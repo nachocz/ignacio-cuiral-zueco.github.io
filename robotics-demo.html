@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2-Robot Cable Manipulation Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 950px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        canvas {
+            display: block;
+            background: #fafafa;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: crosshair;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .control-section {
+            margin-bottom: 15px;
+        }
+
+        .control-section h3 {
+            color: #34495e;
+            font-size: 0.95em;
+            margin-bottom: 8px;
+        }
+
+        .keyboard-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            font-size: 0.9em;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .robot-group {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #2c3e50;
+        }
+
+        .robot-group.robot2 {
+            border-left-color: #8b4513;
+        }
+
+        .robot-group strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .robot-group.robot2 strong {
+            color: #8b4513;
+        }
+
+        .status {
+            background: #ecf0f1;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            color: #2c3e50;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🤖 2-Robot Cable Manipulation</h1>
+        
+        <div style="background: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <p style="margin: 0 0 12px 0; color: #2c3e50; font-size: 0.9em; line-height: 1.5;">
+                Control two robot arms using joint angle sliders to manipulate a flexible cable and match the target shape (green dashed line). 
+                The error value shows how well you match the target. Click "New Target Shape" to generate a new challenge.
+            </p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 12px;">
+                <div>
+                    <h4 style="margin: 0 0 8px 0; color: #34495e; font-size: 0.9em;">Left Robot (Blue)</h4>
+                    <div style="background: white; padding: 10px; border-radius: 6px;">
+                        <div style="margin-bottom: 10px;">
+                            <label style="display: block; color: #2c3e50; font-size: 0.85em; margin-bottom: 4px;">Joint 1</label>
+                            <input type="range" id="theta1Slider" min="-2" max="0.5" step="0.05" value="0" style="width: 100%;">
+                            <span id="theta1Value" style="font-size: 0.8em; color: #7f8c8d;">0.00</span>
+                        </div>
+                        <div>
+                            <label style="display: block; color: #2c3e50; font-size: 0.85em; margin-bottom: 4px;">Joint 2</label>
+                            <input type="range" id="theta2Slider" min="-2" max="2" step="0.05" value="0" style="width: 100%;">
+                            <span id="theta2Value" style="font-size: 0.8em; color: #7f8c8d;">0.00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="margin: 0 0 8px 0; color: #8b4513; font-size: 0.9em;">Right Robot (Brown)</h4>
+                    <div style="background: white; padding: 10px; border-radius: 6px;">
+                        <div style="margin-bottom: 10px;">
+                            <label style="display: block; color: #2c3e50; font-size: 0.85em; margin-bottom: 4px;">Joint 1</label>
+                            <input type="range" id="theta3Slider" min="-2.5" max="4.5" step="0.05" value="3.14" style="width: 100%;">
+                            <span id="theta3Value" style="font-size: 0.8em; color: #7f8c8d;">3.14</span>
+                        </div>
+                        <div>
+                            <label style="display: block; color: #2c3e50; font-size: 0.85em; margin-bottom: 4px;">Joint 2</label>
+                            <input type="range" id="theta4Slider" min="-2" max="2" step="0.05" value="0" style="width: 100%;">
+                            <span id="theta4Value" style="font-size: 0.8em; color: #7f8c8d;">0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 12px;">
+                <button id="newTargetBtn" style="padding: 10px 24px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.95em; transition: all 0.3s ease;">New Target Shape</button>
+            </div>
+        </div>
+        
+        <div style="margin-top: 15px; margin-bottom: 15px;">
+            <p style="font-size: 0.9em; color: #7f8c8d; margin-bottom: 8px; font-weight: 500;">Error Over Time <span style="font-weight: 400; color: #95a5a6;">(lower is better)</span></p>
+            <canvas id="errorPlot" width="750" height="150" style="border: 1px solid #ecf0f1; border-radius: 4px; background: white;"></canvas>
+        </div>
+        
+        <canvas id="roboticsCanvas" width="750" height="450"></canvas>
+        
+        <div class="controls">
+            <div class="control-section">
+            </div>
+            
+            <div class="status">
+                Error: <span id="errorDisplay">0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Polyfill for rounded rectangles (for older browsers)
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (w < 2 * r) r = w / 2;
+                if (h < 2 * r) r = h / 2;
+                this.beginPath();
+                this.moveTo(x + r, y);
+                this.arcTo(x + w, y, x + w, y + h, r);
+                this.arcTo(x + w, y + h, x, y + h, r);
+                this.arcTo(x, y + h, x, y, r);
+                this.arcTo(x, y, x + w, y, r);
+                this.closePath();
+            };
+        }
+        
+        const config = {
+            numPoints: 15,  // Shorter cable
+            constraintIterations: 10,  // Lower iterations for softer cable
+            robotSpeed: 3.5,
+            segmentLength: 20,  // Longer segments for fewer points
+            smoothingStrength: 0.05,  // Very low smoothing - soft and flexible
+            link1Length: 90,  // Larger links
+            link2Length: 90,  // Larger links
+            damping: 0.85,  // Less aggressive damping
+            gravity: 0.02   // Minimal gravity
+        };
+
+        // DOM elements
+        const canvas = document.getElementById('roboticsCanvas');
+        const ctx = canvas.getContext('2d');
+        const errorPlot = document.getElementById('errorPlot');
+        const errorPlotCtx = errorPlot.getContext('2d');
+        const errorDisplay = document.getElementById('errorDisplay');
+        const newTargetBtn = document.getElementById('newTargetBtn');
+        
+        // Error history for plotting
+        let errorHistory = [];
+        const maxHistoryLength = 2000;  // Keep last 2000 frames (~33 seconds at 60fps)
+
+        // State
+        let cable = [];
+        let cableVel = [];  // Velocity for each cable point
+        let target = [];
+        let targetCable = [];  // The actual target cable shape
+        
+        // Left robot
+        let robotPos = [450, 200];
+        let robotBase = [250, 250];  // Robot base position
+        let theta1 = 0;  // First link angle
+        let theta2 = 0;  // Second link angle
+        
+        // Right robot
+        let robot2Pos = [450, 200];
+        let robot2Base = [650, 250];  // Right robot base position
+        let theta3 = Math.PI;  // First link angle (pointing left)
+        let theta4 = 0;  // Second link angle
+        
+        // Ghost robots (for target generation)
+        let theta1_ghost = 0;
+        let theta2_ghost = 0;
+        let theta3_ghost = Math.PI;
+        let theta4_ghost = 0;
+        
+        let targetRobotPos = [700, 150];  // Virtual target robot position
+        let keys = {};
+        let rmsError = 0;
+
+        // Initialize cable as straight line between two robots
+        function initCable() {
+            cable = [];
+            cableVel = [];
+            const ee1 = getEndEffector();
+            const ee2 = getEndEffector2();
+            for (let i = 0; i < config.numPoints; i++) {
+                const t = i / (config.numPoints - 1);
+                cable.push([
+                    ee1.j2[0] + t * (ee2.j2[0] - ee1.j2[0]),
+                    ee1.j2[1] + t * (ee2.j2[1] - ee1.j2[1])
+                ]);
+                cableVel.push([0, 0]);
+            }
+        }
+
+        // Simple 2-link inverse kinematics for left robot
+        function solveIK(targetX, targetY) {
+            const L1 = config.link1Length;
+            const L2 = config.link2Length;
+            const bx = robotBase[0];
+            const by = robotBase[1];
+            
+            const dx = targetX - bx;
+            const dy = targetY - by;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            
+            // Clamp distance to reachable range
+            const maxDist = L1 + L2;
+            const minDist = Math.abs(L1 - L2);
+            
+            if (d > maxDist) {
+                theta1 = Math.atan2(dy, dx);
+                theta2 = 0;
+                return;
+            }
+            
+            if (d < minDist) {
+                theta1 = Math.atan2(dy, dx);
+                theta2 = Math.PI;
+                return;
+            }
+            
+            const cosTheta2 = (d * d - L1 * L1 - L2 * L2) / (2 * L1 * L2);
+            const sinTheta2 = Math.sqrt(Math.max(0, 1 - cosTheta2 * cosTheta2));
+            theta2 = Math.atan2(sinTheta2, cosTheta2);
+            
+            const alpha = Math.atan2(dy, dx);
+            const beta = Math.atan2(L2 * sinTheta2, L1 + L2 * cosTheta2);
+            theta1 = alpha - beta;
+        }
+        
+        // Inverse kinematics for right robot
+        function solveIK2(targetX, targetY) {
+            const L1 = config.link1Length;
+            const L2 = config.link2Length;
+            const bx = robot2Base[0];
+            const by = robot2Base[1];
+            
+            const dx = targetX - bx;
+            const dy = targetY - by;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            
+            const maxDist = L1 + L2;
+            const minDist = Math.abs(L1 - L2);
+            
+            if (d > maxDist) {
+                theta3 = Math.atan2(dy, dx);
+                theta4 = 0;
+                return;
+            }
+            
+            if (d < minDist) {
+                theta3 = Math.atan2(dy, dx);
+                theta4 = Math.PI;
+                return;
+            }
+            
+            const cosTheta4 = (d * d - L1 * L1 - L2 * L2) / (2 * L1 * L2);
+            const sinTheta4 = Math.sqrt(Math.max(0, 1 - cosTheta4 * cosTheta4));
+            theta4 = Math.atan2(sinTheta4, cosTheta4);
+            
+            const alpha = Math.atan2(dy, dx);
+            const beta = Math.atan2(L2 * sinTheta4, L1 + L2 * cosTheta4);
+            theta3 = alpha - beta;
+        }
+
+        // Get end effector position from joint angles
+        function getEndEffector() {
+            const bx = robotBase[0];
+            const by = robotBase[1];
+            const L1 = config.link1Length;
+            const L2 = config.link2Length;
+            
+            const joint1X = bx + L1 * Math.cos(theta1);
+            const joint1Y = by + L1 * Math.sin(theta1);
+            
+            const joint2X = joint1X + L2 * Math.cos(theta1 + theta2);
+            const joint2Y = joint1Y + L2 * Math.sin(theta1 + theta2);
+            
+            return {
+                j0: [bx, by],
+                j1: [joint1X, joint1Y],
+                j2: [joint2X, joint2Y]
+            };
+        }
+        
+        // Get end effector position for right robot
+        function getEndEffector2() {
+            const bx = robot2Base[0];
+            const by = robot2Base[1];
+            const L1 = config.link1Length;
+            const L2 = config.link2Length;
+            
+            const joint1X = bx + L1 * Math.cos(theta3);
+            const joint1Y = by + L1 * Math.sin(theta3);
+            
+            const joint2X = joint1X + L2 * Math.cos(theta3 + theta4);
+            const joint2Y = joint1Y + L2 * Math.sin(theta3 + theta4);
+            
+            return {
+                j0: [bx, by],
+                j1: [joint1X, joint1Y],
+                j2: [joint2X, joint2Y]
+            };
+        }
+        
+        // Get ghost end effectors (for target generation)
+        function getGhostEndEffector1() {
+            const bx = robotBase[0];
+            const by = robotBase[1];
+            const L1 = config.link1Length;
+            const L2 = config.link2Length;
+            
+            const joint1X = bx + L1 * Math.cos(theta1_ghost);
+            const joint1Y = by + L1 * Math.sin(theta1_ghost);
+            
+            const joint2X = joint1X + L2 * Math.cos(theta1_ghost + theta2_ghost);
+            const joint2Y = joint1Y + L2 * Math.sin(theta1_ghost + theta2_ghost);
+            
+            return [joint2X, joint2Y];
+        }
+        
+        function getGhostEndEffector2() {
+            const bx = robot2Base[0];
+            const by = robot2Base[1];
+            const L1 = config.link1Length;
+            const L2 = config.link2Length;
+            
+            const joint1X = bx + L1 * Math.cos(theta3_ghost);
+            const joint1Y = by + L1 * Math.sin(theta3_ghost);
+            
+            const joint2X = joint1X + L2 * Math.cos(theta3_ghost + theta4_ghost);
+            const joint2Y = joint1Y + L2 * Math.sin(theta3_ghost + theta4_ghost);
+            
+            return [joint2X, joint2Y];
+        }
+
+        // Generate random target shape using ghost robot poses
+        function generateTarget() {
+            // Set ghost robots to random poses constrained to workspace quadrants
+            // Left robot: first quadrant (top-right) - angles from -π/2 to 0
+            theta1_ghost = -Math.random() * Math.PI / 2;
+            theta2_ghost = -Math.PI / 2 + Math.random() * Math.PI;
+            
+            // Right robot: second quadrant (top-left) - angles from π to 3π/2
+            theta3_ghost = Math.PI + Math.random() * Math.PI / 2;
+            theta4_ghost = -Math.PI / 2 + Math.random() * Math.PI;
+            
+            // Get ghost end effector positions
+            const ghostEe1 = getGhostEndEffector1();
+            const ghostEe2 = getGhostEndEffector2();
+            
+            // Initialize target cable as straight line between ghost end effectors
+            targetCable = [];
+            for (let i = 0; i < config.numPoints; i++) {
+                const t = i / (config.numPoints - 1);
+                targetCable.push([
+                    ghostEe1[0] + t * (ghostEe2[0] - ghostEe1[0]),
+                    ghostEe1[1] + t * (ghostEe2[1] - ghostEe1[1])
+                ]);
+            }
+            
+            // Solve target cable constraints to get a realistic shape
+            solveTargetCable();
+            
+            // Copy to target display
+            target = targetCable.map(p => [...p]);
+        }
+        
+        // Solve target cable constraints (same as main cable)
+        function solveTargetCable() {
+            for (let iter = 0; iter < config.constraintIterations; iter++) {
+                // Segment length constraints
+                for (let i = 1; i < targetCable.length; i++) {
+                    const p0 = targetCable[i - 1];
+                    const p1 = targetCable[i];
+                    const dx = p1[0] - p0[0];
+                    const dy = p1[1] - p0[1];
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 0.01) continue;
+                    
+                    const correction = (config.segmentLength - dist) / dist * 0.5;
+                    const cdx = dx * correction;
+                    const cdy = dy * correction;
+                    
+                    if (i > 1) {
+                        p0[0] -= cdx;
+                        p0[1] -= cdy;
+                    }
+                    p1[0] += cdx;
+                    p1[1] += cdy;
+                }
+                
+                // Smoothing via bending constraints
+                for (let i = 1; i < targetCable.length - 1; i++) {
+                    const p0 = targetCable[i - 1];
+                    const p1 = targetCable[i];
+                    const p2 = targetCable[i + 1];
+                    
+                    const mx = (p0[0] + p2[0]) / 2;
+                    const my = (p0[1] + p2[1]) / 2;
+                    
+                    p1[0] += (mx - p1[0]) * config.smoothingStrength;
+                    p1[1] += (my - p1[1]) * config.smoothingStrength;
+                }
+            }
+            
+            // Enforce constraints to ghost end effectors
+            const ghostEe1 = getGhostEndEffector1();
+            const ghostEe2 = getGhostEndEffector2();
+            targetCable[0] = [...ghostEe1];
+            targetCable[targetCable.length - 1] = [...ghostEe2];
+        }
+
+        // Cubic Hermite spline based cable - rich curves from position and orientation constraints
+        function solveCable() {
+            const ee1 = getEndEffector();
+            const ee2 = getEndEffector2();
+            
+            // Endpoint positions
+            const P0 = ee1.j2;
+            const P1 = ee2.j2;
+            
+            // Endpoint tangent directions from robot orientations
+            const angle1 = theta1 + theta2;
+            const angle2 = theta3 + theta4;
+            
+            // Tangent vectors - magnitude controls curvature strength
+            const tangentScale = 70;  // How much the orientation influences curve shape
+            const T0 = [
+                Math.cos(angle1) * tangentScale,
+                Math.sin(angle1) * tangentScale
+            ];
+            const T1 = [
+                Math.cos(angle2) * tangentScale,
+                Math.sin(angle2) * tangentScale
+            ];
+            
+            // Generate cable points using cubic Hermite interpolation
+            cable = [];
+            for (let i = 0; i < config.numPoints; i++) {
+                const t = i / (config.numPoints - 1);
+                
+                // Hermite basis functions
+                const h00 = 2 * t * t * t - 3 * t * t + 1;
+                const h10 = t * t * t - 2 * t * t + t;
+                const h01 = -2 * t * t * t + 3 * t * t;
+                const h11 = t * t * t - t * t;
+                
+                // Hermite interpolation: P(t) = h00*P0 + h10*T0 + h01*P1 + h11*T1
+                const x = h00 * P0[0] + h10 * T0[0] + h01 * P1[0] + h11 * T1[0];
+                const y = h00 * P0[1] + h10 * T0[1] + h01 * P1[1] + h11 * T1[1];
+                
+                cable.push([x, y]);
+            }
+        }
+
+        // Calculate RMS error as averaged point-to-point error
+        function computeRmsError() {
+            if (target.length === 0) return 0;
+            let sumError = 0;
+            for (let i = 0; i < cable.length; i++) {
+                const dx = cable[i][0] - target[i][0];
+                const dy = cable[i][1] - target[i][1];
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                sumError += dist;
+            }
+            return sumError / cable.length;  // Average point-to-point error
+        }
+
+        // Render main robotics demo
+        function render() {
+            ctx.fillStyle = '#fafafa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw target cable (bright green - clearly visible)
+            if (target.length > 0) {
+                ctx.strokeStyle = '#27ae60';
+                ctx.lineWidth = 6;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.setLineDash([8, 4]);  // Dashed line
+                ctx.beginPath();
+                ctx.moveTo(target[0][0], target[0][1]);
+                for (let i = 1; i < target.length; i++) {
+                    ctx.lineTo(target[i][0], target[i][1]);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);  // Reset line dash
+            }
+            
+            // Draw actual cable (bold blue)
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 8;  // Larger cable
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(cable[0][0], cable[0][1]);
+            for (let i = 1; i < cable.length; i++) {
+                ctx.lineTo(cable[i][0], cable[i][1]);
+            }
+            ctx.stroke();
+            
+            // Draw cable points (small dots - less visible)
+            ctx.fillStyle = '#3498db';
+            ctx.globalAlpha = 0.4;
+            for (let i = 0; i < cable.length; i++) {
+                ctx.beginPath();
+                ctx.arc(cable[i][0], cable[i][1], 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1.0;
+            
+            // Draw left robot arm
+            const ee1 = getEndEffector();
+            
+            // Draw links with shadow effect
+            ctx.strokeStyle = 'rgba(44, 62, 80, 0.2)';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(ee1.j0[0] + 1, ee1.j0[1] + 1);
+            ctx.lineTo(ee1.j1[0] + 1, ee1.j1[1] + 1);
+            ctx.lineTo(ee1.j2[0] + 1, ee1.j2[1] + 1);
+            ctx.stroke();
+            
+            // Draw links
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(ee1.j0[0], ee1.j0[1]);
+            ctx.lineTo(ee1.j1[0], ee1.j1[1]);
+            ctx.lineTo(ee1.j2[0], ee1.j2[1]);
+            ctx.stroke();
+            
+            // Draw joints (darker)
+            ctx.fillStyle = '#34495e';
+            for (let j of [ee1.j0, ee1.j1]) {
+                ctx.beginPath();
+                ctx.arc(j[0], j[1], 10, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Draw end effector (gripper in red)
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.arc(ee1.j2[0], ee1.j2[1], 13, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Draw end effector outline
+            ctx.strokeStyle = '#c0392b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(ee1.j2[0], ee1.j2[1], 13, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // Draw right robot arm (mirror)
+            const ee2 = getEndEffector2();
+            
+            // Draw links with shadow effect
+            ctx.strokeStyle = 'rgba(44, 62, 80, 0.2)';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(ee2.j0[0] + 1, ee2.j0[1] + 1);
+            ctx.lineTo(ee2.j1[0] + 1, ee2.j1[1] + 1);
+            ctx.lineTo(ee2.j2[0] + 1, ee2.j2[1] + 1);
+            ctx.stroke();
+            
+            // Draw links
+            ctx.strokeStyle = '#8b4513';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(ee2.j0[0], ee2.j0[1]);
+            ctx.lineTo(ee2.j1[0], ee2.j1[1]);
+            ctx.lineTo(ee2.j2[0], ee2.j2[1]);
+            ctx.stroke();
+            
+            // Draw joints (darker brown)
+            ctx.fillStyle = '#654321';
+            for (let j of [ee2.j0, ee2.j1]) {
+                ctx.beginPath();
+                ctx.arc(j[0], j[1], 10, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Draw end effector (gripper in orange)
+            ctx.fillStyle = '#f39c12';
+            ctx.beginPath();
+            ctx.arc(ee2.j2[0], ee2.j2[1], 13, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Draw end effector outline
+            ctx.strokeStyle = '#d68910';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(ee2.j2[0], ee2.j2[1], 13, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+        
+        // Render error plot
+        function renderErrorPlot() {
+            const plotWidth = errorPlot.width;
+            const plotHeight = errorPlot.height;
+            const padding = 35;
+            const graphWidth = plotWidth - padding - 10;
+            const graphHeight = plotHeight - 2 * padding;
+            
+            // Clear plot
+            errorPlotCtx.fillStyle = 'white';
+            errorPlotCtx.fillRect(0, 0, plotWidth, plotHeight);
+            
+            // Draw border
+            errorPlotCtx.strokeStyle = '#ecf0f1';
+            errorPlotCtx.lineWidth = 1;
+            errorPlotCtx.strokeRect(padding, padding, graphWidth, graphHeight);
+            
+            // Draw grid lines
+            errorPlotCtx.strokeStyle = '#f0f0f0';
+            errorPlotCtx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (graphHeight / 5) * i;
+                errorPlotCtx.beginPath();
+                errorPlotCtx.moveTo(padding, y);
+                errorPlotCtx.lineTo(padding + graphWidth, y);
+                errorPlotCtx.stroke();
+            }
+            
+            // Find max error for scaling
+            const maxError = Math.max(...errorHistory, 50);
+            const scale = graphHeight / maxError;
+            
+            // Draw error line
+            if (errorHistory.length > 1) {
+                errorPlotCtx.strokeStyle = '#e74c3c';
+                errorPlotCtx.lineWidth = 2;
+                errorPlotCtx.lineCap = 'round';
+                errorPlotCtx.lineJoin = 'round';
+                
+                errorPlotCtx.beginPath();
+                for (let i = 0; i < errorHistory.length; i++) {
+                    const x = padding + (i / (errorHistory.length - 1 || 1)) * graphWidth;
+                    const y = padding + graphHeight - (errorHistory[i] * scale);
+                    if (i === 0) {
+                        errorPlotCtx.moveTo(x, y);
+                    } else {
+                        errorPlotCtx.lineTo(x, y);
+                    }
+                }
+                errorPlotCtx.stroke();
+            }
+            
+            // Draw axis labels
+            errorPlotCtx.fillStyle = '#7f8c8d';
+            errorPlotCtx.font = '11px sans-serif';
+            
+            // Y-axis label with max value
+            errorPlotCtx.textAlign = 'right';
+            errorPlotCtx.fillText(`Error (px) - Max: ${maxError.toFixed(1)}`, padding - 5, 15);
+            
+            // Y-axis scale values
+            errorPlotCtx.font = '9px sans-serif';
+            errorPlotCtx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (graphHeight / 5) * i;
+                const value = maxError - (maxError / 5) * i;
+                errorPlotCtx.fillText(value.toFixed(0), padding - 5, y + 3);
+            }
+            
+            // X-axis label
+            errorPlotCtx.font = '11px sans-serif';
+            errorPlotCtx.textAlign = 'center';
+            errorPlotCtx.fillText('Time →', plotWidth / 2, plotHeight - 5);
+        }
+
+        // Animation loop
+        function animate() {
+            // Joint angles are now directly controlled by sliders
+            // No need for IK solving—angles are already set
+            
+            // Solve cable constraints
+            solveCable();
+            
+            // Calculate error
+            rmsError = computeRmsError();
+            errorHistory.push(rmsError);
+            if (errorHistory.length > maxHistoryLength) {
+                errorHistory.shift();
+            }
+            errorDisplay.textContent = rmsError.toFixed(2);
+            
+            // Render
+            render();
+            renderErrorPlot();
+            
+            requestAnimationFrame(animate);
+        }
+
+        // Slider controls
+        const theta1Slider = document.getElementById('theta1Slider');
+        const theta2Slider = document.getElementById('theta2Slider');
+        const theta3Slider = document.getElementById('theta3Slider');
+        const theta4Slider = document.getElementById('theta4Slider');
+        
+        const theta1Value = document.getElementById('theta1Value');
+        const theta2Value = document.getElementById('theta2Value');
+        const theta3Value = document.getElementById('theta3Value');
+        const theta4Value = document.getElementById('theta4Value');
+        
+        theta1Slider.addEventListener('input', (e) => {
+            theta1 = parseFloat(e.target.value);
+            theta1Value.textContent = theta1.toFixed(2);
+        });
+        
+        theta2Slider.addEventListener('input', (e) => {
+            theta2 = parseFloat(e.target.value);
+            theta2Value.textContent = theta2.toFixed(2);
+        });
+        
+        theta3Slider.addEventListener('input', (e) => {
+            theta3 = parseFloat(e.target.value);
+            theta3Value.textContent = theta3.toFixed(2);
+        });
+        
+        theta4Slider.addEventListener('input', (e) => {
+            theta4 = parseFloat(e.target.value);
+            theta4Value.textContent = theta4.toFixed(2);
+        });
+
+        // New target button
+        newTargetBtn.addEventListener('click', generateTarget);
+        newTargetBtn.addEventListener('mouseover', () => {
+            newTargetBtn.style.background = '#2980b9';
+        });
+        newTargetBtn.addEventListener('mouseout', () => {
+            newTargetBtn.style.background = '#3498db';
+        });
+
+        // Initialize and start
+        initCable();
+        generateTarget();
+        animate();
+    </script>
+</body>
+</html>
