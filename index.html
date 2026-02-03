@@ -141,11 +141,20 @@
         }
 
         .award-photo {
-            width: 80px;
+            width: 120px;
             height: auto;
-            margin-top: 8px;
+            margin-top: 12px;
+            margin-bottom: 8px;
             border-radius: 4px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            display: block;
+        }
+
+        .award-caption {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            margin-top: 6px;
+            font-style: italic;
         }
 
         a {
@@ -158,6 +167,22 @@
         a:hover {
             color: #2980b9;
             border-bottom-color: #3498db;
+        }
+
+        .award a {
+            display: inline-block;
+            padding: 8px 14px;
+            background: #3498db;
+            color: white;
+            border-radius: 4px;
+            margin-top: 8px;
+            border-bottom: none;
+            font-weight: 500;
+        }
+
+        .award a:hover {
+            background: #2980b9;
+            border-bottom: none;
         }
 
         .publication-meta {
@@ -289,10 +314,13 @@
         <ul>
             <li class="nested-list"><em>PhD Thesis:</em> Shape Control of Deformable Objects (International Mention, Cum Laude). <a href="https://zaguan.unizar.es/record/151097/files/">[Link]</a></li>
             <li class="award"><strong>🏆 Best Robotics PhD Thesis Award (2025)</strong>, conferred by the Spanish Committee of Automatic Control (CEA), recognizing excellence in publication quality, open-source code dissemination, and validation.
-                <img src="price_CEA.jpg" alt="CEA Award" class="award-photo">
+                <div>
+                    <img src="price_CEA.jpg" alt="CEA Award" class="award-photo">
+                    <div class="award-caption">CEA Best Robotics PhD Thesis Award</div>
+                </div>
             </li>
             <li class="award"><strong>🏆 Best Iberian Robotics PhD Thesis Award (November 2025)</strong>, conferred by the Spanish Society for Research and Development in Robotics (SEIDROB) and the Portuguese Robotics Society (SPR).</li>
-            <li class="award"><strong>🏆 <a href="https://eu-robotics.net/georges-giralt-phd-award/" style="color: #2c3e50;">Georges Giralt PhD Award Finalist</a></strong>—One of four finalists for Europe's most prestigious recognition for PhD excellence in robotics—selected among over 50 candidates and presented at the European Robotics Forum 2025.</li>
+            <li class="award"><strong>🏆 <a href="https://eu-robotics.net/georges-giralt-phd-award/">Georges Giralt PhD Award Finalist</a></strong>—One of four finalists for Europe's most prestigious recognition for PhD excellence in robotics—selected among over 50 candidates and presented at the European Robotics Forum 2025.</li>
         </ul>
         <p><strong>15/09/2017–18/12/2019:</strong> MSc in Industrial Engineering, University of Zaragoza.</p>
         <ul>
