@@ -182,15 +182,15 @@
                 <h3>Target Shape</h3>
                 <canvas id="targetCanvas" width="400" height="400"></canvas>
                 <canvas id="errorCanvas" width="400" height="150" style="margin-top: 12px;"></canvas>
-                <div class="plot-note">Residual: lower is better</div>
+                <div class="plot-note">Shape mismatch residual: lower is better</div>
             </div>
             
             <div class="panel">
                 <h3>Sculpting Canvas (try to match target)</h3>
                 <canvas id="shapesCanvas" width="400" height="400"></canvas>
                 <div class="tools" style="margin-top: 12px;">
-                    <button class="tool-btn active" onclick="selectTool('chisel')" id="toolChisel">🔨 Chisel (Erase)</button>
-                    <button class="tool-btn" onclick="selectTool('clay')" id="toolClay">🏺 Clay (Add)</button>
+                    <button class="tool-btn active" onclick="selectTool('chisel')" id="toolChisel">🔨 Chisel (remove)</button>
+                    <button class="tool-btn" onclick="selectTool('clay')" id="toolClay">🏺 Clay (add)</button>
                 </div>
                 <button onclick="resetSculpt()">🔄 Reset Block</button>
             </div>
@@ -225,7 +225,7 @@
             }
         }
 
-        const NUM_POINTS = 45;
+        const NUM_POINTS = 100;
         const NUM_SHAPES = 3;  // Unused in sculpting mode
         let targetShape = [];
         let userGuess = null;
@@ -243,8 +243,8 @@
         const sculptCtx = shapesCanvas.getContext('2d');
         
         // Particle grid for sculpting
-        const GRID_COLS = 26;
-        const GRID_ROWS = 30;
+        const GRID_COLS = 30;
+        const GRID_ROWS = 34;
         let particleGrid = [];  // 2D array of {x, y, alive}
         const PARTICLE_RADIUS = 2;
         const ERASE_RADIUS = 20;
@@ -720,17 +720,30 @@
                 return angleA - angleB;
             });
 
-            // 3. Apply Laplacian smoothing to reduce sharp peaks
-            const smoothed = [];
-            for (let i = 0; i < boundaryPixels.length; i++) {
-                const prev = boundaryPixels[(i - 1 + boundaryPixels.length) % boundaryPixels.length];
-                const curr = boundaryPixels[i];
-                const next = boundaryPixels[(i + 1) % boundaryPixels.length];
-                
-                smoothed.push({
-                    x: (prev.x + curr.x + next.x) / 3,
-                    y: (prev.y + curr.y + next.y) / 3
-                });
+            // 3. Apply smoothing to reduce sharp peaks
+            // Use a wider kernel so we can run fewer iterations
+            const SMOOTH_ITERS = 2;
+            let smoothed = boundaryPixels.map(p => ({ x: p.x, y: p.y }));
+            for (let iter = 0; iter < SMOOTH_ITERS; iter++) {
+                const nextPass = [];
+                for (let i = 0; i < smoothed.length; i++) {
+                    const prev2 = smoothed[(i - 2 + smoothed.length) % smoothed.length];
+                    const prev1 = smoothed[(i - 1 + smoothed.length) % smoothed.length];
+                    const curr = smoothed[i];
+                    const next1 = smoothed[(i + 1) % smoothed.length];
+                    const next2 = smoothed[(i + 2) % smoothed.length];
+
+                    const w0 = 1;
+                    const w1 = 2;
+                    const w2 = 3;
+                    const wSum = w0 + w1 + w2 + w1 + w0;
+
+                    nextPass.push({
+                        x: (w0 * prev2.x + w1 * prev1.x + w2 * curr.x + w1 * next1.x + w0 * next2.x) / wSum,
+                        y: (w0 * prev2.y + w1 * prev1.y + w2 * curr.y + w1 * next1.y + w0 * next2.y) / wSum
+                    });
+                }
+                smoothed = nextPass;
             }
 
             // 4. Convert to coordinate array
@@ -860,7 +873,7 @@
                 lastResidual = computeAreaResidual(targetShape, currentSculptShape);
                 residualHistory.push(lastResidual);
                 if (residualHistory.length > 200) residualHistory.shift();
-                statusText.textContent = `Area mismatch (lower is better): ${lastResidual.toFixed(4)}`;
+                statusText.textContent = `Current shape mismatch (lower is better): ${lastResidual.toFixed(4)}`;
                 statusText.style.background = '#ecf0f1';
             }
 
