@@ -47,13 +47,19 @@
         }
 
         #roboticsCanvas {
-            width: 100%;
-            height: auto;
+            width: 100% !important;
+            height: auto !important;
+            max-width: 100%;
+            margin-bottom: 0;
         }
 
         #errorPlot {
-            width: 100%;
-            height: auto;
+            width: 100% !important;
+            height: auto !important;
+            max-width: 100%;
+            border: 1px solid #ecf0f1;
+            border-radius: 4px;
+            background: white;
         }
 
         .controls {
@@ -171,17 +177,7 @@
             flex-direction: column;
         }
 
-        #roboticsCanvas {
-            margin-bottom: 0;
-        }
 
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .visualization-container {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-        }
     </style>
 </head>
 <body>
