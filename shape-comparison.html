@@ -156,9 +156,55 @@
             border-color: #2980b9;
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
         }
+
+        body.dark-theme {
+            background: #0f1115;
+            color: #e6e6e6;
+        }
+
+        body.dark-theme .demo-container,
+        body.dark-theme .panel,
+        body.dark-theme .instructions,
+        body.dark-theme .status {
+            background: #151922 !important;
+            color: #e6e6e6 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        }
+
+        body.dark-theme canvas {
+            border-color: #2a3140;
+        }
+
+        body.dark-theme h1,
+        body.dark-theme h3,
+        body.dark-theme p,
+        body.dark-theme li,
+        body.dark-theme span,
+        body.dark-theme strong {
+            color: #e6e6e6 !important;
+        }
+
+        body.dark-theme button {
+            background: #2c6fb3;
+        }
+
+        body.dark-theme button:hover {
+            background: #3b82c4;
+        }
+
+        body.dark-theme .tool-btn {
+            background: #1f2633;
+            border-color: #2a3140;
+            color: #e6e6e6;
+        }
+
+        body.dark-theme .tool-btn.active {
+            background: #2c6fb3;
+            border-color: #3b82c4;
+        }
     </style>
 </head>
-<body>
+<body class="dark-theme">
     <div class="demo-container">
         <h1>Shape Comparison Game</h1>
         
