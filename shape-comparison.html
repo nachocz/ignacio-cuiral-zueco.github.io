@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shape Analysis and Comparison</title>
+    <title>Shape Comparison Game</title>
     <style>
         * {
             margin: 0;
@@ -27,7 +27,7 @@
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            max-width: 950px;
+            max-width: 1000px;
             width: 100%;
         }
 
@@ -38,82 +38,55 @@
             font-size: 1.8em;
         }
 
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .panel h3 {
+            color: #2c3e50;
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
         canvas {
             display: block;
-            background: #fafafa;
+            background: white;
             border: 2px solid #ecf0f1;
             border-radius: 8px;
+            width: 100%;
+            height: auto;
+        }
+
+        #targetCanvas {
+            cursor: default;
+        }
+
+        #shapesCanvas {
             cursor: crosshair;
         }
 
-        #shapeCanvas {
-            width: 100% !important;
-            height: auto !important;
-            max-width: 100%;
-        }
-
-        .controls {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .control-section {
-            margin-bottom: 15px;
-        }
-
-        .control-section h3 {
-            color: #34495e;
-            font-size: 0.95em;
-            margin-bottom: 8px;
-        }
-
-        .shape-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .shape-group {
-            background: white;
-            padding: 12px;
-            border-radius: 6px;
-            border-left: 4px solid #2c3e50;
-        }
-
-        .shape-group.shape2 {
-            border-left-color: #27ae60;
-        }
-
-        .shape-group strong {
-            display: block;
-            margin-bottom: 8px;
-            color: #2c3e50;
-            font-size: 0.9em;
-        }
-
-        .shape-group.shape2 strong {
-            color: #27ae60;
-        }
-
-        .shape-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
         button {
-            padding: 8px 12px;
+            padding: 10px 20px;
             background: #3498db;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 500;
-            font-size: 0.9em;
+            font-size: 0.95em;
             transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
         }
 
         button:hover {
@@ -126,271 +99,188 @@
             transform: translateY(0);
         }
 
-        button.secondary {
-            background: #27ae60;
-        }
-
-        button.secondary:hover {
-            background: #229954;
-            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
-        }
-
-        .metrics {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .metric-box {
-            background: #ecf0f1;
-            padding: 12px;
-            border-radius: 6px;
-            text-align: center;
-        }
-
-        .metric-label {
-            font-size: 0.85em;
-            color: #7f8c8d;
-            margin-bottom: 4px;
-        }
-
-        .metric-value {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #2c3e50;
-            font-family: 'Courier New', monospace;
-        }
-
         .status {
             background: #ecf0f1;
-            padding: 12px;
+            padding: 15px;
             border-radius: 8px;
             text-align: center;
-            font-family: 'Courier New', monospace;
+            color: #2c3e50;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .instructions {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
             color: #2c3e50;
             font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .plot-note {
+            margin-top: 6px;
+            font-size: 0.85em;
+            color: #7f8c8d;
+            text-align: center;
+        }
+
+        .tools {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .tool-btn {
+            padding: 10px 20px;
+            background: #ecf0f1;
+            color: #2c3e50;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .tool-btn:hover {
+            background: #d5dbdb;
+            transform: translateY(-2px);
+        }
+
+        .tool-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
         }
     </style>
 </head>
 <body>
     <div class="demo-container">
-        <h1>📐 Shape Analysis and Comparison</h1>
+        <h1>🎯 Shape Comparison Game</h1>
         
-        <div style="background: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-            <p style="margin: 0 0 12px 0; color: #2c3e50; font-size: 0.9em; line-height: 1.5;">
-                Visualize and compare shape representations using contour-based analysis. 
-                Generate different shapes and compute similarity metrics like Hausdorff distance and area overlap.
-                Each shape is represented as a normalized contour for comparison.
-            </p>
-            
-            <div class="shape-selector">
-                <div class="shape-group">
-                    <strong>Shape 1 (Blue)</strong>
-                    <div class="shape-buttons">
-                        <button onclick="generateShape1('circle')">Circle</button>
-                        <button onclick="generateShape1('square')">Square</button>
-                        <button onclick="generateShape1('star')">Star</button>
-                        <button onclick="generateShape1('ellipse')">Ellipse</button>
-                    </div>
-                </div>
-                
-                <div class="shape-group shape2">
-                    <strong>Shape 2 (Green)</strong>
-                    <div class="shape-buttons">
-                        <button class="secondary" onclick="generateShape2('circle')">Circle</button>
-                        <button class="secondary" onclick="generateShape2('square')">Square</button>
-                        <button class="secondary" onclick="generateShape2('star')">Star</button>
-                        <button class="secondary" onclick="generateShape2('ellipse')">Ellipse</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="text-align: center;">
-                <button onclick="randomizeShapes()" style="padding: 10px 20px; background: #e74c3c; font-size: 0.95em;">🎲 Random Shapes</button>
-            </div>
+        <div class="instructions">
+            <strong>How to Play</strong>
+            <br><br>
+            <strong>The Goal:</strong> Match the Red target shape by sculpting the block on the right.
+            <br>
+            <strong>The Feedback:</strong> Your current shape is overlaid in Green on the left. Watch the error curve, lower is better!
+            <br>
+            <strong>The Tools:</strong> Use Chisel to remove material and Clay to add it back.
+            <br><br>
+            <strong>Why This Matters</strong>
+            <br><br>
+            Humans have a natural intuition for shape; we can instantly judge how closely one object resembles another. Sculptors
+            exemplify this skill, constantly comparing a target model to the material in their hands and making adjustments until
+            the two are almost identical.
         </div>
-        
-        <canvas id="shapeCanvas" width="800" height="400"></canvas>
-        
-        <div class="metrics">
-            <div class="metric-box">
-                <div class="metric-label">Hausdorff Distance</div>
-                <div class="metric-value" id="hausdorffMetric">0.00</div>
+
+        <div class="layout">
+            <div class="panel">
+                <h3>Target Shape</h3>
+                <canvas id="targetCanvas" width="400" height="400"></canvas>
+                <canvas id="errorCanvas" width="400" height="150" style="margin-top: 12px;"></canvas>
+                <div class="plot-note">Residual: lower is better</div>
             </div>
-            <div class="metric-box">
-                <div class="metric-label">Area Overlap</div>
-                <div class="metric-value" id="overlapMetric">0.0%</div>
-            </div>
-            <div class="metric-box">
-                <div class="metric-label">Similarity</div>
-                <div class="metric-value" id="similarityMetric">0.0%</div>
+            
+            <div class="panel">
+                <h3>Sculpting Canvas (Erase to Match)</h3>
+                <canvas id="shapesCanvas" width="400" height="400"></canvas>
+                <div class="tools" style="margin-top: 12px;">
+                    <button class="tool-btn active" onclick="selectTool('chisel')" id="toolChisel">🔨 Chisel (Erase)</button>
+                    <button class="tool-btn" onclick="selectTool('clay')" id="toolClay">🏺 Clay (Add)</button>
+                </div>
+                <button onclick="resetSculpt()">🔄 Reset Block</button>
             </div>
         </div>
 
-        <div class="controls" style="margin-top: 15px;">
-            <div class="status">
-                Comparison metrics computed in real-time. Lower Hausdorff distance and higher area overlap indicate greater similarity.
-            </div>
+        <div class="status" id="statusText">
+            Sculpt the shape to match the target. The residual curve updates as you sculpt.
         </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('shapeCanvas');
-        const ctx = canvas.getContext('2d');
+        const targetCanvas = document.getElementById('targetCanvas');
+        const targetCtx = targetCanvas.getContext('2d');
+        const shapesCanvas = document.getElementById('shapesCanvas');
+        const shapesCtx = shapesCanvas.getContext('2d');
+        const errorCanvas = document.getElementById('errorCanvas');
+        const errorCtx = errorCanvas.getContext('2d');
+        const statusText = document.getElementById('statusText');
+
+        let currentTool = 'chisel';  // 'chisel' for erasing, 'clay' for adding
+
+        function selectTool(tool) {
+            currentTool = tool;
+            document.getElementById('toolChisel').classList.remove('active');
+            document.getElementById('toolClay').classList.remove('active');
+            if (tool === 'chisel') {
+                document.getElementById('toolChisel').classList.add('active');
+                sculptCanvas.style.cursor = 'crosshair';
+            } else {
+                document.getElementById('toolClay').classList.add('active');
+                sculptCanvas.style.cursor = 'cell';
+            }
+        }
+
+        const NUM_POINTS = 45;
+        const NUM_SHAPES = 3;  // Unused in sculpting mode
+        let targetShape = [];
+        let userGuess = null;
+        let gameState = 'playing';
+        let procrustesDistances = [];
+        let targetLoaded = false;
+        let isSculpting = false;
+        let sculptHistory = [];
+        let residualHistory = [];
+        let lastResidual = null;
+        let currentSculptShape = [];
+        let pendingUpdate = false;
+
+        const sculptCanvas = shapesCanvas;
+        const sculptCtx = shapesCanvas.getContext('2d');
         
-        let shape1 = { points: [], type: 'circle' };
-        let shape2 = { points: [], type: 'circle' };
-        
-        // Shape generation functions
-        function generateCircle(centerX, centerY, radius, numPoints = 40) {
+        // Particle grid for sculpting
+        const GRID_COLS = 26;
+        const GRID_ROWS = 30;
+        let particleGrid = [];  // 2D array of {x, y, alive}
+        const PARTICLE_RADIUS = 2;
+        const ERASE_RADIUS = 20;
+        const ALPHA_RADIUS = 15;  // Concavity parameter
+
+        // Load and parse the target SVG (embedded path data)
+        function loadTargetShape() {
+            // Path data extracted directly from the source SVG
+            const pathData = "m 760.7495,2617.5699 c 0.38246,3.9549 5.10303,31.8314 10.64711,41.2593 5.54386,9.4279 18.93547,21.0188 25.06522,21.5951 6.12975,0.5762 31.22287,-7.0403 40.34127,-13.3083 9.1184,-6.2682 16.19732,-12.3718 15.11094,-18.5306 -1.08638,-6.1587 -18.28883,-24.1643 -14.36233,-38.7585 3.92628,-14.5942 20.67115,-39.3838 19.50855,-52.6751 -1.16261,-13.2913 -14.26695,-29.8428 -33.73125,-36.6606 -19.46408,-6.8176 -28.33331,-9.0766 -39.55608,-8.7065 -11.22256,0.3701 -36.90156,16.8381 -39.55349,23.3579 -2.65193,6.5198 -14.26589,33.9295 -12.47558,42.2921 1.79052,8.3624 20.07543,32.1702 24.54446,36.5093 4.46881,4.3391 4.46118,3.6259 4.46118,3.6259 z";
+            
+            // Create a temporary SVG element to parse the path
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '400');
+            svg.setAttribute('height', '400');
+            svg.style.position = 'absolute';
+            svg.style.visibility = 'hidden';
+            document.body.appendChild(svg);
+            
+            const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            pathElement.setAttribute('d', pathData);
+            svg.appendChild(pathElement);
+            
+            // Sample points along the path
+            const pathLength = pathElement.getTotalLength();
             const points = [];
-            for (let i = 0; i < numPoints; i++) {
-                const angle = (i / numPoints) * Math.PI * 2;
-                points.push([
-                    centerX + radius * Math.cos(angle),
-                    centerY + radius * Math.sin(angle)
-                ]);
-            }
-            return points;
-        }
-        
-        function generateSquare(centerX, centerY, size, numPoints = 40) {
-            const points = [];
-            const half = size / 2;
-            const pointsPerSide = numPoints / 4;
             
-            // Top side
-            for (let i = 0; i < pointsPerSide; i++) {
-                points.push([centerX - half + (i / pointsPerSide) * size, centerY - half]);
-            }
-            // Right side
-            for (let i = 0; i < pointsPerSide; i++) {
-                points.push([centerX + half, centerY - half + (i / pointsPerSide) * size]);
-            }
-            // Bottom side
-            for (let i = 0; i < pointsPerSide; i++) {
-                points.push([centerX + half - (i / pointsPerSide) * size, centerY + half]);
-            }
-            // Left side
-            for (let i = 0; i < pointsPerSide; i++) {
-                points.push([centerX - half, centerY + half - (i / pointsPerSide) * size]);
+            for (let i = 0; i < 200; i++) {
+                const point = pathElement.getPointAtLength((i / 200) * pathLength);
+                points.push([point.x, point.y]);
             }
             
-            return points;
-        }
-        
-        function generateStar(centerX, centerY, outerRadius, numPoints = 5) {
-            const points = [];
-            const totalPoints = numPoints * 2;
-            for (let i = 0; i < totalPoints; i++) {
-                const angle = (i / totalPoints) * Math.PI * 2;
-                const radius = i % 2 === 0 ? outerRadius : outerRadius * 0.4;
-                points.push([
-                    centerX + radius * Math.cos(angle),
-                    centerY + radius * Math.sin(angle)
-                ]);
-            }
-            return points;
-        }
-        
-        function generateEllipse(centerX, centerY, radiusX, radiusY, numPoints = 40) {
-            const points = [];
-            for (let i = 0; i < numPoints; i++) {
-                const angle = (i / numPoints) * Math.PI * 2;
-                points.push([
-                    centerX + radiusX * Math.cos(angle),
-                    centerY + radiusY * Math.sin(angle)
-                ]);
-            }
-            return points;
-        }
-        
-        function generateShape1(type) {
-            shape1.type = type;
-            switch (type) {
-                case 'circle':
-                    shape1.points = generateCircle(200, 200, 80);
-                    break;
-                case 'square':
-                    shape1.points = generateSquare(200, 200, 140);
-                    break;
-                case 'star':
-                    shape1.points = generateStar(200, 200, 80, 5);
-                    break;
-                case 'ellipse':
-                    shape1.points = generateEllipse(200, 200, 100, 60);
-                    break;
-            }
-            render();
-        }
-        
-        function generateShape2(type) {
-            shape2.type = type;
-            switch (type) {
-                case 'circle':
-                    shape2.points = generateCircle(600, 200, 80);
-                    break;
-                case 'square':
-                    shape2.points = generateSquare(600, 200, 140);
-                    break;
-                case 'star':
-                    shape2.points = generateStar(600, 200, 80, 5);
-                    break;
-                case 'ellipse':
-                    shape2.points = generateEllipse(600, 200, 100, 60);
-                    break;
-            }
-            render();
-        }
-        
-        function randomizeShapes() {
-            const types = ['circle', 'square', 'star', 'ellipse'];
-            generateShape1(types[Math.floor(Math.random() * types.length)]);
-            generateShape2(types[Math.floor(Math.random() * types.length)]);
-        }
-        
-        // Distance calculations
-        function pointToPointDistance(p1, p2) {
-            const dx = p1[0] - p2[0];
-            const dy = p1[1] - p2[1];
-            return Math.sqrt(dx * dx + dy * dy);
-        }
-        
-        function hausdorffDistance(points1, points2) {
-            let maxMinDist = 0;
+            // Remove temporary SVG
+            document.body.removeChild(svg);
             
-            for (let p1 of points1) {
-                let minDist = Infinity;
-                for (let p2 of points2) {
-                    const dist = pointToPointDistance(p1, p2);
-                    minDist = Math.min(minDist, dist);
-                }
-                maxMinDist = Math.max(maxMinDist, minDist);
-            }
-            
-            return maxMinDist;
-        }
-        
-        function computeMetrics() {
-            if (shape1.points.length === 0 || shape2.points.length === 0) return;
-            
-            const hausdorff = hausdorffDistance(shape1.points, shape2.points);
-            const maxDist = 300; // Approximate max possible distance
-            const hausdorffNorm = Math.min(hausdorff / maxDist, 1.0);
-            const similarity = (1 - hausdorffNorm) * 100;
-            
-            // Simple area overlap estimate based on bounding box intersection
-            const bb1 = getBoundingBox(shape1.points);
-            const bb2 = getBoundingBox(shape2.points);
-            const overlap = computeBBOverlap(bb1, bb2) * 100;
-            
-            document.getElementById('hausdorffMetric').textContent = hausdorff.toFixed(2);
-            document.getElementById('overlapMetric').textContent = overlap.toFixed(1) + '%';
-            document.getElementById('similarityMetric').textContent = similarity.toFixed(1) + '%';
-        }
-        
-        function getBoundingBox(points) {
+            // Normalize to canvas coordinates
             let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
             for (let p of points) {
                 minX = Math.min(minX, p[0]);
@@ -398,86 +288,621 @@
                 minY = Math.min(minY, p[1]);
                 maxY = Math.max(maxY, p[1]);
             }
-            return { minX, maxX, minY, maxY };
-        }
-        
-        function computeBBOverlap(bb1, bb2) {
-            const overlapX = Math.max(0, Math.min(bb1.maxX, bb2.maxX) - Math.max(bb1.minX, bb2.minX));
-            const overlapY = Math.max(0, Math.min(bb1.maxY, bb2.maxY) - Math.max(bb1.minY, bb2.minY));
-            const intersectionArea = overlapX * overlapY;
-            const area1 = (bb1.maxX - bb1.minX) * (bb1.maxY - bb1.minY);
-            const area2 = (bb2.maxX - bb2.minX) * (bb2.maxY - bb2.minY);
-            const unionArea = area1 + area2 - intersectionArea;
-            return unionArea > 0 ? intersectionArea / unionArea : 0;
-        }
-        
-        function render() {
-            // Clear canvas
-            ctx.fillStyle = '#fafafa';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Draw grid
-            ctx.strokeStyle = '#ecf0f1';
-            ctx.lineWidth = 1;
-            for (let x = 0; x < canvas.width; x += 50) {
-                ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, canvas.height);
-                ctx.stroke();
-            }
-            for (let y = 0; y < canvas.height; y += 50) {
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(canvas.width, y);
-                ctx.stroke();
-            }
+            const width = maxX - minX;
+            const height = maxY - minY;
+            const scale = 225 / Math.max(width, height);
+            const centerX = 200;
+            const centerY = 200;
             
-            // Draw shape 1
-            if (shape1.points.length > 0) {
-                ctx.fillStyle = '#3498db';
-                ctx.beginPath();
-                ctx.moveTo(shape1.points[0][0], shape1.points[0][1]);
-                for (let p of shape1.points.slice(1)) {
-                    ctx.lineTo(p[0], p[1]);
-                }
-                ctx.closePath();
-                ctx.fill();
-                ctx.strokeStyle = '#2980b9';
-                ctx.lineWidth = 2;
-                ctx.stroke();
+            const normalized = points.map(p => [
+                centerX + (p[0] - (minX + maxX) / 2) * scale,
+                centerY + (p[1] - (minY + maxY) / 2) * scale
+            ]);
+            
+            targetShape = sampleUniformly(normalized, NUM_POINTS);
+            targetLoaded = true;
+            console.log('Target shape loaded successfully with', targetShape.length, 'points');
+            resetSculpt();
+        }
+
+        // Fallback if SVG can't be loaded
+        function generateFallbackTarget() {
+            const points = [];
+            const centerX = 200;
+            const centerY = 200;
+            for (let i = 0; i < 50; i++) {
+                const t = i / 50;
+                const angle = t * Math.PI * 2;
+                const r = 60 + 20 * Math.sin(5 * angle);
+                points.push([
+                    centerX + r * Math.cos(angle),
+                    centerY + r * 1.3 * Math.sin(angle)
+                ]);
+            }
+            return sampleUniformly(points, NUM_POINTS);
+        }
+
+        // Generate deformed version of target
+        function generateDeformedTarget(centerX, centerY, deformationType) {
+            // Start with the target shape points (before sampling)
+            const basePoints = [...targetShape];
+            const [cx, cy] = centroid(basePoints);
+            
+            let deformed = basePoints.map((p, idx) => {
+                const dx = p[0] - cx;
+                const dy = p[1] - cy;
+                const angle = Math.atan2(dy, dx);
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                let newX, newY;
                 
-                // Label
-                ctx.fillStyle = '#2c3e50';
-                ctx.font = 'bold 12px Arial';
-                ctx.fillText('Shape 1', shape1.points[0][0] - 20, shape1.points[0][1] - 15);
-            }
-            
-            // Draw shape 2
-            if (shape2.points.length > 0) {
-                ctx.fillStyle = '#27ae6055';
-                ctx.beginPath();
-                ctx.moveTo(shape2.points[0][0], shape2.points[0][1]);
-                for (let p of shape2.points.slice(1)) {
-                    ctx.lineTo(p[0], p[1]);
+                switch (deformationType) {
+                    case 0: // Wiggly + shear
+                        const shearX = 0.15 + Math.random() * 0.2;
+                        const wiggleFreq = 3 + Math.random() * 2;
+                        const wiggleAmp = 3 + Math.random() * 4;
+                        const wiggle = wiggleAmp * Math.sin(wiggleFreq * angle);
+                        newX = dx + shearX * dy + wiggle;
+                        newY = dy + wiggle * 0.5;
+                        break;
+                    case 1: // Wavy distortion + mild shear
+                        const waveFreq = 4 + Math.random() * 3;
+                        const waveAmp = 4 + Math.random() * 5;
+                        const radialWave = waveAmp * Math.sin(waveFreq * angle);
+                        const shearY = 0.1 + Math.random() * 0.15;
+                        newX = dx + radialWave * Math.cos(angle);
+                        newY = dy + radialWave * Math.sin(angle) + shearY * dx;
+                        break;
+                    case 2: // Sinusoidal wiggle + rotation
+                        const rotAngle = (Math.random() - 0.5) * Math.PI / 4;
+                        const sinWiggle = 3 + Math.random() * 4;
+                        const wiggleX = sinWiggle * Math.sin(5 * angle);
+                        const wiggleY = sinWiggle * Math.cos(5 * angle);
+                        const rotX = dx * Math.cos(rotAngle) - dy * Math.sin(rotAngle);
+                        const rotY = dx * Math.sin(rotAngle) + dy * Math.cos(rotAngle);
+                        newX = rotX + wiggleX;
+                        newY = rotY + wiggleY;
+                        break;
+                    default:
+                        newX = dx;
+                        newY = dy;
                 }
-                ctx.closePath();
-                ctx.fill();
-                ctx.strokeStyle = '#27ae60';
-                ctx.lineWidth = 2;
-                ctx.stroke();
                 
-                // Label
-                ctx.fillStyle = '#2c3e50';
-                ctx.font = 'bold 12px Arial';
-                ctx.fillText('Shape 2', shape2.points[0][0] - 20, shape2.points[0][1] - 15);
+                return [newX + centerX, newY + centerY];
+            });
+            
+            // Resample uniformly after deformation to maintain consistent point distribution
+            return sampleUniformly(deformed, NUM_POINTS);
+        }
+
+        function generateRandomShape(centerX, centerY) {
+            const shapeType = Math.floor(Math.random() * 6);
+            let points = [];
+            
+            switch (shapeType) {
+                case 0:
+                    points = generateCircle(centerX, centerY, 40 + Math.random() * 30);
+                    break;
+                case 1:
+                    points = generateEllipse(centerX, centerY, 30 + Math.random() * 40, 30 + Math.random() * 40);
+                    break;
+                case 2:
+                    points = generateRectangle(centerX, centerY, 50 + Math.random() * 40, 50 + Math.random() * 40);
+                    break;
+                case 3:
+                    points = generatePolygon(centerX, centerY, 50 + Math.random() * 30, 3);
+                    break;
+                case 4:
+                    points = generateStar(centerX, centerY, 50 + Math.random() * 30);
+                    break;
+                case 5:
+                    points = generateBlob(centerX, centerY, 50 + Math.random() * 30);
+                    break;
             }
             
-            computeMetrics();
+            return sampleUniformly(points, NUM_POINTS);
         }
-        
-        // Initialize
-        generateShape1('circle');
-        generateShape2('square');
+
+        function generateCircle(cx, cy, radius) {
+            const points = [];
+            for (let i = 0; i < 50; i++) {
+                const angle = (i / 50) * Math.PI * 2;
+                points.push([cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)]);
+            }
+            return points;
+        }
+
+        function generateEllipse(cx, cy, rx, ry) {
+            const points = [];
+            for (let i = 0; i < 50; i++) {
+                const angle = (i / 50) * Math.PI * 2;
+                points.push([cx + rx * Math.cos(angle), cy + ry * Math.sin(angle)]);
+            }
+            return points;
+        }
+
+        function generateRectangle(cx, cy, width, height) {
+            const points = [];
+            const hw = width / 2, hh = height / 2;
+            const perimeter = 2 * (width + height);
+            const numPoints = 50;
+            
+            for (let i = 0; i < numPoints; i++) {
+                const dist = (i / numPoints) * perimeter;
+                let x, y;
+                if (dist < width) {
+                    x = cx - hw + dist;
+                    y = cy - hh;
+                } else if (dist < width + height) {
+                    x = cx + hw;
+                    y = cy - hh + (dist - width);
+                } else if (dist < 2 * width + height) {
+                    x = cx + hw - (dist - width - height);
+                    y = cy + hh;
+                } else {
+                    x = cx - hw;
+                    y = cy + hh - (dist - 2 * width - height);
+                }
+                points.push([x, y]);
+            }
+            return points;
+        }
+
+        function generatePolygon(cx, cy, radius, sides) {
+            const points = [];
+            for (let i = 0; i < sides; i++) {
+                const angle = (i / sides) * Math.PI * 2;
+                points.push([cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)]);
+            }
+            return points;
+        }
+
+        function generateStar(cx, cy, radius) {
+            const points = [];
+            const spikes = 5;
+            for (let i = 0; i < spikes * 2; i++) {
+                const angle = (i / (spikes * 2)) * Math.PI * 2;
+                const r = i % 2 === 0 ? radius : radius * 0.4;
+                points.push([cx + r * Math.cos(angle), cy + r * Math.sin(angle)]);
+            }
+            return points;
+        }
+
+        function generateBlob(cx, cy, radius) {
+            const points = [];
+            const numPoints = 50;
+            for (let i = 0; i < numPoints; i++) {
+                const angle = (i / numPoints) * Math.PI * 2;
+                const r = radius * (0.7 + Math.random() * 0.6);
+                points.push([cx + r * Math.cos(angle), cy + r * Math.sin(angle)]);
+            }
+            return points;
+        }
+
+        function sampleUniformly(points, numSamples) {
+            if (points.length === 0) return [];
+            
+            const arcLengths = [0];
+            for (let i = 1; i < points.length; i++) {
+                const dx = points[i][0] - points[i-1][0];
+                const dy = points[i][1] - points[i-1][1];
+                arcLengths.push(arcLengths[i-1] + Math.sqrt(dx*dx + dy*dy));
+            }
+            
+            const totalLength = arcLengths[arcLengths.length - 1];
+            const sampledPoints = [];
+            
+            for (let i = 0; i < numSamples; i++) {
+                const targetLength = (i / numSamples) * totalLength;
+                
+                let segmentIndex = 0;
+                for (let j = 0; j < arcLengths.length - 1; j++) {
+                    if (arcLengths[j] <= targetLength && targetLength <= arcLengths[j + 1]) {
+                        segmentIndex = j;
+                        break;
+                    }
+                }
+                
+                const segmentStart = arcLengths[segmentIndex];
+                const segmentEnd = arcLengths[segmentIndex + 1];
+                const t = (targetLength - segmentStart) / (segmentEnd - segmentStart);
+                
+                const p1 = points[segmentIndex];
+                const p2 = points[Math.min(segmentIndex + 1, points.length - 1)];
+                
+                sampledPoints.push([
+                    p1[0] + t * (p2[0] - p1[0]),
+                    p1[1] + t * (p2[1] - p1[1])
+                ]);
+            }
+            
+            return sampledPoints;
+        }
+
+        function centroid(points) {
+            const cx = points.reduce((sum, p) => sum + p[0], 0) / points.length;
+            const cy = points.reduce((sum, p) => sum + p[1], 0) / points.length;
+            return [cx, cy];
+        }
+
+        function centerPoints(points) {
+            const [cx, cy] = centroid(points);
+            return points.map(p => [p[0] - cx, p[1] - cy]);
+        }
+
+        function scale(points) {
+            const sumSq = points.reduce((sum, p) => sum + p[0]*p[0] + p[1]*p[1], 0);
+            const scaleFactor = Math.sqrt(sumSq);
+            return points.map(p => [p[0] / scaleFactor, p[1] / scaleFactor]);
+        }
+
+        // Ray casting algorithm to test if a point is inside a polygon
+        function pointInPolygon(point, polygon) {
+            const [x, y] = point;
+            let inside = false;
+            for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+                const [xi, yi] = polygon[i];
+                const [xj, yj] = polygon[j];
+                const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            return inside;
+        }
+
+        // Grid-based area residual: computes symmetric difference between two shapes
+        function computeAreaResidual(shape1, shape2) {
+            if (shape1.length < 3 || shape2.length < 3) return 1000;
+            
+            // Create a grid over the canvas for fast computation
+            const gridSize = 20;  // 20x20 grid
+            const cellWidth = sculptCanvas.width / gridSize;
+            const cellHeight = sculptCanvas.height / gridSize;
+            
+            let mismatchArea = 0;
+            const totalCells = gridSize * gridSize;
+            
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    // Center of grid cell
+                    const cx = (i + 0.5) * cellWidth;
+                    const cy = (j + 0.5) * cellHeight;
+                    const point = [cx, cy];
+                    
+                    const inTarget = pointInPolygon(point, shape1);
+                    const inSculpt = pointInPolygon(point, shape2);
+                    
+                    // XOR: cost if they differ
+                    if (inTarget !== inSculpt) {
+                        mismatchArea++;
+                    }
+                }
+            }
+            
+            // Normalize to [0, 1] range, then scale for visibility
+            return (mismatchArea / totalCells) * 10;
+        }
+
+        function drawShape(ctx, points, color, lineWidth = 2, fill = false) {
+            if (points.length === 0) return;
+            
+            ctx.beginPath();
+            ctx.moveTo(points[0][0], points[0][1]);
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i][0], points[i][1]);
+            }
+            ctx.closePath();
+            
+            if (fill) {
+                ctx.fillStyle = color + '40';
+                ctx.fill();
+            }
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineWidth;
+            ctx.stroke();
+        }
+
+        function drawTargetShape() {
+            targetCtx.fillStyle = 'white';
+            targetCtx.fillRect(0, 0, targetCanvas.width, targetCanvas.height);
+            
+            targetCtx.strokeStyle = '#f0f0f0';
+            targetCtx.lineWidth = 1;
+            for (let i = 0; i < targetCanvas.width; i += 50) {
+                targetCtx.beginPath();
+                targetCtx.moveTo(i, 0);
+                targetCtx.lineTo(i, targetCanvas.height);
+                targetCtx.stroke();
+            }
+            for (let i = 0; i < targetCanvas.height; i += 50) {
+                targetCtx.beginPath();
+                targetCtx.moveTo(0, i);
+                targetCtx.lineTo(targetCanvas.width, i);
+                targetCtx.stroke();
+            }
+            
+            drawShape(targetCtx, targetShape, '#e74c3c', 3, true);
+            
+            // Overlay current sculpt shape (no alignment, just draw it)
+            if (currentSculptShape.length > 0) {
+                drawShape(targetCtx, currentSculptShape, '#27ae60', 3, false);
+            }
+            
+            targetCtx.fillStyle = '#2c3e50';
+            targetCtx.font = 'bold 14px Arial';
+        }
+
+        function drawErrorPlot() {
+            errorCtx.fillStyle = 'white';
+            errorCtx.fillRect(0, 0, errorCanvas.width, errorCanvas.height);
+
+            errorCtx.strokeStyle = '#ecf0f1';
+            errorCtx.lineWidth = 1;
+            for (let i = 0; i <= 4; i++) {
+                const y = 20 + i * ((errorCanvas.height - 40) / 4);
+                errorCtx.beginPath();
+                errorCtx.moveTo(20, y);
+                errorCtx.lineTo(errorCanvas.width - 20, y);
+                errorCtx.stroke();
+            }
+
+            if (residualHistory.length < 2) return;
+
+            const maxVal = Math.max(...residualHistory, 0.0001);
+            const plotW = errorCanvas.width - 40;
+            const plotH = errorCanvas.height - 40;
+
+            errorCtx.strokeStyle = '#3498db';
+            errorCtx.lineWidth = 2;
+            errorCtx.beginPath();
+            residualHistory.forEach((v, i) => {
+                const x = 20 + (i / (residualHistory.length - 1)) * plotW;
+                const y = 20 + plotH - (v / maxVal) * plotH;
+                if (i === 0) {
+                    errorCtx.moveTo(x, y);
+                } else {
+                    errorCtx.lineTo(x, y);
+                }
+            });
+            errorCtx.stroke();
+
+            errorCtx.fillStyle = '#7f8c8d';
+            errorCtx.font = '12px Arial';
+            errorCtx.fillText('Residual', 24, 16);
+        }
+
+        // Helper: Check if a grid cell is valid and alive
+        function isAlive(r, c) {
+            if (r < 0 || r >= GRID_ROWS || c < 0 || c >= GRID_COLS) return false;
+            return particleGrid[r][c] && particleGrid[r][c].alive;
+        }
+
+        // Robust concave hull using grid-based boundary extraction
+        function traceGridBoundary() {
+            // 1. Find all cells on the boundary (alive cells with at least one dead neighbor)
+            const boundaryPixels = [];
+            
+            for (let r = 0; r < GRID_ROWS; r++) {
+                for (let c = 0; c < GRID_COLS; c++) {
+                    if (!isAlive(r, c)) continue;
+                    
+                    // Check if this cell touches a dead cell (is on boundary)
+                    let isBoundary = false;
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            if (dr === 0 && dc === 0) continue;
+                            if (!isAlive(r + dr, c + dc)) {
+                                isBoundary = true;
+                                break;
+                            }
+                        }
+                        if (isBoundary) break;
+                    }
+                    
+                    if (isBoundary) {
+                        boundaryPixels.push({
+                            r, c,
+                            x: particleGrid[r][c].x,
+                            y: particleGrid[r][c].y
+                        });
+                    }
+                }
+            }
+
+            if (boundaryPixels.length < 3) return [];
+
+            // 2. Sort boundary pixels by angle from centroid
+            const cx = boundaryPixels.reduce((s, p) => s + p.x, 0) / boundaryPixels.length;
+            const cy = boundaryPixels.reduce((s, p) => s + p.y, 0) / boundaryPixels.length;
+            
+            boundaryPixels.sort((a, b) => {
+                const angleA = Math.atan2(a.y - cy, a.x - cx);
+                const angleB = Math.atan2(b.y - cy, b.x - cx);
+                return angleA - angleB;
+            });
+
+            // 3. Apply Laplacian smoothing to reduce sharp peaks
+            const smoothed = [];
+            for (let i = 0; i < boundaryPixels.length; i++) {
+                const prev = boundaryPixels[(i - 1 + boundaryPixels.length) % boundaryPixels.length];
+                const curr = boundaryPixels[i];
+                const next = boundaryPixels[(i + 1) % boundaryPixels.length];
+                
+                smoothed.push({
+                    x: (prev.x + curr.x + next.x) / 3,
+                    y: (prev.y + curr.y + next.y) / 3
+                });
+            }
+
+            // 4. Convert to coordinate array
+            return smoothed.map(p => [p.x, p.y]);
+        }
+
+        function renderSculpt() {
+            sculptCtx.fillStyle = 'white';
+            sculptCtx.fillRect(0, 0, sculptCanvas.width, sculptCanvas.height);
+
+            sculptCtx.strokeStyle = '#f0f0f0';
+            sculptCtx.lineWidth = 1;
+            for (let i = 0; i < sculptCanvas.width; i += 50) {
+                sculptCtx.beginPath();
+                sculptCtx.moveTo(i, 0);
+                sculptCtx.lineTo(i, sculptCanvas.height);
+                sculptCtx.stroke();
+            }
+            for (let i = 0; i < sculptCanvas.height; i += 50) {
+                sculptCtx.beginPath();
+                sculptCtx.moveTo(0, i);
+                sculptCtx.lineTo(sculptCanvas.width, i);
+                sculptCtx.stroke();
+            }
+
+            // Draw particles
+            for (let row = 0; row < particleGrid.length; row++) {
+                for (let col = 0; col < particleGrid[row].length; col++) {
+                    const p = particleGrid[row][col];
+                    if (p.alive) {
+                        sculptCtx.fillStyle = '#3498db';
+                        sculptCtx.beginPath();
+                        sculptCtx.arc(p.x, p.y, PARTICLE_RADIUS, 0, Math.PI * 2);
+                        sculptCtx.fill();
+                    }
+                }
+            }
+
+            // Draw convex hull
+            if (currentSculptShape.length > 0) {
+                drawShape(sculptCtx, currentSculptShape, '#2c3e50', 2, false);
+            }
+        }
+
+        function getSculptShape() {
+            // Trace the grid structure to get the boundary contour
+            const contour = traceGridBoundary();
+            
+            // If contour is too small (e.g. completely erased), return empty
+            if (contour.length < 3) return [];
+
+            // The rest of the pipeline expects a specific number of sampled points
+            // sampleUniformly handles the smoothing and point distribution
+            return sampleUniformly(contour, NUM_POINTS);
+        }
+
+        function updateResidualAndRender() {
+            if (!targetLoaded) return;
+
+            currentSculptShape = getSculptShape();
+            if (currentSculptShape.length > 0) {
+                lastResidual = computeAreaResidual(targetShape, currentSculptShape);
+                residualHistory.push(lastResidual);
+                if (residualHistory.length > 200) residualHistory.shift();
+                statusText.textContent = `Area mismatch (lower is better): ${lastResidual.toFixed(4)}`;
+                statusText.style.background = '#ecf0f1';
+            }
+
+            renderSculpt();
+            drawTargetShape();
+            drawErrorPlot();
+        }
+
+        function scheduleUpdate() {
+            if (pendingUpdate) return;
+            pendingUpdate = true;
+            requestAnimationFrame(() => {
+                pendingUpdate = false;
+                updateResidualAndRender();
+            });
+        }
+
+        function resetSculpt() {
+            if (!targetLoaded) return;
+
+            // Initialize particle grid
+            particleGrid = [];
+            const startX = 50;
+            const startY = 40;
+            const endX = sculptCanvas.width - 50;
+            const endY = sculptCanvas.height - 40;
+            const stepX = (endX - startX) / (GRID_COLS - 1);
+            const stepY = (endY - startY) / (GRID_ROWS - 1);
+
+            for (let row = 0; row < GRID_ROWS; row++) {
+                particleGrid[row] = [];
+                for (let col = 0; col < GRID_COLS; col++) {
+                    particleGrid[row][col] = {
+                        x: startX + col * stepX,
+                        y: startY + row * stepY,
+                        alive: true
+                    };
+                }
+            }
+
+            residualHistory = [];
+            currentSculptShape = [];
+            statusText.textContent = 'Sculpt the shape to match the target.';
+            statusText.style.background = '#ecf0f1';
+
+            updateResidualAndRender();
+        }
+
+        function eraseAt(x, y) {
+            let changed = false;
+            for (let row = 0; row < particleGrid.length; row++) {
+                for (let col = 0; col < particleGrid[row].length; col++) {
+                    const p = particleGrid[row][col];
+                    const dx = p.x - x;
+                    const dy = p.y - y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < ERASE_RADIUS) {
+                        if (currentTool === 'chisel') {
+                            // Remove material (chisel)
+                            if (p.alive) {
+                                p.alive = false;
+                                changed = true;
+                            }
+                        } else {
+                            // Add material (clay)
+                            if (!p.alive) {
+                                p.alive = true;
+                                changed = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if (changed) scheduleUpdate();
+        }
+
+        function getCanvasPos(e) {
+            const rect = sculptCanvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (sculptCanvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (sculptCanvas.height / rect.height);
+            return { x, y };
+        }
+
+        sculptCanvas.addEventListener('mousedown', (e) => {
+            isSculpting = true;
+            const { x, y } = getCanvasPos(e);
+            eraseAt(x, y);
+        });
+
+        sculptCanvas.addEventListener('mousemove', (e) => {
+            if (!isSculpting) return;
+            const { x, y } = getCanvasPos(e);
+            eraseAt(x, y);
+        });
+
+        sculptCanvas.addEventListener('mouseup', () => {
+            isSculpting = false;
+        });
+
+        sculptCanvas.addEventListener('mouseleave', () => {
+            isSculpting = false;
+        });
+
+        // Initialize by loading the target shape
+        loadTargetShape();
     </script>
 </body>
 </html>
