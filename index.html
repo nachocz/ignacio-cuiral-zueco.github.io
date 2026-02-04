@@ -310,6 +310,48 @@
             transform: translateX(2px);
         }
 
+        .bib-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .bib-list li {
+            background: white;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 3px solid #3498db;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            font-size: 0.98em;
+        }
+
+        .bib-label {
+            display: inline-block;
+            min-width: 38px;
+            font-weight: 700;
+            color: #3498db;
+        }
+
+        .cv-section {
+            background: white;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #3498db;
+        }
+
+        .cv-section h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+            color: #2c3e50;
+        }
+
+        .cv-section ul li {
+            margin-bottom: 10px;
+        }
+
         .always-visible {
             border-bottom: none !important;
         }
@@ -377,15 +419,10 @@
 <body>
     <div class="container">
         <nav>
-            <a href="#summary">Summary</a>
-            <a href="#education">Education</a>
-            <a href="#experience">Experience</a>
+            <a href="#news">News</a>
+            <a href="#cv">CV</a>
+            <a href="#research">Research</a>
             <a href="#publications">Publications</a>
-            <a href="#invited-talks">Invited Talks</a>
-            <a href="#conferences">Conferences</a>
-            <a href="#research-stays">Research Stays</a>
-            <a href="#projects">Projects</a>
-            <a href="#demo">Demo</a>
         </nav>
 
         <div class="header">
@@ -413,173 +450,133 @@
             </div>
         </div>
 
-        <h2 id="summary"><span>Summary</span> <span class="toggle-icon">▼</span></h2>
+        <h2 id="news"><span>News</span> <span class="toggle-icon">▼</span></h2>
         <div class="section-content">
             <ul class="summary-list">
-                <li><strong>Research:</strong> Focus on robotic manipulation of deformable objects and shape control.</li>
-                <li><strong>Dissemination:</strong> Publications and presentations in top-tier journals and conferences (ICRA, IROS, T-MECH, T-ASE, RA-L).</li>
-                <li><strong>Teaching:</strong> Adjunct (part-time) professor in Systems Engineering and Automation.</li>
-                <li><strong>International research projects:</strong> Contributed to European projects (REMAIN, COMMANDIA), focusing on algorithm design and experimental validation for robotic manipulation of deformable objects.</li>
-                <li><strong>International stays:</strong> Conducted research stays in Sweden (LTH), and Portugal (University of Coimbra).</li>
-                <li><strong>Technical Expertise:</strong> Specialized in system analysis and control, and computer vision for robotics (MATLAB (proficient), C++ (intermediate), Python (basic)).</li>
+                <li><strong>Profile:</strong> Postdoctoral researcher in deformable object manipulation and shape control.</li>
+                <li><strong>Focus:</strong> Perception-to-manipulation pipelines, geometric mapping, and multi-robot coordination.</li>
+                <li><strong>Open science:</strong> Code and demos available for key publications.</li>
             </ul>
+
+            <div class="award" style="margin-top: 10px;">
+                <strong>🏆 Best Robotics PhD Thesis Award (2025)</strong>, Spanish Committee of Automatic Control (CEA).
+                <div>
+                    <img src="price_CEA.jpg" alt="CEA Award" class="award-photo">
+                    <div class="award-caption">CEA Best Robotics PhD Thesis Award</div>
+                </div>
+            </div>
+
+            <div class="award" style="margin-top: 10px;">
+                <strong>Invited Visiting Scholar, <a href="https://elliit.se/news-and-events/focus-period-lund-2025/">ELLIIT Focus Period</a>, Lund University, Sweden.</strong> Seminar on data-driven deformable object manipulation (Nov 2025).
+                <div>
+                    <img src="elliit_focus_period.jpg" alt="ELLIIT Focus Period Lund 2025" class="award-photo" style="width: 150px;">
+                    <div class="award-caption">ELLIIT Focus Period - Lund University 2025</div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 20px;">Highlighted Publications</h3>
+            <div class="publication-item">
+                <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Time Consistent Surface Mapping for Deformable Object Shape Control," <em>IEEE Transactions on Automation Science and Engineering</em>, vol. 22, pp. 11099–11111, 2025, doi: <a href="https://doi.org/10.1109/TASE.2025.3529180">10.1109/TASE.2025.3529180</a>.
+                <ul class="nested-list">
+                    <li><a href="https://github.com/nachocz/time-consistent-surface-mapping" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon">Code Available</a></li>
+                </ul>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/tWMJCbUwZOM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="publication-item">
+                <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Multiscale Procrustes-Based 3-D Shape Control," <em>IEEE/ASME Transactions on Mechatronics</em>, vol. 29, no. 3, pp. 1738-1748, June 2024, doi: <a href="https://doi.org/10.1109/TMECH.2023.3325934">10.1109/TMECH.2023.3325934</a>.
+                <ul class="nested-list">
+                    <li><a href="https://github.com/nachocz/Multi-scale-Procrustes-based-3D-shape-control" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon">Code Available</a></li>
+                </ul>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/a2cZTjaVBmM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
         </div>
 
-        <h2 id="education"><span>Education</span> <span class="toggle-icon">▼</span></h2>
+        <h2 id="cv"><span>CV</span> <span class="toggle-icon">▼</span></h2>
         <div class="section-content">
-            <p><strong>28/10/2019–24/10/2024:</strong> PhD in Systems Engineering and Computer Science, University of Zaragoza.</p>
-            <ul>
-                <li class="nested-list"><em>PhD Thesis:</em> Shape Control of Deformable Objects (International Mention, Cum Laude). <a href="https://zaguan.unizar.es/record/151097/files/">[Link]</a></li>
-                <li class="award"><strong>🏆 Best Robotics PhD Thesis Award (2025)</strong>, conferred by the Spanish Committee of Automatic Control (CEA), recognizing excellence in publication quality, open-source code dissemination, and validation.
-                    <div>
-                        <img src="price_CEA.jpg" alt="CEA Award" class="award-photo">
-                        <div class="award-caption">CEA Best Robotics PhD Thesis Award</div>
-                    </div>
-                </li>
-                <li class="award"><strong>🏆 Best Iberian Robotics PhD Thesis Award (November 2025)</strong>, conferred by the Spanish Society for Research and Development in Robotics (SEIDROB) and the Portuguese Robotics Society (SPR).</li>
-                <li class="award"><strong>🏆 <a href="https://eu-robotics.net/georges-giralt-phd-award/">Georges Giralt PhD Award Finalist</a></strong>—One of four finalists for Europe's most prestigious recognition for PhD excellence in robotics—selected among over 50 candidates and presented at the European Robotics Forum 2025.</li>
-            </ul>
-            <p><strong>15/09/2017–18/12/2019:</strong> MSc in Industrial Engineering, University of Zaragoza.</p>
-            <ul>
-                <li class="nested-list"><em>Master's Thesis:</em> RGB-D Visual SLAM for Manipulator Control in Deformable Environments (Distinction).</li>
-            </ul>
-            <p><strong>15/09/2013–01/10/2017:</strong> BSc in Industrial Technologies Engineering, University of Zaragoza.</p>
-            <ul>
-                <li class="nested-list"><em>Bachelor's Thesis:</em> Stereo Visual SLAM for Medical Endoscopy (Distinction).</li>
-            </ul>
+            <div class="cv-section">
+                <h3>Education</h3>
+                <ul>
+                    <li><strong>PhD (2019–2024):</strong> Systems Engineering and Computer Science, University of Zaragoza. <em>Thesis:</em> Shape Control of Deformable Objects (International Mention, Cum Laude). <a href="https://zaguan.unizar.es/record/151097/files/">[Link]</a></li>
+                    <li><strong>MSc (2017–2019):</strong> Industrial Engineering, University of Zaragoza. <em>Thesis:</em> RGB-D Visual SLAM for Manipulator Control in Deformable Environments (Distinction).</li>
+                    <li><strong>BSc (2013–2017):</strong> Industrial Technologies Engineering, University of Zaragoza. <em>Thesis:</em> Stereo Visual SLAM for Medical Endoscopy (Distinction).</li>
+                </ul>
+            </div>
+
+            <div class="cv-section">
+                <h3>Academic Experience</h3>
+                <ul>
+                    <li><strong>2025–Present:</strong> Postdoctoral Researcher, CA-INP <a href="http://www.institutpascal.uca.fr/index.php/en/">Institut Pascal</a>, France.</li>
+                    <li><strong>2024–2025:</strong> Adjunct Professor, Systems Engineering and Automation, University of Zaragoza.</li>
+                    <li><strong>2024–2025:</strong> Researcher N3, European Project DeFORMS, University of Zaragoza.</li>
+                    <li><strong>2020–2024:</strong> Researcher N3, Project FROSCAT, University of Zaragoza.</li>
+                    <li><strong>2019–2020:</strong> Researcher N4, European Project COMMANDIA, University of Zaragoza.</li>
+                </ul>
+            </div>
+
+            <div class="cv-section">
+                <h3>Awards & Honors</h3>
+                <ul>
+                    <li>🏆 Best Robotics PhD Thesis Award (2025), Spanish Committee of Automatic Control (CEA).</li>
+                    <li>🏆 Best Iberian Robotics PhD Thesis Award (2025), conferred by the Spanish Society for Research and Development in Robotics (SEIDROB) and the Portuguese Robotics Society (SPR).</li>
+                    <li>🏆 <a href="https://eu-robotics.net/georges-giralt-phd-award/">Georges Giralt PhD Award Finalist</a> — finalist for Europe's most prestigious recognition for PhD excellence in robotics, selected among over 50 candidates and presented at the European Robotics Forum 2025.</li>
+                </ul>
+            </div>
+
+            <div class="cv-section">
+                <h3>Research Stays & Invited Talks</h3>
+                <ul>
+                    <li><strong>Nov 2025:</strong> Invited Visiting Scholar, <a href="https://elliit.se/news-and-events/focus-period-lund-2025/">ELLIIT Focus Period</a>, Lund University, Sweden. Seminar on data-driven deformable object manipulation.</li>
+                    <li><strong>Sep–Nov 2022:</strong> Research stay, <a href="https://www.control.lth.se/">Lund University (LTH)</a>, Sweden.</li>
+                    <li><strong>May–Aug 2021:</strong> Research stay, <a href="https://www.isr.uc.pt/">University of Coimbra</a>, Portugal.</li>
+                    <li><strong>Mar 2025:</strong> European Robotics Forum (ERF), Stuttgart — PhD Award finalist presentation.</li>
+                </ul>
+            </div>
+
+            <div class="cv-section">
+                <h3>Projects, Service & Outreach</h3>
+                <ul>
+                    <li><strong>Projects:</strong> <a href="https://commandia.unizar.es/">COMMANDIA</a>, <a href="https://interreg-sudoe.eu/en/proyecto-interreg/remain/">REMAIN</a>, <a href="https://ropert.i3a.es/countrybots/">COUNTRYBOTS</a>, <a href="https://ropert.i3a.es/deforms/">DeFORMS</a>.</li>
+                    <li><strong>Mentoring:</strong> Supervised 1 MSc and 2 BSc theses; 150+ hours of extracurricular research internships.</li>
+                    <li><strong>Service:</strong> Organizing committee (XLIV Jornadas de Automática 2023, IEEE SWYP 2020); reviewer for 20+ papers.</li>
+                    <li><strong>Research Group:</strong> Member of <a href="https://i3a.unizar.es/es/grupos-de-investigacion/ropert">ROPERT</a> (Robotics, Computer Vision and AI).</li>
+                </ul>
+            </div>
         </div>
 
-        <h2 id="experience"><span>Professional Experience</span> <span class="toggle-icon">▼</span></h2>
+        <h2 id="research"><span>Research</span> <span class="toggle-icon">▼</span></h2>
         <div class="section-content">
+            <p style="margin-bottom: 12px;">I study how robots perceive, model, and control deformable objects. My work connects shape perception, mapping, and manipulation with a focus on robust, data-efficient methods and multi-robot coordination.</p>
             <ul>
-                <li><strong>01/10/2025–Present:</strong> Postdoctoral Researcher, CA-INP <a href="http://www.institutpascal.uca.fr/index.php/en/">Institut Pascal</a>, France.</li>
-                <li><strong>31/10/2024–30/09/2025:</strong> Adjunct (part-time) Professor, Systems Engineering and Automation, University of Zaragoza.</li>
-                <li><strong>07/06/2024–30/09/2025:</strong> Researcher N3, European Project DEFORMS, University of Zaragoza.</li>
-                <li><strong>15/08/2020–06/06/2024:</strong> Researcher N3, Project FROSCAT, University of Zaragoza.</li>
-                <li><strong>15/07/2019–14/08/2020:</strong> Researcher N4, European Project COMMANDIA, University of Zaragoza.</li>
+                <li><strong>Core topics:</strong> Shape control, deformable object manipulation, robot perception, and visual servoing.</li>
+                <li><strong>Applications:</strong> Robotic manipulation, cooperative robotics, and manufacturing.</li>
             </ul>
         </div>
 
         <h2 id="publications"><span>Publications</span> <span class="toggle-icon">▼</span></h2>
         <div class="section-content">
             <h3>Journals</h3>
-            <p>Indexed publications in high-impact forums:</p>
-            <ul>
-                <li class="publication-item"><strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Multi-scale elastic contour mapping for deformable object shape control," <em>Robotics and Autonomous Systems</em>, vol. 194, p. 105134, 2025, doi: <a href="https://doi.org/10.1016/j.robot.2025.105134">10.1016/j.robot.2025.105134</a>.
-                    <ul class="nested-list"><li class="publication-meta">JCR (2024): 5.2, Q1 80.3% (Automation & Control Systems), Q2 74% (Robotics)</li></ul>
-                </li>
-                <li class="publication-item">M. Aranda, <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Distributed Control of Flexible Chained Multiagent Formations," <em>in IEEE Control Systems Letters</em>, vol. 9, pp. 211-216, 2025, doi: <a href="https://doi.org/10.1109/LCSYS.2025.3590428">10.1109/LCSYS.2025.3590428</a>.
-                    <ul class="nested-list"><li class="publication-meta">JCR (2024): 2.0, Q3 48.9% (Automation & Control Systems)</li></ul>
-                </li>
-                <li class="publication-item"><strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Time Consistent Surface Mapping for Deformable Object Shape Control," <em>IEEE Transactions on Automation Science and Engineering</em>, vol. 21, no. 4, pp. 5800-5814, Oct. 2024, doi: <a href="https://doi.org/10.1109/TASE.2025.3529180">10.1109/TASE.2025.3529180</a>.
-                    <ul class="nested-list">
-                        <li class="publication-meta">JCR (2024): 6.4, Q1 84.8% (Automation & Control Systems)</li>
-                        <li><a href="https://github.com/nachocz/time-consistent-surface-mapping" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon">Code Available</a></li>
-                    </ul>
-                    <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/tWMJCbUwZOM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                </li>
-                <li class="publication-item"><strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Taxonomy of Deformable Object Shape Control," <em>IEEE Robotics and Automation Letters</em>, vol. 9, no. 10, pp. 9015-9022, Oct. 2024, doi: <a href="https://doi.org/10.1109/LRA.2024.3455770">10.1109/LRA.2024.3455770</a>.
-                    <ul class="nested-list">
-                        <li class="publication-meta">JCR (2024): 5.3, Q1 76% (Robotics)</li>
-                        <li><a href="https://github.com/nachocz/Taxonomy-of-deformable-object-shape-control" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon">Code Available</a></li>
-                    </ul>
-                </li>
-                <li class="publication-item"><strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Multiscale Procrustes-Based 3-D Shape Control," <em>IEEE/ASME Transactions on Mechatronics</em>, vol. 29, no. 3, pp. 1738-1748, June 2024, doi: <a href="https://doi.org/10.1109/TMECH.2023.3325934">10.1109/TMECH.2023.3325934</a>.
-                    <ul class="nested-list">
-                        <li class="publication-meta">JCR (2024): 7.3, Q1 90.4% (Automation & Control Systems)</li>
-                        <li><a href="https://github.com/nachocz/Multi-scale-Procrustes-based-3D-shape-control" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon">Code Available</a></li>
-                    </ul>
-                    <div class="video-container">
-                         <iframe src="https://www.youtube.com/embed/a2cZTjaVBmM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                </li>
-                <li class="publication-item"><strong>I. Cuiral-Zueco</strong>, Y. Karayiannidis and G. López-Nicolás, "Contour Based Object-Compliant Shape Control," <em>IEEE Robotics and Automation Letters</em>, vol. 8, no. 8, pp. 4628-4635, Aug. 2023, doi: <a href="https://doi.org/10.1109/LRA.2023.3292617">10.1109/LRA.2023.3292617</a>.
-                    <ul class="nested-list"><li class="publication-meta">JCR (2023): 4.6, Q2 75% (Robotics)</li></ul>
-                </li>
-                <li class="publication-item"><strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "RGB-D Tracking and Optimal Perception of Deformable Objects," <em>IEEE Access</em>, vol. 8, pp. 136884-136897, 2020, doi: <a href="https://doi.org/10.1109/ACCESS.2020.3012067">10.1109/ACCESS.2020.3012067</a>.
-                    <ul class="nested-list"><li class="publication-meta">JCR (2020): 3.367, Q2 (Engineering, Electrical & Electronic), Q2 (Computer Science, Information Systems)</li></ul>
-                </li>
-            </ul>
-        </div>
+            <ol class="bib-list">
+                <li><span class="bib-label">[J1]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Multi-scale elastic contour mapping for deformable object shape control,” <em>Robotics and Autonomous Systems</em>, vol. 194, p. 105134, 2025. doi: <a href="https://doi.org/10.1016/j.robot.2025.105134">10.1016/j.robot.2025.105134</a>.</li>
+                <li><span class="bib-label">[J2]</span> M. Aranda, <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Distributed Control of Flexible Chained Multiagent Formations,” <em>IEEE Control Systems Letters</em>, vol. 9, pp. 2018–2023, 2025. doi: <a href="https://doi.org/10.1109/LCSYS.2025.3590428">10.1109/LCSYS.2025.3590428</a>.</li>
+                <li><span class="bib-label">[J3]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Time Consistent Surface Mapping for Deformable Object Shape Control,” <em>IEEE Transactions on Automation Science and Engineering</em>, vol. 22, pp. 11099–11111, 2025. doi: <a href="https://doi.org/10.1109/TASE.2025.3529180">10.1109/TASE.2025.3529180</a>. <a href="https://github.com/nachocz/time-consistent-surface-mapping" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon">Code</a></li>
+                <li><span class="bib-label">[J4]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Taxonomy of Deformable Object Shape Control,” <em>IEEE Robotics and Automation Letters</em>, vol. 9, no. 10, pp. 9015–9022, 2024. doi: <a href="https://doi.org/10.1109/LRA.2024.3455770">10.1109/LRA.2024.3455770</a>. <a href="https://github.com/nachocz/Taxonomy-of-deformable-object-shape-control" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon">Code</a></li>
+                <li><span class="bib-label">[J5]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Multiscale Procrustes-Based 3-D Shape Control,” <em>IEEE/ASME Transactions on Mechatronics</em>, vol. 29, no. 3, pp. 1738–1748, 2024. doi: <a href="https://doi.org/10.1109/TMECH.2023.3325934">10.1109/TMECH.2023.3325934</a>. <a href="https://github.com/nachocz/Multi-scale-Procrustes-based-3D-shape-control" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon">Code</a></li>
+                <li><span class="bib-label">[J6]</span> <strong>I. Cuiral-Zueco</strong>, Y. Karayiannidis and G. López-Nicolás, “Contour Based Object-Compliant Shape Control,” <em>IEEE Robotics and Automation Letters</em>, vol. 8, no. 8, pp. 5164–5171, 2023. doi: <a href="https://doi.org/10.1109/LRA.2023.3292617">10.1109/LRA.2023.3292617</a>.</li>
+                <li><span class="bib-label">[J7]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “RGB-D Tracking and Optimal Perception of Deformable Objects,” <em>IEEE Access</em>, vol. 8, pp. 136884–136897, 2020. doi: <a href="https://doi.org/10.1109/ACCESS.2020.3012067">10.1109/ACCESS.2020.3012067</a>.</li>
+            </ol>
 
-        <h2 id="invited-talks"><span>Invited Talks & Visiting Positions</span> <span class="toggle-icon">▼</span></h2>
-        <div class="section-content">
-            <ul>
-                <li><strong>Mar 2025:</strong> European Robotics Forum (ERF), Stuttgart, Germany. Presented PhD thesis as a finalist for the <a href="https://eu-robotics.net/georges-giralt-phd-award/">Georges Giralt PhD Award</a>.</li>
-                <li><strong>Nov 3 – Dec 5, 2025:</strong> Invited Visiting Scholar, <a href="https://elliit.se/news-and-events/focus-period-lund-2025/">ELLIIT Focus Period</a>, Lund University, Sweden. Gave a seminar on "Deformable Shape Control: From Perception to Manipulation".
-                    <div>
-                        <img src="elliit_focus_period.jpg" alt="ELLIIT Focus Period Lund 2025" class="award-photo" style="width: 150px;">
-                        <div class="award-caption">ELLIIT Focus Period - Lund University 2025</div>
-                    </div>
-                </li>
-            </ul>
-        </div>
+            <h3>Conferences</h3>
+            <ol class="bib-list">
+                <li><span class="bib-label">[C1]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Elastic Contour Mapping for the Estimation of Abrupt Shape Deformations,” <em>Proc. Iberian Robotics Conf.</em>, pp. 400–408, 2023.</li>
+                <li><span class="bib-label">[C2]</span> <strong>I. Cuiral-Zueco</strong>, G. López-Nicolás and H. Araujo, “Gripper positioning for object deformation tasks,” <em>Proc. IEEE Int. Conf. Robot. Autom.</em> (ICRA), pp. 2403–2409, 2022. doi: <a href="https://doi.org/10.1109/ICRA46639.2022.9812304">10.1109/ICRA46639.2022.9812304</a>.</li>
+                <li><span class="bib-label">[C3]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Multi-scale Laplacian-based FMM for deformable object elastic shape estimation,” <em>Proc. IEEE/RSJ Int. Conf. Intell. Robots Syst.</em> (IROS), pp. 1766–1772, 2021. doi: <a href="https://doi.org/10.1109/IROS51168.2021.9636857">10.1109/IROS51168.2021.9636857</a>. <a href="https://github.com/nachocz/FMM-elastic-shape-comparison" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon">Code</a></li>
+                <li><span class="bib-label">[C4]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Dynamic Occlusion Handling for Real Time Object Perception,” <em>Proc. Int. Conf. Robot. Autom. Eng.</em> (ICRAE), pp. 66–70, 2020. doi: <a href="https://doi.org/10.1109/ICRAE50850.2020.9310850">10.1109/ICRAE50850.2020.9310850</a>.</li>
+            </ol>
 
-        <h2 id="conferences"><span>International Conferences</span> <span class="toggle-icon">▼</span></h2>
-        <div class="section-content">
-            <ul>
-                <li><strong>Nov 2023:</strong> Sixth Iberian Robotics Conference, Coimbra, Portugal. Presented "Elastic Contour Mapping for the Estimation of Abrupt Shape Deformations," later published in <em>Robotics and Autonomous Systems</em> (2024).</li>
-                <li><strong>May 2023:</strong> International Conference on Robotics and Automation (ICRA), London, UK. Presented <em>Mesh Estimation for Abrupt Deformations of Texture-less Objects</em> in the ICRA 2023 Workshop on Deformable Object Manipulation.</li>
-                <li><strong>May 2022:</strong> IEEE International Conference on Robotics and Automation (ICRA), Philadelphia, USA, with the conference paper "Gripper positioning for object deformation tasks," in <em>Proc. IEEE Int. Conf. Robot. Autom.</em>, Philadelphia, PA, USA, May 2022, pp. 2403-2409. doi: <a href="https://doi.org/10.1109/ICRA46639.2022.9812304">10.1109/ICRA46639.2022.9812304</a>.
-                    <ul><li class="publication-meta">CORE (2023)/ Scholar h5-Index: A*/106 (2nd)</li></ul>
-                </li>
-                <li><strong>Sep 2021:</strong> IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), Prague, Czech Republic, with the conference paper "Multi-scale Laplacian-based FMM for deformable object elastic shape estimation," in <em>Proc. IEEE/RSJ Int. Conf. Intell. Robots Syst.</em>, Prague, Czech Republic, Sep. 2021, pp. 1766-1772. doi: <a href="https://doi.org/10.1109/IROS51168.2021.9636857">10.1109/IROS51168.2021.9636857</a>.
-                    <ul>
-                        <li class="publication-meta">CORE (2021)/ Scholar h5-Index: A/78 (4th)</li>
-                        <li><a href="https://github.com/nachocz/FMM-elastic-shape-comparison" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon">Code Available</a></li>
-                    </ul>
-                </li>
-                <li><strong>Nov 2020:</strong> International Conference on Robotics and Automation Engineering (ICRAE), Singapore, with the conference paper "Dynamic Occlusion Handling for Real Time Object Perception," in <em>Proc. Int. Conf. Robot. Autom. Eng.</em>, Singapore, Dec. 2020, pp. 66-70. doi: <a href="https://doi.org/10.1109/ICRAE50850.2020.9310850">10.1109/ICRAE50850.2020.9310850</a>.</li>
-                <li><strong>Aug 2020:</strong> International Conference on Intelligent Robots and Systems (IROS), Las Vegas, USA. Presented <em>RGB-D Sensing of Challenging Deformable Objects</em> in the workshop "Perception and Manipulation of Deformable Objects: Methods, Tools, and Applications."</li>
-                <li><strong>Sep 2019:</strong> IEEE West European Student and Young Professional (WESYP), Glasgow, UK. Attended and presented <em>RGB-D SLAM for Manipulation and Control in Deformable Environments</em>.</li>
-            </ul>
-        </div>
-
-        <h2 id="research-stays"><span>International Research Stays</span> <span class="toggle-icon">▼</span></h2>
-        <div class="section-content">
-            <ul>
-                <li><strong>Sep 2022–Nov 2022 (3 months):</strong> <a href="https://www.control.lth.se/">Department of Automatic Control</a>, Lund University (LTH), Sweden. Supervised by Dr. Yiannis Karayiannidis.</li>
-                <li><strong>May 2021–Aug 2021 (3 months):</strong> <a href="https://www.isr.uc.pt/">Institute of Systems and Robotics</a>, University of Coimbra, Portugal. Supervised by Prof. Helder Araujo.</li>
-            </ul>
-        </div>
-
-        <h2 id="projects"><span>Participation in Research Projects</span> <span class="toggle-icon">▼</span></h2>
-        <div class="section-content">
-            <ul>
-                <li><strong>Project <a href="https://commandia.unizar.es/">COMMANDIA</a>:</strong> COllaborative robotic Mobile MANipulation of Deformable objects in Industrial Applications — SOE2/P1/F0638 (Interreg SUDOE), 2018-2022, University of Zaragoza.</li>
-                <li><strong>Project <a href="https://interreg-sudoe.eu/en/proyecto-interreg/remain/">REMAIN</a>:</strong> robotic REMAnufacturing of deformable INdustrial products — S1/1.1/E0111 (Interreg SUDOE), 2019-2022, University of Zaragoza.</li>
-                <li><strong>Project <a href="https://ropert.i3a.es/countrybots/">COUNTRYBOTS</a>:</strong> Cooperative robots for monitorization and deformable goods transport in the countryside, PID2021-124137OB-I00, 2022-2025, University of Zaragoza.</li>
-                <li><strong>Project <a href="https://ropert.i3a.es/deforms/">DeFORMS</a>:</strong> Deformation control of Flexible Objects with cooperative Robots in Manufacturing Sectors, TED2021-130224B-I00, 2022-2024, University of Zaragoza.</li>
-            </ul>
-        </div>
-
-        <h2 id="demo"><span>Paper Demos</span> <span class="toggle-icon">▼</span></h2>
-        <div class="section-content">
-            <p style="margin-bottom: 12px; color: #2c3e50;">Here you can see demos that illustrate some of the problems I tackle in my research.</p>
-            <h3 style="margin-top: 0;">Shape control of deformable objects</h3>
-            <p style="font-size: 0.95em; color: #7f8c8d; margin-bottom: 12px;">
-                Related papers: 
-                <a href="https://doi.org/10.1109/LRA.2023.3292617">Cuiral-Zueco et al., RA-L 2023</a> ·
-                <a href="https://doi.org/10.1109/TMECH.2023.3325934">Cuiral-Zueco & López-Nicolás, TMECH 2024</a>
-            </p>
-            <iframe src="robotics-demo.html" class="demo-iframe" title="Interactive 2-Robot Cable Manipulation Demo"></iframe>
-        </div>
-
-        <!-- These sections stay always visible -->
-        <div class="always-visible">
-            <h2>Mentoring, Service, and Outreach</h2>
-            <ul>
-                <li><strong>Supervision and Mentoring:</strong> Supervised 1 MSc and 2 BSc theses, and over 150 hours of extracurricular research internships.</li>
-                <li><strong>Academic Service:</strong> Member of the organizing committee for the XLIV Jornadas de Automática (2023) and IEEE SWYP (2020). Reviewer of +20 papers for top-tier conferences and journals.</li>
-                <li><strong>Entrepreneurship and Outreach (LoCoCORP Project):</strong> Co-developed an educational robotics business project at CEMINEM (University of Zaragoza), creating educational robotic platforms for teaching programming and automation.</li>
-            </ul>
-
-            <h2>Research Groups</h2>
-            <ul>
-                <li><strong>2019–Present:</strong> Member of <a href="https://i3a.unizar.es/es/grupos-de-investigacion/ropert">ROPERT</a> Research Group (Robotics, Computer Vision and Artificial Intelligence).</li>
-            </ul>
         </div>
     </div>
 
