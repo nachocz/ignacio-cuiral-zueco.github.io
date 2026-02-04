@@ -160,22 +160,21 @@
 </head>
 <body>
     <div class="demo-container">
-        <h1>🎯 Shape Comparison Game</h1>
+        <h1>Shape Comparison Game</h1>
         
         <div class="instructions">
             <strong>How to Play</strong>
-            <br><br>
-            <strong>The Goal:</strong> Match the Red target shape by sculpting the block on the right.
-            <br>
-            <strong>The Feedback:</strong> Your current shape is overlaid in Green on the left. Watch the error curve, lower is better!
-            <br>
-            <strong>The Tools:</strong> Use Chisel to remove material and Clay to add it back.
-            <br><br>
+            <ul style="margin: 12px 0 12px 20px; line-height: 1.8; color: #2c3e50;">
+                <li><strong>Goal:</strong> Shape the block on the right to match the red target shape on the left</li>
+                <li><strong>Sculpting:</strong> The right panel shows your block as a grid of particles. Use Chisel to remove particles and Clay to add them back</li>
+                <li><strong>Feedback:</strong> Your current shape appears in green on the left. The error curve shows how close you are, lower values are better</li>
+            </ul>
+            
             <strong>Why This Matters</strong>
-            <br><br>
-            Humans have a natural intuition for shape; we can instantly judge how closely one object resembles another. Sculptors
-            exemplify this skill, constantly comparing a target model to the material in their hands and making adjustments until
-            the two are almost identical.
+            <ul style="margin: 12px 0 12px 20px; line-height: 1.8; color: #2c3e50;">
+                <li>Humans naturally compare shapes and judge how closely objects match. Sculptors show this skill at its highest level, constantly adjusting their work against a target until the pieces look identical</li>
+                <li>Robots need systems that help them compare shapes properly so they can know whether they are manipulating the object in the desired direction towards the target shape or away from it</li>
+            </ul>
         </div>
 
         <div class="layout">
@@ -187,7 +186,7 @@
             </div>
             
             <div class="panel">
-                <h3>Sculpting Canvas (Erase to Match)</h3>
+                <h3>Sculpting Canvas (try to match target)</h3>
                 <canvas id="shapesCanvas" width="400" height="400"></canvas>
                 <div class="tools" style="margin-top: 12px;">
                     <button class="tool-btn active" onclick="selectTool('chisel')" id="toolChisel">🔨 Chisel (Erase)</button>
@@ -762,7 +761,7 @@
                 for (let col = 0; col < particleGrid[row].length; col++) {
                     const p = particleGrid[row][col];
                     if (p.alive) {
-                        sculptCtx.fillStyle = '#3498db';
+                        sculptCtx.fillStyle = '#1a1a1a';
                         sculptCtx.beginPath();
                         sculptCtx.arc(p.x, p.y, PARTICLE_RADIUS, 0, Math.PI * 2);
                         sculptCtx.fill();
@@ -770,9 +769,9 @@
                 }
             }
 
-            // Draw convex hull
+            // Draw contour
             if (currentSculptShape.length > 0) {
-                drawShape(sculptCtx, currentSculptShape, '#2c3e50', 2, false);
+                drawShape(sculptCtx, currentSculptShape, '#d0d0d0', 2, false);
             }
         }
 
@@ -788,8 +787,73 @@
             return sampleUniformly(contour, NUM_POINTS);
         }
 
+        function removeDisconnectedParticles() {
+            // Find all connected components using flood fill
+            const visited = [];
+            for (let r = 0; r < GRID_ROWS; r++) {
+                visited[r] = [];
+                for (let c = 0; c < GRID_COLS; c++) {
+                    visited[r][c] = false;
+                }
+            }
+
+            // Find all connected components
+            const components = [];
+            function floodFill(startR, startC, component) {
+                const stack = [[startR, startC]];
+                while (stack.length > 0) {
+                    const [r, c] = stack.pop();
+                    if (r < 0 || r >= GRID_ROWS || c < 0 || c >= GRID_COLS) continue;
+                    if (visited[r][c] || !isAlive(r, c)) continue;
+                    
+                    visited[r][c] = true;
+                    component.push([r, c]);
+                    
+                    // Check 8 neighbors
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            if (dr === 0 && dc === 0) continue;
+                            stack.push([r + dr, c + dc]);
+                        }
+                    }
+                }
+            }
+
+            // Find all components
+            for (let r = 0; r < GRID_ROWS; r++) {
+                for (let c = 0; c < GRID_COLS; c++) {
+                    if (!visited[r][c] && isAlive(r, c)) {
+                        const component = [];
+                        floodFill(r, c, component);
+                        components.push(component);
+                    }
+                }
+            }
+
+            // Find the largest component
+            if (components.length === 0) return;
+            let largestComponent = components[0];
+            for (let comp of components) {
+                if (comp.length > largestComponent.length) {
+                    largestComponent = comp;
+                }
+            }
+
+            // Mark all particles not in largest component as dead
+            const largestSet = new Set(largestComponent.map(p => `${p[0]},${p[1]}`));
+            for (let r = 0; r < GRID_ROWS; r++) {
+                for (let c = 0; c < GRID_COLS; c++) {
+                    if (isAlive(r, c) && !largestSet.has(`${r},${c}`)) {
+                        particleGrid[r][c].alive = false;
+                    }
+                }
+            }
+        }
+
         function updateResidualAndRender() {
             if (!targetLoaded) return;
+
+            removeDisconnectedParticles();
 
             currentSculptShape = getSculptShape();
             if (currentSculptShape.length > 0) {

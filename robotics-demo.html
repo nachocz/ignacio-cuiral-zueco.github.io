@@ -182,13 +182,21 @@
 </head>
 <body>
     <div class="demo-container">
-        <h1>🤖 2-Robot Cable Manipulation</h1>
+        <h1>Robot Cable Manipulation</h1>
         
         <div style="background: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-            <p style="margin: 0 0 12px 0; color: #2c3e50; font-size: 0.9em; line-height: 1.5;">
-                Control two robot arms using joint angle sliders to manipulate a flexible cable and match the target shape (green dashed line). 
-                The error value shows how well you match the target. Click "New Target Shape" to generate a new challenge.
-            </p>
+            <p style="margin: 0 0 12px 0; color: #2c3e50; font-size: 0.9em; line-height: 1.5; font-weight: 600;">How to Play</p>
+            <ul style="margin: 0 0 12px 0 ; padding-left: 20px; color: #2c3e50; font-size: 0.9em; line-height: 1.8;">
+                <li><strong>Goal:</strong> Adjust the robot joints to shape the cable and match the target shape shown as a green dashed line</li>
+                <li><strong>Controls:</strong> Use the sliders to change joint angles for each robot. The blue robot on the left and brown robot on the right work together to control the cable</li>
+                <li><strong>Feedback:</strong> The error curve shows how close you are to the target. Lower values are better. Try "New Target Shape" for different challenges</li>
+            </ul>
+            
+            <p style="margin: 0 0 12px 0; color: #2c3e50; font-size: 0.9em; line-height: 1.5; font-weight: 600;">Why This Matters</p>
+            <ul style="margin: 0 0 12px 20px; padding-left: 20px; color: #2c3e50; font-size: 0.9em; line-height: 1.8;">
+                <li>Manipulating soft objects like cables and ropes is a key challenge in robotics. These materials show up constantly in real tasks</li>
+                <li><strong>Note:</strong> Not all target shapes can be achieved with this cable and robot setup. Determining whether a shape is reachable for a given object and manipulation method is still an open research question</li>
+            </ul>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 12px;">
                 <div>
@@ -196,13 +204,13 @@
                     <div style="background: white; padding: 10px; border-radius: 6px;">
                         <div style="margin-bottom: 10px;">
                             <label style="display: block; color: #2c3e50; font-size: 0.85em; margin-bottom: 4px;">Joint 1</label>
-                            <input type="range" id="theta1Slider" min="-2" max="0.5" step="0.05" value="0" style="width: 100%;">
-                            <span id="theta1Value" style="font-size: 0.8em; color: #7f8c8d;">0.00</span>
+                            <input type="range" id="theta1Slider" min="-2" max="0.5" step="0.05" value="-1.6" style="width: 100%;">
+                            <span id="theta1Value" style="font-size: 0.8em; color: #7f8c8d;">-1.60</span>
                         </div>
                         <div>
                             <label style="display: block; color: #2c3e50; font-size: 0.85em; margin-bottom: 4px;">Joint 2</label>
-                            <input type="range" id="theta2Slider" min="-2" max="2" step="0.05" value="0" style="width: 100%;">
-                            <span id="theta2Value" style="font-size: 0.8em; color: #7f8c8d;">0.00</span>
+                            <input type="range" id="theta2Slider" min="-2" max="2" step="0.05" value="1" style="width: 100%;">
+                            <span id="theta2Value" style="font-size: 0.8em; color: #7f8c8d;">1.00</span>
                         </div>
                     </div>
                 </div>
@@ -212,13 +220,13 @@
                     <div style="background: white; padding: 10px; border-radius: 6px;">
                         <div style="margin-bottom: 10px;">
                             <label style="display: block; color: #2c3e50; font-size: 0.85em; margin-bottom: 4px;">Joint 1</label>
-                            <input type="range" id="theta3Slider" min="-2.5" max="4.5" step="0.05" value="3.14" style="width: 100%;">
-                            <span id="theta3Value" style="font-size: 0.8em; color: #7f8c8d;">3.14</span>
+                            <input type="range" id="theta3Slider" min="-2.5" max="4.5" step="0.05" value="4.1" style="width: 100%;">
+                            <span id="theta3Value" style="font-size: 0.8em; color: #7f8c8d;">4.10</span>
                         </div>
                         <div>
                             <label style="display: block; color: #2c3e50; font-size: 0.85em; margin-bottom: 4px;">Joint 2</label>
-                            <input type="range" id="theta4Slider" min="-2" max="2" step="0.05" value="0" style="width: 100%;">
-                            <span id="theta4Value" style="font-size: 0.8em; color: #7f8c8d;">0.00</span>
+                            <input type="range" id="theta4Slider" min="-2" max="2" step="0.05" value="-0.7" style="width: 100%;">
+                            <span id="theta4Value" style="font-size: 0.8em; color: #7f8c8d;">-0.70</span>
                         </div>
                     </div>
                 </div>
@@ -298,20 +306,20 @@
         // Left robot
         let robotPos = [450, 200];
         let robotBase = [150, 250];  // Robot base position (adjusted for 600px canvas)
-        let theta1 = 0;  // First link angle
-        let theta2 = 0;  // Second link angle
+        let theta1 = -1.6;  // First link angle
+        let theta2 = 1;  // Second link angle
         
         // Right robot
         let robot2Pos = [450, 200];
         let robot2Base = [450, 250];  // Right robot base position (adjusted for 600px canvas)
-        let theta3 = Math.PI;  // First link angle (pointing left)
-        let theta4 = 0;  // Second link angle
+        let theta3 = 4.1;  // First link angle (pointing left)
+        let theta4 = -0.7;  // Second link angle
         
         // Ghost robots (for target generation)
-        let theta1_ghost = 0;
-        let theta2_ghost = 0;
-        let theta3_ghost = Math.PI;
-        let theta4_ghost = 0;
+        let theta1_ghost = -1.6;
+        let theta2_ghost = 1;
+        let theta3_ghost = 4.1;
+        let theta4_ghost = -0.7;
         
         let targetRobotPos = [400, 150];  // Virtual target robot position
         let keys = {};
@@ -655,6 +663,15 @@
             // Draw left robot arm
             const ee1 = getEndEffector();
             
+            // Draw robot base (rectangular platform)
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(ee1.j0[0] - 25, ee1.j0[1] - 8, 50, 16);
+            
+            // Draw base outline
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(ee1.j0[0] - 25, ee1.j0[1] - 8, 50, 16);
+            
             // Draw links with shadow effect
             ctx.strokeStyle = 'rgba(44, 62, 80, 0.2)';
             ctx.lineWidth = 8;
@@ -683,21 +700,41 @@
                 ctx.fill();
             }
             
-            // Draw end effector (gripper in red)
-            ctx.fillStyle = '#e74c3c';
-            ctx.beginPath();
-            ctx.arc(ee1.j2[0], ee1.j2[1], 13, 0, Math.PI * 2);
-            ctx.fill();
+            // Draw simple V-shaped gripper (two fingers)
+            const gripperAngle = theta1 + theta2;
+            const fingerLength = 12;
+            const fingerSpread = 0.3; // radians
             
-            // Draw end effector outline
-            ctx.strokeStyle = '#c0392b';
-            ctx.lineWidth = 2;
+            // Left finger
+            ctx.strokeStyle = '#34495e';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
             ctx.beginPath();
-            ctx.arc(ee1.j2[0], ee1.j2[1], 13, 0, Math.PI * 2);
+            ctx.moveTo(ee1.j2[0], ee1.j2[1]);
+            const fx1 = ee1.j2[0] + fingerLength * Math.cos(gripperAngle + fingerSpread);
+            const fy1 = ee1.j2[1] + fingerLength * Math.sin(gripperAngle + fingerSpread);
+            ctx.lineTo(fx1, fy1);
+            ctx.stroke();
+            
+            // Right finger
+            ctx.beginPath();
+            ctx.moveTo(ee1.j2[0], ee1.j2[1]);
+            const fx2 = ee1.j2[0] + fingerLength * Math.cos(gripperAngle - fingerSpread);
+            const fy2 = ee1.j2[1] + fingerLength * Math.sin(gripperAngle - fingerSpread);
+            ctx.lineTo(fx2, fy2);
             ctx.stroke();
             
             // Draw right robot arm (mirror)
             const ee2 = getEndEffector2();
+            
+            // Draw robot base (rectangular platform)
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(ee2.j0[0] - 25, ee2.j0[1] - 8, 50, 16);
+            
+            // Draw base outline
+            ctx.strokeStyle = '#8b4513';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(ee2.j0[0] - 25, ee2.j0[1] - 8, 50, 16);
             
             // Draw links with shadow effect
             ctx.strokeStyle = 'rgba(44, 62, 80, 0.2)';
@@ -727,17 +764,28 @@
                 ctx.fill();
             }
             
-            // Draw end effector (gripper in orange)
-            ctx.fillStyle = '#f39c12';
-            ctx.beginPath();
-            ctx.arc(ee2.j2[0], ee2.j2[1], 13, 0, Math.PI * 2);
-            ctx.fill();
+            // Draw simple V-shaped gripper (two fingers)
+            const gripperAngle2 = theta3 + theta4;
+            const fingerLength2 = 12;
+            const fingerSpread2 = 0.3; // radians
             
-            // Draw end effector outline
-            ctx.strokeStyle = '#d68910';
-            ctx.lineWidth = 2;
+            // Left finger
+            ctx.strokeStyle = '#654321';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
             ctx.beginPath();
-            ctx.arc(ee2.j2[0], ee2.j2[1], 13, 0, Math.PI * 2);
+            ctx.moveTo(ee2.j2[0], ee2.j2[1]);
+            const fx3 = ee2.j2[0] + fingerLength2 * Math.cos(gripperAngle2 + fingerSpread2);
+            const fy3 = ee2.j2[1] + fingerLength2 * Math.sin(gripperAngle2 + fingerSpread2);
+            ctx.lineTo(fx3, fy3);
+            ctx.stroke();
+            
+            // Right finger
+            ctx.beginPath();
+            ctx.moveTo(ee2.j2[0], ee2.j2[1]);
+            const fx4 = ee2.j2[0] + fingerLength2 * Math.cos(gripperAngle2 - fingerSpread2);
+            const fy4 = ee2.j2[1] + fingerLength2 * Math.sin(gripperAngle2 - fingerSpread2);
+            ctx.lineTo(fx4, fy4);
             ctx.stroke();
         }
         
