@@ -322,6 +322,14 @@
             color: #2c3e50;
         }
 
+        .demo-iframe {
+            width: 100%;
+            height: 700px;
+            border: none;
+            border-radius: 8px;
+            background: white;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 15px;
@@ -353,6 +361,15 @@
 
             h3 {
                 font-size: 1.1em;
+            }
+
+            .section-content {
+                max-height: 10000px;
+            }
+
+            .demo-iframe {
+                height: 70vh;
+                min-height: 520px;
             }
         }
     </style>
@@ -524,8 +541,7 @@
 
         <h2 id="demo"><span>Interactive Robotics Demo</span> <span class="toggle-icon">▼</span></h2>
         <div class="section-content">
-            <p><em>Control two robots to manipulate a cable. Use arrow keys or WASD for the left robot (blue), and I/J/K/L for the right robot (brown).</em></p>
-            <iframe src="robotics-demo.html" width="100%" height="700" style="border: none; border-radius: 8px; background: white;" title="Interactive 2-Robot Cable Manipulation Demo"></iframe>
+            <iframe src="robotics-demo.html" class="demo-iframe" title="Interactive 2-Robot Cable Manipulation Demo"></iframe>
         </div>
 
         <!-- These sections stay always visible -->
