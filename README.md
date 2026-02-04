@@ -1,4 +1,19 @@
-# Ignacio Cuiral Zueco - CV
+# Ignacio Cuiral-Zueco — CV Website
+
+Clean, responsive academic CV website with interactive demos on deformable object shape control and comparison.
+
+**Live site:** https://ignaciocuiral.github.io
+
+## Structure
+
+- index.html — main CV page
+- robotics-demo.html — shape control demo
+- shape-comparison.html — shape comparison game
+- assets/images — site images
+
+## Notes
+
+Open index.html in a browser to view locally.# Ignacio Cuiral Zueco - CV
 
 Welcome to my professional CV website. This is a clean, modern, and responsive CV page showcasing my research, publications, and professional experience in robotic manipulation and deformable object control.
 
