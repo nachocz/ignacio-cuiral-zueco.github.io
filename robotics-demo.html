@@ -40,7 +40,7 @@
 
         canvas {
             display: block;
-            background: #fafafa;
+            background: white;
             border: 2px solid #ecf0f1;
             border-radius: 8px;
             cursor: crosshair;
@@ -67,6 +67,22 @@
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 15px;
+        }
+
+        .instructions {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .control-card {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
         }
 
         .control-section {
@@ -177,38 +193,86 @@
             flex-direction: column;
         }
 
+        body.dark-theme {
+            background: #0f1115;
+            color: #e6e6e6;
+        }
+
+        body.dark-theme .demo-container,
+        body.dark-theme .controls,
+        body.dark-theme .status,
+        body.dark-theme .instructions,
+        body.dark-theme .control-card {
+            background: #151922 !important;
+            color: #e6e6e6 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        }
+
+        body.dark-theme canvas {
+            border-color: #2a3140;
+        }
+
+        body.dark-theme h1,
+        body.dark-theme h3,
+        body.dark-theme h4,
+        body.dark-theme p,
+        body.dark-theme li,
+        body.dark-theme span,
+        body.dark-theme label,
+        body.dark-theme strong {
+            color: #e6e6e6 !important;
+        }
+
+        body.dark-theme button {
+            background: #2c6fb3;
+        }
+
+        body.dark-theme button:hover {
+            background: #3b82c4;
+        }
+
+        body.dark-theme .plot-label {
+            color: #a7b3c2;
+        }
+
+        body.dark-theme .demo-tab-btn {
+            background: #1f2633;
+            border-color: #2a3140;
+            color: #e6e6e6;
+        }
+
 
     </style>
 </head>
-<body>
+<body class="dark-theme">
     <div class="demo-container">
         <h1>Robot Cable Manipulation</h1>
         
-        <div style="background: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-            <p style="margin: 0 0 12px 0; color: #2c3e50; font-size: 0.9em; line-height: 1.5; font-weight: 600;">How to Play</p>
-            <ul style="margin: 0 0 12px 0 ; padding-left: 20px; color: #2c3e50; font-size: 0.9em; line-height: 1.8;">
+        <div class="instructions">
+            <p style="margin: 0 0 12px 0; font-weight: 600;">How to Play</p>
+            <ul style="margin: 0 0 12px 0; padding-left: 20px; line-height: 1.8;">
                 <li><strong>Goal:</strong> Adjust the robot joints to shape the cable and match the target shape shown as a green dashed line</li>
                 <li><strong>Controls:</strong> Use the sliders to change joint angles for each robot. The blue robot on the left and brown robot on the right work together to control the cable</li>
                 <li><strong>Feedback:</strong> The error curve shows how close you are to the target. Lower values are better. Try "New Target Shape" for different challenges</li>
             </ul>
             
-            <p style="margin: 0 0 12px 0; color: #2c3e50; font-size: 0.9em; line-height: 1.5; font-weight: 600;">Why This Matters</p>
-            <ul style="margin: 0 0 12px 20px; padding-left: 20px; color: #2c3e50; font-size: 0.9em; line-height: 1.8;">
+            <p style="margin: 0 0 12px 0; font-weight: 600;">Why This Matters</p>
+            <ul style="margin: 0 0 12px 20px; padding-left: 20px; line-height: 1.8;">
                 <li>Manipulating soft objects like cables and ropes is a key challenge in robotics. These materials show up constantly in real tasks</li>
                 <li><strong>Note:</strong> Not all target shapes can be achieved with this cable and robot setup. Determining whether a shape is reachable for a given object and manipulation method is still an open research question</li>
             </ul>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 12px;">
                 <div>
-                    <h4 style="margin: 0 0 8px 0; color: #34495e; font-size: 0.9em;">Left Robot (Blue)</h4>
-                    <div style="background: white; padding: 10px; border-radius: 6px;">
+                    <h4 style="margin: 0 0 8px 0; font-size: 0.9em;">Left Robot (Blue)</h4>
+                    <div class="control-card">
                         <div style="margin-bottom: 10px;">
-                            <label style="display: block; color: #2c3e50; font-size: 0.85em; margin-bottom: 4px;">Joint 1</label>
+                            <label style="display: block; font-size: 0.85em; margin-bottom: 4px;">Joint 1</label>
                             <input type="range" id="theta1Slider" min="-2" max="0.5" step="0.05" value="-1.6" style="width: 100%;">
                             <span id="theta1Value" style="font-size: 0.8em; color: #7f8c8d;">-1.60</span>
                         </div>
                         <div>
-                            <label style="display: block; color: #2c3e50; font-size: 0.85em; margin-bottom: 4px;">Joint 2</label>
+                            <label style="display: block; font-size: 0.85em; margin-bottom: 4px;">Joint 2</label>
                             <input type="range" id="theta2Slider" min="-2" max="2" step="0.05" value="1" style="width: 100%;">
                             <span id="theta2Value" style="font-size: 0.8em; color: #7f8c8d;">1.00</span>
                         </div>
@@ -216,15 +280,15 @@
                 </div>
                 
                 <div>
-                    <h4 style="margin: 0 0 8px 0; color: #8b4513; font-size: 0.9em;">Right Robot (Brown)</h4>
-                    <div style="background: white; padding: 10px; border-radius: 6px;">
+                    <h4 style="margin: 0 0 8px 0; font-size: 0.9em;">Right Robot (Brown)</h4>
+                    <div class="control-card">
                         <div style="margin-bottom: 10px;">
-                            <label style="display: block; color: #2c3e50; font-size: 0.85em; margin-bottom: 4px;">Joint 1</label>
+                            <label style="display: block; font-size: 0.85em; margin-bottom: 4px;">Joint 1</label>
                             <input type="range" id="theta3Slider" min="-2.5" max="4.5" step="0.05" value="4.1" style="width: 100%;">
                             <span id="theta3Value" style="font-size: 0.8em; color: #7f8c8d;">4.10</span>
                         </div>
                         <div>
-                            <label style="display: block; color: #2c3e50; font-size: 0.85em; margin-bottom: 4px;">Joint 2</label>
+                            <label style="display: block; font-size: 0.85em; margin-bottom: 4px;">Joint 2</label>
                             <input type="range" id="theta4Slider" min="-2" max="2" step="0.05" value="-0.7" style="width: 100%;">
                             <span id="theta4Value" style="font-size: 0.8em; color: #7f8c8d;">-0.70</span>
                         </div>
@@ -233,7 +297,7 @@
             </div>
             
             <div style="text-align: center; margin-top: 12px;">
-                <button id="newTargetBtn" style="padding: 10px 24px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.95em; transition: all 0.3s ease;">New Target Shape</button>
+                <button id="newTargetBtn" style="padding: 10px 24px; font-weight: 600; font-size: 0.95em;">New Target Shape</button>
             </div>
         </div>
         
@@ -252,7 +316,7 @@
             </div>
             
             <div class="status">
-                Error: <span id="errorDisplay">0.00</span>
+                Current cable alignment error: <span id="errorDisplay">0.00</span>
             </div>
         </div>
     </div>

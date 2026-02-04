@@ -27,30 +27,40 @@
         }
 
         /* Navigation */
-        nav {
+        nav.section-tabs {
             background: white;
-            padding: 15px 20px;
+            padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 30px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
+            gap: 10px;
+            flex-wrap: nowrap;
             align-items: center;
+            justify-content: center;
+            overflow-x: auto;
         }
 
-        nav a {
-            color: #3498db;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 6px 12px;
-            border-radius: 4px;
-        }
-
-        nav a:hover {
+        .section-tab-btn {
+            padding: 8px 14px;
             background: #ecf0f1;
-            color: #2980b9;
+            border: 1px solid #dfe6e9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+
+        .section-tab-btn:hover {
+            background: #dfe6e9;
+        }
+
+        .section-tab-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
         }
 
         .header {
@@ -243,6 +253,25 @@
             border-bottom: none;
         }
 
+        .header-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #3498db;
+            font-weight: 500;
+            border-bottom: none;
+            transition: all 0.3s ease;
+        }
+
+        .header-btn:hover {
+            background: #3498db;
+            color: #ffffff;
+        }
+
         .publication-meta {
             font-style: italic;
             color: #7f8c8d;
@@ -288,6 +317,57 @@
             border: none;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-highlight {
+            background: #f0f6ff;
+            border-left: 4px solid #3498db;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-top: 10px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .news-highlight .news-text {
+            flex: 1;
+        }
+
+        .news-highlight .news-meta {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 6px;
+        }
+
+        .research-intro {
+            background: #f8f9fa;
+            border-left: 4px solid #27ae60;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .research-intro p {
+            margin-bottom: 8px;
+        }
+
+        .demo-intro {
+            background: #151c28;
+            border-left: 4px solid #2c6fb3;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 16px 0 12px 0;
+        }
+
+        .demo-intro h3 {
+            margin: 0 0 6px 0;
+        }
+
+        .demo-intro p {
+            margin: 0;
+            color: #a7b3c2;
+            font-size: 0.95em;
         }
 
         strong {
@@ -372,6 +452,194 @@
             background: white;
         }
 
+        .demo-tabs {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0 16px 0;
+            flex-wrap: wrap;
+        }
+
+        .demo-tab-btn {
+            padding: 8px 12px;
+            background: #ecf0f1;
+            border: 1px solid #dfe6e9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+
+        .demo-tab-btn:hover {
+            background: #dfe6e9;
+        }
+
+        .demo-tab-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        .demo-panel {
+            display: none;
+        }
+
+        .demo-panel.active {
+            display: block;
+        }
+
+        .section-panel {
+            display: none;
+        }
+
+        .section-panel.active {
+            display: block;
+        }
+
+        .section-panel h2 .toggle-icon {
+            display: none;
+        }
+
+        .section-panel h2 {
+            cursor: default;
+        }
+
+        body.dark-theme {
+            background: #0f1115;
+            color: #e6e6e6;
+        }
+
+        body.dark-theme nav,
+        body.dark-theme .header,
+        body.dark-theme .summary-list,
+        body.dark-theme .cv-section,
+        body.dark-theme .publication-item,
+        body.dark-theme .bib-list li,
+        body.dark-theme .award,
+        body.dark-theme .demo-callout,
+        body.dark-theme .demo-panel,
+        body.dark-theme .demo-iframe,
+        body.dark-theme .section-content {
+            background: #151922 !important;
+            color: #e6e6e6 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        }
+
+        body.dark-theme .header {
+            background: linear-gradient(135deg, #1b2332 0%, #151922 100%);
+        }
+
+        body.dark-theme .nested-list {
+            border-left-color: #2a3140;
+        }
+
+        body.dark-theme h1,
+        body.dark-theme h2,
+        body.dark-theme h3,
+        body.dark-theme h4,
+        body.dark-theme p,
+        body.dark-theme li,
+        body.dark-theme span,
+        body.dark-theme strong {
+            color: #e6e6e6 !important;
+        }
+
+        body.dark-theme a {
+            color: #7cc4ff !important;
+        }
+
+        body.dark-theme a:hover {
+            color: #9ad4ff !important;
+            border-bottom-color: #9ad4ff !important;
+        }
+
+        body.dark-theme nav a {
+            color: #9ad4ff !important;
+        }
+
+        body.dark-theme nav a:hover {
+            background: #1f2633 !important;
+            color: #cfe9ff !important;
+        }
+
+        body.dark-theme nav.section-tabs {
+            background: #151922 !important;
+        }
+
+        body.dark-theme .section-tab-btn {
+            background: #1f2633;
+            border-color: #2a3140;
+            color: #e6e6e6;
+        }
+
+        body.dark-theme .section-tab-btn.active {
+            background: #2c6fb3;
+            border-color: #3b82c4;
+            color: #ffffff;
+        }
+
+        body.dark-theme .award a {
+            background: #2c6fb3 !important;
+            color: #ffffff !important;
+        }
+
+        body.dark-theme .header-btn {
+            background: #1f2633;
+            color: #cfe9ff;
+        }
+
+        body.dark-theme .header-btn:hover {
+            background: #2c6fb3;
+            color: #ffffff;
+        }
+
+        body.dark-theme .icon-link {
+            background: #1f2633;
+            color: #cfe9ff;
+        }
+
+        body.dark-theme .icon-link:hover {
+            background: #2c6fb3;
+            color: #ffffff;
+        }
+
+        body.dark-theme .demo-tab-btn {
+            background: #1f2633;
+            border-color: #2a3140;
+            color: #e6e6e6;
+        }
+
+        body.dark-theme .demo-tab-btn.active {
+            background: #2c6fb3;
+            border-color: #3b82c4;
+            color: #ffffff;
+        }
+
+        body.dark-theme .news-highlight {
+            background: #1f2633;
+            border-left-color: #2c6fb3;
+        }
+
+        body.dark-theme .news-highlight .news-meta {
+            color: #a7b3c2;
+        }
+
+        body.dark-theme .research-intro {
+            background: #1f2633;
+            border-left-color: #2c6fb3;
+        }
+
+        body.dark-theme .demo-intro {
+            background: #1f2633;
+            border-left-color: #2c6fb3;
+        }
+
+        body.dark-theme .publication-item,
+        body.dark-theme .bib-list li {
+            border-left-color: #2c6fb3;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 15px;
@@ -387,14 +655,15 @@
                 font-size: 2em;
             }
 
-            nav {
-                flex-direction: column;
-                gap: 10px;
+            nav.section-tabs {
+                flex-direction: row;
+                gap: 8px;
             }
 
-            nav a {
-                width: 100%;
+            .section-tab-btn {
+                width: auto;
                 text-align: center;
+                white-space: nowrap;
             }
 
             h2 {
@@ -416,15 +685,8 @@
         }
     </style>
 </head>
-<body>
+<body class="dark-theme">
     <div class="container">
-        <nav>
-            <a href="#news">News</a>
-            <a href="#cv">CV</a>
-            <a href="#research">Research</a>
-            <a href="#publications">Publications</a>
-        </nav>
-
         <div class="header">
             <img src="assets/images/icz_photo.jpg" alt="Ignacio Cuiral-Zueco" class="header-photo">
             <div class="header-content">
@@ -432,14 +694,14 @@
                 <p>Zaragoza, Spain</p>
                 <p><a href="mailto:ignaciocuiral@unizar.es">ignaciocuiral@unizar.es</a></p>
                 <div style="margin-top: 15px; display: flex; gap: 12px; align-items: center;">
-                    <a href="https://scholar.google.es/citations?user=hj9OZJEAAAAJ&hl=es" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: #ecf0f1; border-radius: 4px; text-decoration: none; color: #3498db; font-weight: 500; border-bottom: none; transition: all 0.3s ease;" onmouseover="this.style.background='#3498db'; this.style.color='white';" onmouseout="this.style.background='#ecf0f1'; this.style.color='#3498db';">
+                    <a href="https://scholar.google.es/citations?user=hj9OZJEAAAAJ&hl=es" target="_blank" class="header-btn">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                             <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 14.5c-3.6 0-6.5-2.9-6.5-6.5S4.4 1.5 8 1.5s6.5 2.9 6.5 6.5-2.9 6.5-6.5 6.5z"/>
                             <path d="M8 3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm3 8H5v-1.5c0-1.4 1.6-2 3-2s3 .6 3 2V11z"/>
                         </svg>
                         Google Scholar
                     </a>
-                    <a href="bibliography.bib" download style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: #ecf0f1; border-radius: 4px; text-decoration: none; color: #3498db; font-weight: 500; border-bottom: none; transition: all 0.3s ease;" onmouseover="this.style.background='#3498db'; this.style.color='white';" onmouseout="this.style.background='#ecf0f1'; this.style.color='#3498db';">
+                    <a href="bibliography.bib" download class="header-btn">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                             <path d="M8 12L3 7h3V1h4v6h3l-5 5z"/>
                             <path d="M2 14h12v1H2z"/>
@@ -450,8 +712,16 @@
             </div>
         </div>
 
-        <h2 id="news"><span>News</span> <span class="toggle-icon">▼</span></h2>
-        <div class="section-content">
+        <nav class="section-tabs" role="tablist">
+            <button class="section-tab-btn active" type="button" data-target="panel-news">News</button>
+            <button class="section-tab-btn" type="button" data-target="panel-cv">CV</button>
+            <button class="section-tab-btn" type="button" data-target="panel-research">Research</button>
+            <button class="section-tab-btn" type="button" data-target="panel-publications">Publications</button>
+        </nav>
+
+        <div id="panel-news" class="section-panel active">
+            <h2 id="news"><span>News</span> <span class="toggle-icon">▼</span></h2>
+            <div class="section-content">
             <ul class="summary-list">
                 <li><strong>Profile:</strong> Postdoctoral researcher in deformable object manipulation and shape control.</li>
                 <li><strong>Focus:</strong> Perception-to-manipulation pipelines, shape analysis, continuum mechanics, non-linear control, data-driven estimation and control.</li>
@@ -465,11 +735,16 @@
                 </div>
             </div>
 
-            <div style="margin-top: 10px;">
-                <p><strong>Invited Visiting Scholar, <a href="https://elliit.se/news-and-events/focus-period-lund-2025/">ELLIIT Focus Period</a>, Lund University, Sweden.</strong> Seminar on data-driven deformable object manipulation (Nov 2025).</p>
+            <div class="news-highlight">
+                <div class="news-text">
+                    <strong>Invited Visiting Scholar</strong>
+                    <div>ELLIIT Focus Period, Lund University, Sweden</div>
+                    <div class="news-meta">Seminar on data-driven deformable object manipulation · Nov 2025</div>
+                    <div style="margin-top: 6px;"><a href="https://elliit.se/news-and-events/focus-period-lund-2025/">Event page</a></div>
+                </div>
                 <div>
                     <img src="assets/images/elliit_focus_period.jpg" alt="ELLIIT Focus Period Lund 2025" class="award-photo" style="width: 150px;">
-                    <div class="award-caption">ELLIIT Focus Period - Lund University 2025</div>
+                    <div class="award-caption">ELLIIT Focus Period · Lund University 2025</div>
                 </div>
             </div>
 
@@ -492,10 +767,12 @@
                     <iframe src="https://www.youtube.com/embed/a2cZTjaVBmM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
             </div>
+            </div>
         </div>
 
-        <h2 id="cv"><span>CV</span> <span class="toggle-icon">▼</span></h2>
-        <div class="section-content">
+        <div id="panel-cv" class="section-panel">
+            <h2 id="cv"><span>CV</span> <span class="toggle-icon">▼</span></h2>
+            <div class="section-content">
             <div class="cv-section">
                 <h3>Education</h3>
                 <ul>
@@ -547,42 +824,59 @@
                     <li><strong>Research Group:</strong> Member of <a href="https://i3a.unizar.es/es/grupos-de-investigacion/ropert">ROPERT</a> (Robotics, Computer Vision and AI).</li>
                 </ul>
             </div>
+            </div>
         </div>
 
-        <h2 id="research"><span>Research</span> <span class="toggle-icon">▼</span></h2>
-        <div class="section-content">
-            <p style="margin-bottom: 12px;">I study how robots perceive, model, and control deformable objects. My work connects shape perception, mapping, and manipulation with a focus on robust, data-efficient methods and multi-robot coordination.</p>
-            <ul>
-                <li><strong>Main research line:</strong> Shape control.</li>
-                <li><strong>Core topics:</strong> Shape control, deformable object manipulation, robot perception, and visual servoing.</li>
-                <li><strong>Applications:</strong> Robotic manipulation, cooperative robotics, and manufacturing.</li>
-            </ul>
-            <h3 style="margin-top: 18px;">Demos</h3>
-            <p style="margin: 0 0 12px 0; color: #7f8c8d; font-size: 0.95em;">These interactive demos showcase my main research interests—shape perception, mapping, and control of deformable objects—in a dissemination-friendly way.</p>
-            
-            <div style="background: linear-gradient(135deg, #3498db15 0%, #3498db08 100%); border-left: 4px solid #3498db; padding: 15px; border-radius: 6px; margin: 18px 0;">
-                <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;">Shape Control of Deformable Objects</h4>
-                <p style="font-size: 0.95em; color: #7f8c8d; margin-bottom: 12px; margin: 0;">
-                    Related papers:
-                    <a href="https://doi.org/10.1109/LRA.2023.3292617">RA-L 2023</a> ·
-                    <a href="https://doi.org/10.1109/TMECH.2023.3325934">TMECH 2024</a>
-                </p>
+        <div id="panel-research" class="section-panel">
+            <h2 id="research"><span>Research</span> <span class="toggle-icon">▼</span></h2>
+            <div class="section-content">
+            <div class="research-intro">
+                <p>I study how robots perceive, model, and control deformable objects. My work connects shape perception, mapping, and manipulation with a focus on robust, data-efficient methods and multi-robot coordination.</p>
+                <ul style="margin: 0;">
+                    <li><strong>Main research line:</strong> Shape control.</li>
+                    <li><strong>Core topics:</strong> Shape control, deformable object manipulation, robot perception, and visual servoing.</li>
+                    <li><strong>Applications:</strong> Robotic manipulation, cooperative robotics, and manufacturing.</li>
+                </ul>
             </div>
-            <iframe src="robotics-demo.html" class="demo-iframe" title="Interactive 2-Robot Cable Manipulation Demo"></iframe>
-            
-            <div style="background: linear-gradient(135deg, #27ae6015 0%, #27ae6008 100%); border-left: 4px solid #27ae60; padding: 15px; border-radius: 6px; margin: 18px 0;">
-                <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;">Shape Analysis and Comparison</h4>
-                <p style="font-size: 0.95em; color: #7f8c8d; margin: 0;">
-                    Related papers:
-                    <a href="https://doi.org/10.1109/TASE.2025.3529180">T-ASE (surface mapping)</a> ·
-                    <a href="https://doi.org/10.1016/j.robot.2025.105134">RAS (elastic contour mapping)</a>
-                </p>
+            <div class="demo-intro">
+                <h3>Demos</h3>
+                <p>These interactive demos showcase my main research interests in shape perception, mapping, and control of deformable objects.</p>
             </div>
-            <iframe src="shape-comparison.html" class="demo-iframe" title="Shape Analysis and Comparison Tool"></iframe>
+
+            <div class="demo-tabs" role="tablist">
+                <button class="demo-tab-btn active" type="button" data-target="demo-shape-control">Shape Control of Deformable Objects</button>
+                <button class="demo-tab-btn" type="button" data-target="demo-shape-compare">Shape Analysis and Comparison</button>
+            </div>
+
+            <div id="demo-shape-control" class="demo-panel active">
+                <div class="demo-callout" style="background: linear-gradient(135deg, #3498db15 0%, #3498db08 100%); border-left: 4px solid #3498db; padding: 15px; border-radius: 6px; margin: 18px 0;">
+                    <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;">Shape Control of Deformable Objects</h4>
+                    <p style="font-size: 0.95em; color: #7f8c8d; margin-bottom: 12px; margin: 0;">
+                        Related papers:
+                        <a href="https://doi.org/10.1109/LRA.2023.3292617">RA-L 2023</a> ·
+                        <a href="https://doi.org/10.1109/TMECH.2023.3325934">TMECH 2024</a>
+                    </p>
+                </div>
+                <iframe src="robotics-demo.html" class="demo-iframe" title="Interactive 2-Robot Cable Manipulation Demo"></iframe>
+            </div>
+
+            <div id="demo-shape-compare" class="demo-panel">
+                <div class="demo-callout" style="background: linear-gradient(135deg, #27ae6015 0%, #27ae6008 100%); border-left: 4px solid #27ae60; padding: 15px; border-radius: 6px; margin: 18px 0;">
+                    <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;">Shape Analysis and Comparison</h4>
+                    <p style="font-size: 0.95em; color: #7f8c8d; margin: 0;">
+                        Related papers:
+                        <a href="https://doi.org/10.1109/TASE.2025.3529180">T-ASE (surface mapping)</a> ·
+                        <a href="https://doi.org/10.1016/j.robot.2025.105134">RAS (elastic contour mapping)</a>
+                    </p>
+                </div>
+                <iframe src="shape-comparison.html" class="demo-iframe" title="Shape Analysis and Comparison Tool"></iframe>
+            </div>
+            </div>
         </div>
 
-        <h2 id="publications"><span>Publications</span> <span class="toggle-icon">▼</span></h2>
-        <div class="section-content">
+        <div id="panel-publications" class="section-panel">
+            <h2 id="publications"><span>Publications</span> <span class="toggle-icon">▼</span></h2>
+            <div class="section-content">
             <h3>Journals</h3>
             <ol class="bib-list">
                 <li><span class="bib-label">[J1]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Multi-scale elastic contour mapping for deformable object shape control,” <em>Robotics and Autonomous Systems</em>, vol. 194, p. 105134, 2025. doi: <a href="https://doi.org/10.1016/j.robot.2025.105134">10.1016/j.robot.2025.105134</a>.</li>
@@ -602,18 +896,43 @@
                 <li><span class="bib-label">[C4]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Dynamic Occlusion Handling for Real Time Object Perception,” <em>Proc. Int. Conf. Robot. Autom. Eng.</em> (ICRAE), pp. 66–70, 2020. doi: <a href="https://doi.org/10.1109/ICRAE50850.2020.9310850">10.1109/ICRAE50850.2020.9310850</a>.</li>
             </ol>
 
+            </div>
         </div>
     </div>
 
     <script>
-        document.querySelectorAll('h2:not(.always-visible h2)').forEach(heading => {
-            heading.addEventListener('click', function() {
-                const content = this.nextElementSibling;
-                const icon = this.querySelector('.toggle-icon');
-                
-                if (content && content.classList.contains('section-content')) {
-                    content.classList.toggle('collapsed');
-                    icon.classList.toggle('collapsed');
+        const sectionTabButtons = document.querySelectorAll('.section-tab-btn');
+        const sectionPanels = document.querySelectorAll('.section-panel');
+
+        sectionTabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-target');
+
+                sectionTabButtons.forEach(btn => btn.classList.remove('active'));
+                sectionPanels.forEach(panel => panel.classList.remove('active'));
+
+                button.classList.add('active');
+                const targetPanel = document.getElementById(targetId);
+                if (targetPanel) {
+                    targetPanel.classList.add('active');
+                }
+            });
+        });
+
+        const demoTabButtons = document.querySelectorAll('.demo-tab-btn');
+        const demoPanels = document.querySelectorAll('.demo-panel');
+
+        demoTabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-target');
+
+                demoTabButtons.forEach(btn => btn.classList.remove('active'));
+                demoPanels.forEach(panel => panel.classList.remove('active'));
+
+                button.classList.add('active');
+                const targetPanel = document.getElementById(targetId);
+                if (targetPanel) {
+                    targetPanel.classList.add('active');
                 }
             });
         });
