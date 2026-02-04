@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shape Analysis and Comparison</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 950px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        canvas {
+            display: block;
+            background: #fafafa;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            cursor: crosshair;
+        }
+
+        #shapeCanvas {
+            width: 100% !important;
+            height: auto !important;
+            max-width: 100%;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .control-section {
+            margin-bottom: 15px;
+        }
+
+        .control-section h3 {
+            color: #34495e;
+            font-size: 0.95em;
+            margin-bottom: 8px;
+        }
+
+        .shape-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .shape-group {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #2c3e50;
+        }
+
+        .shape-group.shape2 {
+            border-left-color: #27ae60;
+        }
+
+        .shape-group strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+
+        .shape-group.shape2 strong {
+            color: #27ae60;
+        }
+
+        .shape-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        button {
+            padding: 8px 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: #27ae60;
+        }
+
+        button.secondary:hover {
+            background: #229954;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .metric-box {
+            background: #ecf0f1;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2c3e50;
+            font-family: 'Courier New', monospace;
+        }
+
+        .status {
+            background: #ecf0f1;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>📐 Shape Analysis and Comparison</h1>
+        
+        <div style="background: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <p style="margin: 0 0 12px 0; color: #2c3e50; font-size: 0.9em; line-height: 1.5;">
+                Visualize and compare shape representations using contour-based analysis. 
+                Generate different shapes and compute similarity metrics like Hausdorff distance and area overlap.
+                Each shape is represented as a normalized contour for comparison.
+            </p>
+            
+            <div class="shape-selector">
+                <div class="shape-group">
+                    <strong>Shape 1 (Blue)</strong>
+                    <div class="shape-buttons">
+                        <button onclick="generateShape1('circle')">Circle</button>
+                        <button onclick="generateShape1('square')">Square</button>
+                        <button onclick="generateShape1('star')">Star</button>
+                        <button onclick="generateShape1('ellipse')">Ellipse</button>
+                    </div>
+                </div>
+                
+                <div class="shape-group shape2">
+                    <strong>Shape 2 (Green)</strong>
+                    <div class="shape-buttons">
+                        <button class="secondary" onclick="generateShape2('circle')">Circle</button>
+                        <button class="secondary" onclick="generateShape2('square')">Square</button>
+                        <button class="secondary" onclick="generateShape2('star')">Star</button>
+                        <button class="secondary" onclick="generateShape2('ellipse')">Ellipse</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                <button onclick="randomizeShapes()" style="padding: 10px 20px; background: #e74c3c; font-size: 0.95em;">🎲 Random Shapes</button>
+            </div>
+        </div>
+        
+        <canvas id="shapeCanvas" width="800" height="400"></canvas>
+        
+        <div class="metrics">
+            <div class="metric-box">
+                <div class="metric-label">Hausdorff Distance</div>
+                <div class="metric-value" id="hausdorffMetric">0.00</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">Area Overlap</div>
+                <div class="metric-value" id="overlapMetric">0.0%</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">Similarity</div>
+                <div class="metric-value" id="similarityMetric">0.0%</div>
+            </div>
+        </div>
+
+        <div class="controls" style="margin-top: 15px;">
+            <div class="status">
+                Comparison metrics computed in real-time. Lower Hausdorff distance and higher area overlap indicate greater similarity.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('shapeCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let shape1 = { points: [], type: 'circle' };
+        let shape2 = { points: [], type: 'circle' };
+        
+        // Shape generation functions
+        function generateCircle(centerX, centerY, radius, numPoints = 40) {
+            const points = [];
+            for (let i = 0; i < numPoints; i++) {
+                const angle = (i / numPoints) * Math.PI * 2;
+                points.push([
+                    centerX + radius * Math.cos(angle),
+                    centerY + radius * Math.sin(angle)
+                ]);
+            }
+            return points;
+        }
+        
+        function generateSquare(centerX, centerY, size, numPoints = 40) {
+            const points = [];
+            const half = size / 2;
+            const pointsPerSide = numPoints / 4;
+            
+            // Top side
+            for (let i = 0; i < pointsPerSide; i++) {
+                points.push([centerX - half + (i / pointsPerSide) * size, centerY - half]);
+            }
+            // Right side
+            for (let i = 0; i < pointsPerSide; i++) {
+                points.push([centerX + half, centerY - half + (i / pointsPerSide) * size]);
+            }
+            // Bottom side
+            for (let i = 0; i < pointsPerSide; i++) {
+                points.push([centerX + half - (i / pointsPerSide) * size, centerY + half]);
+            }
+            // Left side
+            for (let i = 0; i < pointsPerSide; i++) {
+                points.push([centerX - half, centerY + half - (i / pointsPerSide) * size]);
+            }
+            
+            return points;
+        }
+        
+        function generateStar(centerX, centerY, outerRadius, numPoints = 5) {
+            const points = [];
+            const totalPoints = numPoints * 2;
+            for (let i = 0; i < totalPoints; i++) {
+                const angle = (i / totalPoints) * Math.PI * 2;
+                const radius = i % 2 === 0 ? outerRadius : outerRadius * 0.4;
+                points.push([
+                    centerX + radius * Math.cos(angle),
+                    centerY + radius * Math.sin(angle)
+                ]);
+            }
+            return points;
+        }
+        
+        function generateEllipse(centerX, centerY, radiusX, radiusY, numPoints = 40) {
+            const points = [];
+            for (let i = 0; i < numPoints; i++) {
+                const angle = (i / numPoints) * Math.PI * 2;
+                points.push([
+                    centerX + radiusX * Math.cos(angle),
+                    centerY + radiusY * Math.sin(angle)
+                ]);
+            }
+            return points;
+        }
+        
+        function generateShape1(type) {
+            shape1.type = type;
+            switch (type) {
+                case 'circle':
+                    shape1.points = generateCircle(200, 200, 80);
+                    break;
+                case 'square':
+                    shape1.points = generateSquare(200, 200, 140);
+                    break;
+                case 'star':
+                    shape1.points = generateStar(200, 200, 80, 5);
+                    break;
+                case 'ellipse':
+                    shape1.points = generateEllipse(200, 200, 100, 60);
+                    break;
+            }
+            render();
+        }
+        
+        function generateShape2(type) {
+            shape2.type = type;
+            switch (type) {
+                case 'circle':
+                    shape2.points = generateCircle(600, 200, 80);
+                    break;
+                case 'square':
+                    shape2.points = generateSquare(600, 200, 140);
+                    break;
+                case 'star':
+                    shape2.points = generateStar(600, 200, 80, 5);
+                    break;
+                case 'ellipse':
+                    shape2.points = generateEllipse(600, 200, 100, 60);
+                    break;
+            }
+            render();
+        }
+        
+        function randomizeShapes() {
+            const types = ['circle', 'square', 'star', 'ellipse'];
+            generateShape1(types[Math.floor(Math.random() * types.length)]);
+            generateShape2(types[Math.floor(Math.random() * types.length)]);
+        }
+        
+        // Distance calculations
+        function pointToPointDistance(p1, p2) {
+            const dx = p1[0] - p2[0];
+            const dy = p1[1] - p2[1];
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+        
+        function hausdorffDistance(points1, points2) {
+            let maxMinDist = 0;
+            
+            for (let p1 of points1) {
+                let minDist = Infinity;
+                for (let p2 of points2) {
+                    const dist = pointToPointDistance(p1, p2);
+                    minDist = Math.min(minDist, dist);
+                }
+                maxMinDist = Math.max(maxMinDist, minDist);
+            }
+            
+            return maxMinDist;
+        }
+        
+        function computeMetrics() {
+            if (shape1.points.length === 0 || shape2.points.length === 0) return;
+            
+            const hausdorff = hausdorffDistance(shape1.points, shape2.points);
+            const maxDist = 300; // Approximate max possible distance
+            const hausdorffNorm = Math.min(hausdorff / maxDist, 1.0);
+            const similarity = (1 - hausdorffNorm) * 100;
+            
+            // Simple area overlap estimate based on bounding box intersection
+            const bb1 = getBoundingBox(shape1.points);
+            const bb2 = getBoundingBox(shape2.points);
+            const overlap = computeBBOverlap(bb1, bb2) * 100;
+            
+            document.getElementById('hausdorffMetric').textContent = hausdorff.toFixed(2);
+            document.getElementById('overlapMetric').textContent = overlap.toFixed(1) + '%';
+            document.getElementById('similarityMetric').textContent = similarity.toFixed(1) + '%';
+        }
+        
+        function getBoundingBox(points) {
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            for (let p of points) {
+                minX = Math.min(minX, p[0]);
+                maxX = Math.max(maxX, p[0]);
+                minY = Math.min(minY, p[1]);
+                maxY = Math.max(maxY, p[1]);
+            }
+            return { minX, maxX, minY, maxY };
+        }
+        
+        function computeBBOverlap(bb1, bb2) {
+            const overlapX = Math.max(0, Math.min(bb1.maxX, bb2.maxX) - Math.max(bb1.minX, bb2.minX));
+            const overlapY = Math.max(0, Math.min(bb1.maxY, bb2.maxY) - Math.max(bb1.minY, bb2.minY));
+            const intersectionArea = overlapX * overlapY;
+            const area1 = (bb1.maxX - bb1.minX) * (bb1.maxY - bb1.minY);
+            const area2 = (bb2.maxX - bb2.minX) * (bb2.maxY - bb2.minY);
+            const unionArea = area1 + area2 - intersectionArea;
+            return unionArea > 0 ? intersectionArea / unionArea : 0;
+        }
+        
+        function render() {
+            // Clear canvas
+            ctx.fillStyle = '#fafafa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid
+            ctx.strokeStyle = '#ecf0f1';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 50) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // Draw shape 1
+            if (shape1.points.length > 0) {
+                ctx.fillStyle = '#3498db';
+                ctx.beginPath();
+                ctx.moveTo(shape1.points[0][0], shape1.points[0][1]);
+                for (let p of shape1.points.slice(1)) {
+                    ctx.lineTo(p[0], p[1]);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#2980b9';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Label
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText('Shape 1', shape1.points[0][0] - 20, shape1.points[0][1] - 15);
+            }
+            
+            // Draw shape 2
+            if (shape2.points.length > 0) {
+                ctx.fillStyle = '#27ae6055';
+                ctx.beginPath();
+                ctx.moveTo(shape2.points[0][0], shape2.points[0][1]);
+                for (let p of shape2.points.slice(1)) {
+                    ctx.lineTo(p[0], p[1]);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#27ae60';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Label
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText('Shape 2', shape2.points[0][0] - 20, shape2.points[0][1] - 15);
+            }
+            
+            computeMetrics();
+        }
+        
+        // Initialize
+        generateShape1('circle');
+        generateShape2('square');
+    </script>
+</body>
+</html>
