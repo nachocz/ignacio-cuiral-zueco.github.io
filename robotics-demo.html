@@ -301,13 +301,13 @@
         
         // Left robot
         let robotPos = [450, 200];
-        let robotBase = [250, 250];  // Robot base position
+        let robotBase = [150, 250];  // Robot base position (adjusted for 600px canvas)
         let theta1 = 0;  // First link angle
         let theta2 = 0;  // Second link angle
         
         // Right robot
         let robot2Pos = [450, 200];
-        let robot2Base = [650, 250];  // Right robot base position
+        let robot2Base = [450, 250];  // Right robot base position (adjusted for 600px canvas)
         let theta3 = Math.PI;  // First link angle (pointing left)
         let theta4 = 0;  // Second link angle
         
@@ -317,7 +317,7 @@
         let theta3_ghost = Math.PI;
         let theta4_ghost = 0;
         
-        let targetRobotPos = [700, 150];  // Virtual target robot position
+        let targetRobotPos = [400, 150];  // Virtual target robot position
         let keys = {};
         let rmsError = 0;
 
