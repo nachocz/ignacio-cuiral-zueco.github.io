@@ -565,6 +565,87 @@
             display: block;
         }
 
+        /* Dissemination Accordion Items */
+        .dissemination-item {
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #dfe6e9;
+            background: #fafbfc;
+            transition: all 0.3s ease;
+        }
+
+        .dissemination-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dissemination-header {
+            width: 100%;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #f8f9fa 100%);
+            border: none;
+            border-bottom: 1px solid #e0e6ed;
+            cursor: pointer;
+            font-size: 1.05em;
+            font-weight: 600;
+            text-align: left;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dissemination-header:hover {
+            background: linear-gradient(135deg, #eff2f7 0%, #f3f5fa 100%);
+        }
+
+        .dissemination-header h3 {
+            font-size: 1.1em;
+            margin: 0 !important;
+            font-weight: 600;
+        }
+
+        .dissemination-toggle {
+            display: inline-block;
+            transition: transform 0.3s ease;
+            font-size: 0.9em;
+            min-width: 16px;
+        }
+
+        .dissemination-item.expanded .dissemination-toggle {
+            transform: rotate(90deg);
+        }
+
+        .dissemination-content {
+            display: none;
+            padding: 0 20px 20px 20px;
+            background: white;
+        }
+
+        .dissemination-item.expanded .dissemination-content {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .demo-panel {
+            display: none;
+        }
+
+        .demo-panel.active {
+            display: block;
+        }
+
         .section-panel {
             display: none;
         }
@@ -735,6 +816,33 @@
         }
 
         body.dark-theme .demo-intro p {
+            color: #a7b3c2;
+        }
+
+        body.dark-theme .dissemination-item {
+            background: #1f2633;
+            border-color: #2a3140;
+        }
+
+        body.dark-theme .dissemination-header {
+            background: linear-gradient(135deg, #1f2633 0%, #1a2128 100%);
+            border-bottom-color: #2a3140;
+            color: #e6e6e6;
+        }
+
+        body.dark-theme .dissemination-header:hover {
+            background: linear-gradient(135deg, #252d38 0%, #202835 100%);
+        }
+
+        body.dark-theme .dissemination-header h3 {
+            color: #e6e6e6 !important;
+        }
+
+        body.dark-theme .dissemination-content {
+            background: #151922;
+        }
+
+        body.dark-theme .dissemination-content p {
             color: #a7b3c2;
         }
 
@@ -995,62 +1103,71 @@
         <div id="panel-dissemination" class="section-panel">
             <h2 id="dissemination"><span data-i18n="sectionDissemination">Dissemination</span> <span class="toggle-icon">▼</span></h2>
             <div class="section-content">
-            <div class="demo-intro">
-                <h3 data-i18n="interactiveDerosTitle">Interactive Demos</h3>
-                <p data-i18n="interactiveDemosDesc">These interactive demos showcase my main research interests in shape perception, mapping, and control of deformable objects.</p>
-            </div>
+            
+            <!-- Interactive Demos Collapsible Section -->
+            <div class="dissemination-item expanded">
+                <button class="dissemination-header" onclick="toggleDisseminationItem(this)">
+                    <span class="dissemination-toggle">▶</span>
+                    <h3 data-i18n="interactiveDerosTitle" style="display: inline; margin: 0; color: #2c3e50;">Interactive Demos</h3>
+                </button>
+                <div class="dissemination-content">
+                    <p data-i18n="interactiveDemosDesc" style="margin-top: 15px; margin-bottom: 20px; color: #555;">These interactive demos showcase my main research interests in shape perception, mapping, and control of deformable objects.</p>
 
-            <div class="demo-tabs" role="tablist">
-                <button class="demo-tab-btn active" type="button" data-target="demo-shape-control" data-i18n="demoShapeControl">Shape Control of Deformable Objects</button>
-                <button class="demo-tab-btn" type="button" data-target="demo-shape-compare" data-i18n="demoShapeComparison">Shape Analysis and Comparison</button>
-            </div>
-
-            <div id="demo-shape-control" class="demo-panel active">
-                <div class="demo-callout" style="background: linear-gradient(135deg, #3498db15 0%, #3498db08 100%); border-left: 4px solid #3498db; padding: 15px; border-radius: 6px; margin: 18px 0;">
-                    <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;" data-i18n="demoShapeTitle">Shape Control of Deformable Objects</h4>
-                    <p style="font-size: 0.95em; color: #7f8c8d; margin-bottom: 12px; margin: 0;">
-                        <span data-i18n="demoShapeRelated">Related papers:</span>
-                        <a href="https://doi.org/10.1109/LRA.2023.3292617">RA-L 2023</a> ·
-                        <a href="https://doi.org/10.1109/TMECH.2023.3325934">TMECH 2024</a>
-                    </p>
-                </div>
-                <iframe src="robotics-demo.html" class="demo-iframe" title="Interactive 2-Robot Cable Manipulation Demo" id="robotics-iframe"></iframe>
-            </div>
-
-            <div id="demo-shape-compare" class="demo-panel">
-                <div class="demo-callout" style="background: linear-gradient(135deg, #27ae6015 0%, #27ae6008 100%); border-left: 4px solid #27ae60; padding: 15px; border-radius: 6px; margin: 18px 0;">
-                    <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;" data-i18n="demoAnalysisTitle">Shape Analysis and Comparison</h4>
-                    <p style="font-size: 0.95em; color: #7f8c8d; margin: 0;">
-                        <span data-i18n="demoAnalysisRelated">Related papers:</span>
-                        <a href="https://doi.org/10.1109/TASE.2025.3529180">T-ASE (surface mapping)</a> ·
-                        <a href="https://doi.org/10.1016/j.robot.2025.105134">RAS (elastic contour mapping)</a>
-                    </p>
-                </div>
-                <iframe src="shape-comparison.html" class="demo-iframe" title="Shape Analysis and Comparison Tool" id="shape-iframe"></iframe>
-            </div>
-            </div>
-
-            <!-- Separator -->
-            <div style="margin: 50px 0 40px 0; position: relative; height: 1px; background: linear-gradient(90deg, transparent 0%, #34495e 20%, #34495e 80%, transparent 100%);"></div>
-
-            <!-- Educational Robotics Section -->
-            <div class="loco-corp-section" style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #27ae6012 0%, #27ae6008 100%); border-left: 5px solid #27ae60; border-radius: 8px;">
-                <h3 data-i18n="locoCorpTitle" style="color: #27ae60; font-size: 1.35em; margin: 0 0 20px 0; font-weight: 600;">Educational Robotics: LoCo CORP</h3>
-                
-                <div class="loco-content-card" style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ecf0f1;">
-                    <p style="margin: 0 0 15px 0; line-height: 1.7;"><span data-i18n="locoCorpIntro"></span> <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" style="color: #3498db; text-decoration: none; border-bottom: 1px solid #3498db;" data-i18n="locoCorpKickstarter">Learn more</a></p>
-                    
-                    <div class="loco-image-box" style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 3px solid #27ae60;">
-                        <p class="loco-image-label" style="margin: 0 0 10px 0; font-weight: 500; color: #2c3e50; font-size: 0.95em;">Programming in a learning-friendly way:</p>
-                        <img src="assets/images/microbit.gif" alt="Noctis programming with micro:bit" style="max-width: 100%; height: auto; border-radius: 4px;">
+                    <div class="demo-tabs" role="tablist">
+                        <button class="demo-tab-btn active" type="button" data-target="demo-shape-control" data-i18n="demoShapeControl">Shape Control of Deformable Objects</button>
+                        <button class="demo-tab-btn" type="button" data-target="demo-shape-compare" data-i18n="demoShapeComparison">Shape Analysis and Comparison</button>
                     </div>
 
-                    <p style="margin: 20px 0 15px 0; line-height: 1.7;"><span data-i18n="locoVerseIntro"></span></p>
-                    
-                    <div class="video-container" style="margin: 20px 0;">
-                        <iframe id="locoVerseVideo" width="100%" height="315" src="https://www.youtube.com/embed/gARHGLxpAdU" title="LoCoVerse - Educational Robotics Narrative" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div id="demo-shape-control" class="demo-panel active">
+                        <div class="demo-callout" style="background: linear-gradient(135deg, #3498db15 0%, #3498db08 100%); border-left: 4px solid #3498db; padding: 15px; border-radius: 6px; margin: 18px 0;">
+                            <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;" data-i18n="demoShapeTitle">Shape Control of Deformable Objects</h4>
+                            <p style="font-size: 0.95em; color: #7f8c8d; margin-bottom: 12px; margin: 0;">
+                                <span data-i18n="demoShapeRelated">Related papers:</span>
+                                <a href="https://doi.org/10.1109/LRA.2023.3292617">RA-L 2023</a> ·
+                                <a href="https://doi.org/10.1109/TMECH.2023.3325934">TMECH 2024</a>
+                            </p>
+                        </div>
+                        <iframe src="robotics-demo.html" class="demo-iframe" title="Interactive 2-Robot Cable Manipulation Demo" id="robotics-iframe"></iframe>
+                    </div>
+
+                    <div id="demo-shape-compare" class="demo-panel">
+                        <div class="demo-callout" style="background: linear-gradient(135deg, #27ae6015 0%, #27ae6008 100%); border-left: 4px solid #27ae60; padding: 15px; border-radius: 6px; margin: 18px 0;">
+                            <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;" data-i18n="demoAnalysisTitle">Shape Analysis and Comparison</h4>
+                            <p style="font-size: 0.95em; color: #7f8c8d; margin: 0;">
+                                <span data-i18n="demoAnalysisRelated">Related papers:</span>
+                                <a href="https://doi.org/10.1109/TASE.2025.3529180">T-ASE (surface mapping)</a> ·
+                                <a href="https://doi.org/10.1016/j.robot.2025.105134">RAS (elastic contour mapping)</a>
+                            </p>
+                        </div>
+                        <iframe src="shape-comparison.html" class="demo-iframe" title="Shape Analysis and Comparison Tool" id="shape-iframe"></iframe>
                     </div>
                 </div>
+            </div>
+
+            <!-- Educational Robotics Collapsible Section -->
+            <div class="dissemination-item expanded">
+                <button class="dissemination-header" onclick="toggleDisseminationItem(this)">
+                    <span class="dissemination-toggle">▶</span>
+                    <h3 data-i18n="locoCorpTitle" style="display: inline; margin: 0; color: #27ae60;">Educational Robotics: LoCo CORP</h3>
+                </button>
+                <div class="dissemination-content">
+                    <div class="loco-content-card" style="background: white; padding: 20px; border-radius: 8px; margin-top: 15px; margin-bottom: 20px; border: 1px solid #ecf0f1;">
+                        <p style="margin: 0 0 15px 0; line-height: 1.7;"><span data-i18n="locoCorpIntro"></span> <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" style="color: #3498db; text-decoration: none; border-bottom: 1px solid #3498db;" data-i18n="locoCorpKickstarter">Learn more</a></p>
+                        
+                        <div class="loco-image-box" style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 3px solid #27ae60;">
+                            <p class="loco-image-label" style="margin: 0 0 10px 0; font-weight: 500; color: #2c3e50; font-size: 0.95em;">Programming in a learning-friendly way:</p>
+                            <img src="assets/images/microbit.gif" alt="Noctis programming with micro:bit" style="max-width: 100%; height: auto; border-radius: 4px;">
+                        </div>
+
+                        <p style="margin: 20px 0 15px 0; line-height: 1.7;"><span data-i18n="locoVerseIntro"></span></p>
+                        
+                        <div class="video-container" style="margin: 20px 0;">
+                            <iframe id="locoVerseVideo" width="100%" height="315" src="https://www.youtube.com/embed/gARHGLxpAdU" title="LoCoVerse - Educational Robotics Narrative" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             </div>
         </div>
 
@@ -1434,6 +1551,12 @@
                 }
             });
         });
+
+        // Dissemination Item Toggle
+        function toggleDisseminationItem(button) {
+            const item = button.closest('.dissemination-item');
+            item.classList.toggle('expanded');
+        }
 
     </script>
 </body>
