@@ -127,7 +127,11 @@ const translations = {
         locoCorpNoctisLink: 'Noctis and Aurel',
         locoCorpIntroSuffix: ' educational robotics platforms as part of this project, these were not the end goal, but rather one of the many tools we created (workshops, courses, etc.) to update technology education in schools and high schools. In our workshops, we left behind the idea of the robot as a simple toy to immerse students in more technical content. We guided them through electronics, programming, and hardware design, encouraging them to stop being passive consumers and understand the technological reality around them.',
         locoVerseIntro: 'Programming with a pedagogical approach: My role focused on creating the LoCoVerso, a fictional ecosystem where these robotic platforms existed as newly discovered “species” on a remote planet. We used this narrative to combine technical lessons with an engaging story in which students could feel like real researchers and scientific discoverers, as well as give free rein to their creativity and artistic abilities with the design and customisation of new species (robots).',
-
+        // PhD Thesis Triptic
+        thesisTripticTitle: 'My PhD Thesis in a Nutshell',
+        thesisTripticIntro: 'For my PhD thesis presentation, I created a flyer that summarizes the main contributions and findings of my research. Feel free to download:',
+        downloadTripticEN: 'Download Flyer (English)',
+        downloadTripticES: 'Download Flyer (Spanish)',
         // Publications
         sectionPublications: 'Publications',
         journalsTitle: 'Journals',
@@ -261,6 +265,12 @@ const translations = {
         locoCorpNoctisLink: 'Noctis y Aurel',
         locoCorpIntroSuffix: ', estas no eran el fin, sino uno de los múltiples medios que creamos (talleres, cursos, etc.) para actualizar la educación en tecnología en colegios e institutos. En nuestros talleres, dejamos atrás la idea del robot como simple juguete para sumergir al alumnado en contenidos más técnicos. Los guiamos a través de la electrónica, la programación y el diseño de hardware, animándolos a dejar de ser consumidores pasivos y a comprender la realidad tecnológica que les rodea.',
         locoVerseIntro: 'Mi papel se centró en crear el LoCoVerso, un ecosistema ficticio donde estas plataformas robóticas existían como "especies" recién descubiertas en un planeta remoto. Utilizamos esta narrativa para combinar las lecciones técnicas con una historia atractiva en la que el alumnado podía sentirse como auténticos investigadores y descubridores científicos, así como dar rienda suelta a su creatividad y a sus capacidades artísticas con el diseño y la personalización de nuevas especies (robots).',
+
+        // PhD Thesis Triptic
+        thesisTripticTitle: 'Mi Tesis en Pocas Palabras',
+        thesisTripticIntro: 'Para la presentación de mi tesis doctoral, creé un tríptico que resume las principales contribuciones y hallazgos de mi investigación. Descárgalo:',
+        downloadTripticEN: 'Descargar Tríptico (Inglés)',
+        downloadTripticES: 'Descargar Tríptico (Español)',
 
         // Publications
         sectionPublications: 'Publicaciones',

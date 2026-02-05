@@ -761,6 +761,34 @@ body.dark-theme .loco-content-card {
     border-color: #2a3140 !important;
 }
 
+body.dark-theme .triptic-content-card {
+    background: #1a2128 !important;
+    border-color: #2a3140 !important;
+    color: #e6e6e6 !important;
+}
+
+body.dark-theme .triptic-content-card p {
+    color: #b8d4e6 !important;
+}
+
+.triptic-download-btn {
+    background: #3498db !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+body.dark-theme .triptic-download-btn {
+    background: #2c6fb3 !important;
+    color: #ffffff !important;
+}
+
+body.dark-theme .triptic-download-btn:hover {
+    background: #3b82c4 !important;
+}
+
 body.dark-theme .loco-image-box {
     background: #0f1115 !important;
     border-left-color: #27ae60 !important;
@@ -858,6 +886,14 @@ body.dark-theme .dissemination-header:hover {
 
 body.dark-theme .dissemination-header h3 {
     color: #e6e6e6 !important;
+}
+
+.thesis-triptic-title {
+    color: #d35400;
+}
+
+body.dark-theme .thesis-triptic-title {
+    color: #f39c12 !important;
 }
 
 body.dark-theme .dissemination-content {
