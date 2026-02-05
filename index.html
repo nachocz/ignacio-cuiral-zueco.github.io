@@ -276,19 +276,19 @@
         }
 
         .award a {
-            display: inline-block;
-            padding: 8px 14px;
-            background: #3498db;
-            color: white;
-            border-radius: 4px;
-            margin-top: 8px;
-            border-bottom: none;
-            font-weight: 500;
+            display: inline;
+            padding: 0;
+            background: none;
+            color: #3498db;
+            border-radius: 0;
+            margin-top: 0;
+            border-bottom: 1px solid #3498db;
+            font-weight: 600;
         }
 
         .award a:hover {
-            background: #2980b9;
-            border-bottom: none;
+            color: #2980b9;
+            border-bottom-color: #2980b9;
         }
 
         .header-btn {
@@ -575,6 +575,12 @@
             transition: all 0.3s ease;
         }
 
+        .dissemination-intro {
+            margin: 0 0 18px 0;
+            color: #555;
+            font-size: 0.98em;
+        }
+
         .dissemination-item:hover {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
@@ -756,8 +762,9 @@
         }
 
         body.dark-theme .award a {
-            background: #2c6fb3 !important;
-            color: #ffffff !important;
+            background: none !important;
+            color: #7cc4ff !important;
+            border-bottom-color: #7cc4ff !important;
         }
 
         body.dark-theme .header-btn {
@@ -843,6 +850,10 @@
         }
 
         body.dark-theme .dissemination-content p {
+            color: #a7b3c2;
+        }
+
+        body.dark-theme .dissemination-intro {
             color: #a7b3c2;
         }
 
@@ -973,7 +984,6 @@
 
             <h2 id="news"><span data-i18n="sectionNews">News</span> <span class="toggle-icon">▼</span></h2>
             <div class="section-content">
-
             <div class="award" style="margin-top: 10px;">
                 <strong data-i18n="award1Title">🏆 Best Robotics PhD Thesis Award (2025)</strong>, <span data-i18n="award1Org">Spanish Committee of Automatic Control (CEA)</span>.
                 <div>
@@ -1060,7 +1070,7 @@
             <div class="cv-section">
                 <h3 data-i18n="researchStaysTitle">Research Stays & Invited Talks</h3>
                 <ul>
-                    <li><strong data-i18n="nov2025">Nov 2025:</strong> <span data-i18n="nov2025Desc">Invited Visiting Scholar,</span> <a href="https://elliit.se/news-and-events/focus-period-lund-2025/">ELLIIT Focus Period</a>, <span data-i18n="lundDesc">Lund University, Sweden. Seminar on data-driven deformable object manipulation.</span></li>
+                    <li><strong data-i18n="nov2025">Nov 2025:</strong> <span data-i18n="nov2025Desc">Invited Visiting Scholar,</span> <a href="https://elliit.se/news-and-events/focus-period-lund-2025/">ELLIIT Focus Period</a>, <span data-i18n="lundDescPrefix">Lund University, Sweden.</span> <a href="https://elliit.se/visiting-scholar-seminar-series-lund-2025/" data-i18n="lundDescSeminar">Seminar</a> <span data-i18n="lundDescSuffix">on data-driven deformable object manipulation.</span></li>
                     <li><strong data-i18n="mar2025">Mar 2025:</strong> <a href="https://erf2025.eu/">European Robotics Forum (ERF)</a>, <span data-i18n="erfDesc">Stuttgart — PhD Award finalist presentation.</span></li>
                     <li><strong data-i18n="sep2022">Sep–Nov 2022:</strong> <span data-i18n="sep2022Desc">Research stay,</span> <a href="https://www.control.lth.se/">Lund University (LTH)</a>, <span data-i18n="lundLocation">Sweden.</span></li>
                     <li><strong data-i18n="may2021">May–Aug 2021:</strong> <span data-i18n="may2021Desc">Research stay,</span> <a href="https://www.isr.uc.pt/">University of Coimbra</a>, <span data-i18n="coimbra">Portugal.</span></li>
@@ -1103,9 +1113,10 @@
         <div id="panel-dissemination" class="section-panel">
             <h2 id="dissemination"><span data-i18n="sectionDissemination">Dissemination</span> <span class="toggle-icon">▼</span></h2>
             <div class="section-content">
+            <p class="dissemination-intro" data-i18n="disseminationIntro">A quick overview of my outreach work, including interactive research demos and educational robotics initiatives.</p>
             
             <!-- Interactive Demos Collapsible Section -->
-            <div class="dissemination-item expanded">
+            <div class="dissemination-item">
                 <button class="dissemination-header" onclick="toggleDisseminationItem(this)">
                     <span class="dissemination-toggle">▶</span>
                     <h3 data-i18n="interactiveDerosTitle" style="display: inline; margin: 0; color: #2c3e50;">Interactive Demos</h3>
@@ -1145,7 +1156,7 @@
             </div>
 
             <!-- Educational Robotics Collapsible Section -->
-            <div class="dissemination-item expanded">
+            <div class="dissemination-item">
                 <button class="dissemination-header" onclick="toggleDisseminationItem(this)">
                     <span class="dissemination-toggle">▶</span>
                     <h3 data-i18n="locoCorpTitle" style="display: inline; margin: 0; color: #27ae60;">Educational Robotics: LoCo CORP</h3>
@@ -1267,15 +1278,17 @@
                 commandiaDesc: 'Researcher N4, European Project COMMANDIA, University of Zaragoza.',
                 awardsTitle: 'Awards & Honors',
                 researchStaysTitle: 'Research Stays & Invited Talks',
-                nov2025: 'Nov 2025:',
+                nov2025: 'nov 2025:',
                 nov2025Desc: 'Invited Visiting Scholar,',
-                lundDesc: 'Lund University, Sweden. Seminar on data-driven deformable object manipulation.',
-                mar2025: 'Mar 2025:',
-                erfDesc: 'Stuttgart — PhD Award finalist presentation.',
-                sep2022: 'Sep–Nov 2022:',
+                lundDescPrefix: 'Lund University, Sweden.',
+                lundDescSeminar: 'Seminar',
+                lundDescSuffix: 'on data-driven deformable object manipulation.',
+                mar2025: 'mar 2025:',
+                erfDesc: 'Stuttgart: PhD Award finalist presentation.',
+                sep2022: 'sep–nov 2022:',
                 sep2022Desc: 'Research stay,',
                 lundLocation: 'Sweden.',
-                may2021: 'May–Aug 2021:',
+                may2021: 'may–ago 2021:',
                 may2021Desc: 'Research stay,',
                 coimbra: 'Portugal.',
                 projectsTitle: 'Projects, Service & Outreach',
@@ -1310,6 +1323,7 @@
                 // Dissemination
                 interactiveDerosTitle: 'Interactive Demos',
                 interactiveDemosDesc: 'These interactive demos showcase my main research interests in shape perception, mapping, and control of deformable objects.',
+                disseminationIntro: 'A quick overview of my outreach work, including interactive research demos and educational robotics initiatives.',
                 demoShapeControl: 'Shape Control of Deformable Objects',
                 demoShapeComparison: 'Shape Analysis and Comparison',
                 demoShapeTitle: 'Shape Control of Deformable Objects',
@@ -1355,19 +1369,19 @@
                 award1Title: '🏆 Premio a la Mejor Tesis Doctoral en Robótica (2025)',
                 award1Org: 'Comité Español de Control Automático (CEA)',
                 award1Caption: 'Premio CEA a la Mejor Tesis Doctoral en Robótica',
-                award2Title: '🏆 Premio a la Mejor Tesis Doctoral en Robótica Ibérica (2025)',
+                award2Title: '🏆 Premio a la Mejor Tesis Doctoral en Robótica de la península Ibérica (2025)',
                 award2Desc: 'concedido por la Sociedad Española de Robótica (SEIDROB) y la Sociedad Portuguesa de Robótica (SPR)',
                 award3Title: '🏆',
                 award3Link: 'Finalista del Premio PhD Georges Giralt',
-                award3Desc: 'finalista del reconocimiento europeo más prestigioso en robótica, seleccionado entre más de 50 candidatos y presentado en el Foro Europeo de Robótica 2025',
+                award3Desc: 'finalista del reconocimiento europeo más prestigioso en excelencia doctoral en robótica, seleccionado entre más de 50 candidaturas y presentado en el Foro Europeo de Robótica 2025',
                 award1Short: 'Premio a la Mejor Tesis Doctoral en Robótica (2025), Comité Español de Control Automático (CEA).',
-                award2Short: 'Premio a la Mejor Tesis Doctoral en Robótica Ibérica (2025), concedido por la Sociedad Española de Robótica (SEIDROB) y la Sociedad Portuguesa de Robótica (SPR).',
-                award3Short: 'Finalista del Premio PhD Georges Giralt: finalista del reconocimiento más prestigioso de Europa en excelencia doctoral en robótica, seleccionado entre más de 50 candidatos y presentado en el Foro Europeo de Robótica 2025.',
+                award2Short: 'Premio a la Mejor Tesis Doctoral en Robótica de la península Ibérica (2025), concedido por la Sociedad Española de Robótica (SEIDROB) y la Sociedad Portuguesa de Robótica (SPR).',
+                award3Short: 'Finalista del Premio PhD Georges Giralt: finalista del reconocimiento europeo más prestigioso en excelencia doctoral en robótica, seleccionado entre más de 50 candidaturas y presentado en el Foro Europeo de Robótica 2025.',
 
                 // Visiting Scholar
-                visitingScholarTitle: 'Investigador Visitante Invitado',
-                visitingScholarInst: 'Período de Enfoque ELLIIT, Universidad de Lund, Suecia',
-                visitingScholarDate: 'Seminario sobre manipulación de objetos deformables basada en datos · Nov 2025',
+                visitingScholarTitle: 'Investigador visitante invitado',
+                visitingScholarInst: 'Período de Enfoque ELLIIT, Universidad de Lund (Suecia)',
+                visitingScholarDate: 'Seminario sobre manipulación de objetos deformables basada en datos · nov 2025',
                 visitingScholarCaption: 'Período de Enfoque ELLIIT · Universidad de Lund 2025',
                 eventPage: 'Página del evento',
                 highlightedPublications: 'Publicaciones Destacadas',
@@ -1378,51 +1392,53 @@
                 phd: 'Doctorado (2019–2024):',
                 phdThesis: 'Tesis:',
                 msc: 'Máster (2017–2019):',
-                mscThesis: 'Tesis:',
-                bsc: 'Licenciatura (2013–2017):',
-                bscThesis: 'Tesis:',
+                mscThesis: 'TFM:',
+                bsc: 'Grado (2013–2017):',
+                bscThesis: 'TFG:',
                 academicExperienceTitle: 'Experiencia Académica',
                 postdoc: '2025–Presente:',
-                postdocDesc: 'Investigador Postdoctoral, CA-INP',
+                postdocDesc: 'Investigador postdoctoral, CA-INP',
                 adjunct: '2024–2025:',
                 adjunctDesc: 'Profesor Asociado, Ingeniería de Sistemas y Automática, Universidad de Zaragoza.',
                 deforms: '2024–2025:',
-                deformsDesc: 'Investigador N3, Proyecto Europeo DeFORMS, Universidad de Zaragoza.',
+                deformsDesc: 'Investigador N3, Proyecto europeo DeFORMS, Universidad de Zaragoza.',
                 froscat: '2020–2024:',
                 froscatDesc: 'Investigador N3, Proyecto FROSCAT, Universidad de Zaragoza.',
                 commandia: '2019–2020:',
-                commandiaDesc: 'Investigador N4, Proyecto Europeo COMMANDIA, Universidad de Zaragoza.',
+                commandiaDesc: 'Investigador N4, Proyecto europeo COMMANDIA, Universidad de Zaragoza.',
                 awardsTitle: 'Premios y Honores',
                 researchStaysTitle: 'Estancias de Investigación y Charlas Invitadas',
                 nov2025: 'Nov 2025:',
-                nov2025Desc: 'Investigador Visitante Invitado,',
-                lundDesc: 'Universidad de Lund, Suecia. Seminario sobre manipulación de objetos deformables basada en datos.',
+                nov2025Desc: 'Investigador visitante invitado,',
+                lundDescPrefix: 'Universidad de Lund, Suecia.',
+                lundDescSeminar: 'Seminario',
+                lundDescSuffix: 'sobre manipulación de objetos deformables basada en datos.',
                 mar2025: 'Mar 2025:',
-                erfDesc: 'Stuttgart — Presentación finalista del Premio Doctoral.',
+                erfDesc: 'Stuttgart: presentación como finalista del premio doctoral.',
                 sep2022: 'Sep–Nov 2022:',
                 sep2022Desc: 'Estancia de investigación,',
                 lundLocation: 'Suecia.',
                 may2021: 'May–Aug 2021:',
                 may2021Desc: 'Estancia de investigación,',
                 coimbra: 'Portugal.',
-                projectsTitle: 'Proyectos, Servicio y Divulgación',
+                projectsTitle: 'Proyectos, servicio y divulgación',
                 commandiaProj: 'Proyecto COMMANDIA:',
-                commandiaProjDesc: 'Manipulación Colaborativa Robótica Móvil de Objetos Deformables en Aplicaciones Industriales — SOE2/P1/F0638 (Programa Interreg Sudoe, ERDF).',
+                commandiaProjDesc: 'Manipulación colaborativa robótica móvil de objetos deformables en aplicaciones industriales — SOE2/P1/F0638 (Programa Interreg Sudoe, ERDF).',
                 remainProj: 'Proyecto REMAIN:',
-                remainProjDesc: 'Remanufactura Robótica de productos industriales Deformables — S1/1.1/E0111 (Programa Interreg Sudoe, ERDF).',
+                remainProjDesc: 'Remanufactura robótica de productos industriales deformables — S1/1.1/E0111 (Programa Interreg Sudoe, ERDF).',
                 countrybotsProj: 'Proyecto COUNTRYBOTS:',
                 countrybotsProjDesc: 'Robots cooperativos para monitorización y transporte de bienes deformables en zonas rurales, PID2021-124137OB-I00.',
                 deformsProj: 'Proyecto DeFORMS:',
-                deformsProjDesc: 'Control de deformación de Objetos Flexibles con Robots cooperativos en Sectores de Manufactura, TED2021-130224B-I00.',
+                deformsProjDesc: 'Control de deformación de objetos flexibles con robots cooperativos en sectores de fabricación, TED2021-130224B-I00.',
                 mentoringLabel: 'Tutoría:',
-                mentoringDesc: 'Supervisión de 1 Máster y 2 Licenciatura; 150+ horas de prácticas de investigación extracurriculares.',
+                mentoringDesc: 'Supervisión de 1 máster y 2 grados; más de 150 horas de prácticas de investigación extracurriculares.',
                 serviceLabel: 'Servicio:',
                 serviceDesc: 'Comité organizador (XLIV Jornadas de Automática 2023, IEEE SWYP 2020).',
                 rgroupLabel: 'Grupo de Investigación:',
                 rgroupDesc: 'Miembro de',
 
                 // Research
-                researchIntro: 'Estudio cómo los robots perciben, modelan y controlan objetos deformables. Mi trabajo conecta percepción, modelado y manipulación, con especial interés en métodos robustos y coordinación entre múltiples robots.',
+                researchIntro: 'Estudio cómo los robots perciben, modelan y controlan objetos deformables. Mi trabajo conecta la percepción de forma, el modelado y la manipulación, con especial interés en métodos robustos y eficientes en datos, y en la coordinación entre múltiples robots.',
                 mainResearch: 'Línea principal:',
                 mainResearchDesc: 'Control de forma.',
                 coreTopics: 'Temas clave:',
@@ -1430,13 +1446,14 @@
                 applications: 'Aplicaciones:',
                 applicationsDesc: 'Manipulación robótica, robótica cooperativa y automatización industrial.',
                 demoIntro: 'Demostraciones interactivas:',
-                demoIntroDesc: 'Para una introducción más accesible, ver la sección',
+                demoIntroDesc: 'Para una introducción más accesible, visita la sección',
                 disseminationButton: 'Divulgación',
-                demoIntroEnd: 'con visualizaciones interactivas para público general.',
+                demoIntroEnd: 'con visualizaciones interactivas pensadas para el público general.',
 
                 // Dissemination
                 interactiveDerosTitle: 'Demostraciones Interactivas',
                 interactiveDemosDesc: 'Estas demostraciones muestran mis principales líneas de investigación: percepción, modelado y control de objetos deformables.',
+                disseminationIntro: 'Un breve resumen de mi labor divulgativa, con demostraciones interactivas de investigación y proyectos de robótica educativa.',
                 demoShapeControl: 'Control de Forma de Objetos Deformables',
                 demoShapeComparison: 'Análisis y Comparación de Formas',
                 demoShapeTitle: 'Control de Forma de Objetos Deformables',
@@ -1444,9 +1461,9 @@
                 demoAnalysisTitle: 'Análisis y Comparación de Formas',
                 demoAnalysisRelated: 'Artículos relacionados:',
                 locoCorpTitle: 'Robótica Educativa: LoCo CORP',
-                locoCorpIntro: 'Participé en la iniciativa LoCo CORP, un proyecto dedicado a transformar la enseñanza de la robótica en escuelas e institutos. Aunque desarrollamos Noctis y Aurel como nuestras plataformas robóticas principales, eran realmente solo las herramientas para una misión educativa más amplia. A través de nuestros talleres, superamos la idea de los robots como simples juguetes e hicimos que los estudiantes se sumergieran en la ingeniería real que hay detrás. Los guiamos a través de la electrónica actual, la programación y el diseño de hardware necesarios para dar vida a una máquina, animándolos a dejar de ser consumidores pasivos y a comenzar a entender la tecnología en sus manos.',
+                locoCorpIntro: 'Participé en la iniciativa LoCo CORP, un proyecto dedicado a transformar cómo se enseña la robótica en colegios e institutos. Aunque desarrollamos Noctis y Aurel como plataformas principales, eran sobre todo la herramienta para una misión educativa más amplia. En nuestros talleres dejamos atrás la idea de los robots como simples juguetes y los usamos para sumergir al alumnado en la ingeniería real que hay detrás. Les guiamos por la electrónica, la programación y el diseño de hardware necesarios para dar vida a una máquina, animándoles a dejar de ser consumidores pasivos y a comprender la tecnología que tienen entre manos.',
                 locoCorpKickstarter: 'Descubre más sobre Noctis y Aurel',
-                locoVerseIntro: 'Mi papel específico se centró en la creación del LoCoVerse, un ecosistema ficticio donde estas plataformas robóticas existían como especies recién descubiertas. Usamos esta narrativa para enmarcar las lecciones técnicas dentro de una historia convincente, combinando la narración con un enfoque científico.',
+                locoVerseIntro: 'Mi papel se centró en la creación del LoCoVerse, un ecosistema ficticio en el que estas plataformas robóticas existían como especies recién descubiertas. Utilizamos esta narrativa para enmarcar las lecciones técnicas dentro de una historia atractiva, combinando divulgación y enfoque científico.',
 
                 // Publications
                 sectionPublications: 'Publicaciones',
@@ -1511,6 +1528,17 @@
                 btn.addEventListener('click', () => {
                     setLanguage(btn.getAttribute('data-lang'));
                 });
+            });
+
+            // Sync demo iframes language on load
+            const roboticsIframe = document.getElementById('robotics-iframe');
+            const shapeIframe = document.getElementById('shape-iframe');
+            [roboticsIframe, shapeIframe].forEach(iframe => {
+                if (iframe) {
+                    iframe.addEventListener('load', () => {
+                        iframe.contentWindow?.postMessage({ type: 'setLanguage', language: currentLanguage }, '*');
+                    });
+                }
             });
         });
 
