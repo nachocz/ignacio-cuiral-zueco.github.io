@@ -464,16 +464,16 @@
             en: {
                 title: 'Robot Cable Manipulation',
                 howToPlay: 'How to Play',
-                goal: 'Goal:',
-                goalDesc: 'Adjust the robot joints to shape the cable and match the target shape shown as a green dashed line',
+                goal: 'Objective:',
+                goalDesc: 'Adjust the robot joints so that the cable acquires the target shape (dashed green line)',
                 controls: 'Controls:',
-                controlsDesc: 'Use the sliders to change joint angles for each robot. The blue robot on the left and brown robot on the right work together to control the cable',
+                controlsDesc: 'Use the sliders to change the angles of each joint. The blue robot (left) and brown robot (right) control the cable together',
                 feedback: 'Feedback:',
-                feedbackDesc: 'The error curve shows how close you are to the target. Lower values are better. Try "New Target Shape" for different challenges',
-                whyMatters: 'Why This Matters',
-                matterText1: 'Manipulating soft objects like cables and ropes is a key challenge in robotics. These materials show up constantly in real tasks',
+                feedbackDesc: 'The error graph indicates how close you are to the target (the lower, the better). Use the "New Target Shape" button to get a new target shape',
+                whyMatters: 'Why It Matters',
+                matterText1: 'Manipulating soft objects (cables, ropes, fabrics) is a big challenge in robotics. These materials frequently appear in real-world applications',
                 note: 'Note:',
-                matterText2: 'Not all target shapes can be achieved with this cable and robot setup. Determining whether a shape is reachable for a given object and manipulation method is still an open research question',
+                matterText2: 'Not all target shapes are achievable with this setup. Determining which shapes can be achieved with a given object and manipulation method remains an open research problem',
                 leftRobot: 'Left Robot (Blue)',
                 rightRobot: 'Right Robot (Brown)',
                 joint1: 'Joint 1',
@@ -936,7 +936,7 @@
                 ctx.lineWidth = 6;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
-                ctx.setLineDash([8, 4]);  // Dashed line
+                ctx.setLineDash([10, 8]);  // Dashed line with more spacing
                 ctx.beginPath();
                 ctx.moveTo(target[0][0], target[0][1]);
                 for (let i = 1; i < target.length; i++) {
