@@ -22,6 +22,53 @@
             justify-content: center;
         }
 
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1000px;
+            margin-bottom: 20px;
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            background: #ecf0f1;
+            border: 1px solid #dfe6e9;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover {
+            background: #dfe6e9;
+        }
+
+        .lang-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+
+        body.dark-theme .lang-btn {
+            background: #1f2633;
+            border-color: #2a3140;
+            color: #e6e6e6;
+        }
+
+        body.dark-theme .lang-btn:hover {
+            background: #2a3140;
+        }
+
+        body.dark-theme .lang-btn.active {
+            background: #2c6fb3;
+            border-color: #3b82c4;
+            color: #ffffff;
+        }
+
         .demo-container {
             background: white;
             border-radius: 12px;
@@ -205,49 +252,161 @@
     </style>
 </head>
 <body class="dark-theme">
+    <div class="header-bar">
+        <div></div>
+        <div id="language-switcher" style="display: flex; gap: 6px;">
+            <button id="lang-en" class="lang-btn active" data-lang="en">EN</button>
+            <button id="lang-es" class="lang-btn" data-lang="es">ES</button>
+        </div>
+    </div>
     <div class="demo-container">
-        <h1>Shape Comparison Game</h1>
+        <h1 data-i18n="title">Shape Comparison Game</h1>
         
         <div class="instructions">
-            <strong>How to Play</strong>
+            <strong data-i18n="howToPlay">How to Play</strong>
             <ul style="margin: 12px 0 12px 20px; line-height: 1.8; color: #2c3e50;">
-                <li><strong>Goal:</strong> Shape the block on the right to match the red target shape on the left</li>
-                <li><strong>Sculpting:</strong> The right panel shows your block as a grid of particles. Use Chisel to remove particles and Clay to add them back</li>
-                <li><strong>Feedback:</strong> Your current shape appears in green on the left. The error curve shows how close you are, lower values are better</li>
+                <li><strong data-i18n="goal">Goal:</strong> <span data-i18n="goalDesc">Shape the block on the right to match the red target shape on the left</span></li>
+                <li><strong data-i18n="sculpting">Sculpting:</strong> <span data-i18n="sculptingDesc">The right panel shows your block as a grid of particles. Use Chisel to remove particles and Clay to add them back</span></li>
+                <li><strong data-i18n="feedback">Feedback:</strong> <span data-i18n="feedbackDesc">Your current shape appears in green on the left. The error curve shows how close you are, lower values are better</span></li>
             </ul>
             
-            <strong>Why This Matters</strong>
+            <strong data-i18n="whyMatters">Why This Matters</strong>
             <ul style="margin: 12px 0 12px 20px; line-height: 1.8; color: #2c3e50;">
-                <li>Humans naturally compare shapes and judge how closely objects match. Sculptors show this skill at its highest level, constantly adjusting their work against a target until the pieces look identical</li>
-                <li>Robots need systems that help them compare shapes properly so they can know whether they are manipulating the object in the desired direction towards the target shape or away from it</li>
+                <li data-i18n="matterText1">Humans naturally compare shapes and judge how closely objects match. Sculptors show this skill at its highest level, constantly adjusting their work against a target until the pieces look identical</li>
+                <li data-i18n="matterText2">Robots need systems that help them compare shapes properly so they can know whether they are manipulating the object in the desired direction towards the target shape or away from it</li>
             </ul>
         </div>
 
         <div class="layout">
             <div class="panel">
-                <h3>Target Shape</h3>
+                <h3 data-i18n="targetShapeLabel">Target Shape</h3>
                 <canvas id="targetCanvas" width="400" height="400"></canvas>
                 <canvas id="errorCanvas" width="400" height="150" style="margin-top: 12px;"></canvas>
-                <div class="plot-note">Shape mismatch residual: lower is better</div>
+                <div class="plot-note" data-i18n="shapeResidualNote">Shape mismatch residual: lower is better</div>
             </div>
             
             <div class="panel">
-                <h3>Sculpting Canvas (try to match target)</h3>
+                <h3 data-i18n="sculptingCanvasLabel">Sculpting Canvas (try to match target)</h3>
                 <canvas id="shapesCanvas" width="400" height="400"></canvas>
                 <div class="tools" style="margin-top: 12px;">
-                    <button class="tool-btn active" onclick="selectTool('chisel')" id="toolChisel">🔨 Chisel (remove)</button>
-                    <button class="tool-btn" onclick="selectTool('clay')" id="toolClay">🏺 Clay (add)</button>
+                    <button class="tool-btn active" onclick="selectTool('chisel')" id="toolChisel"><span data-i18n="chiselBtn">🔨 Chisel (remove)</span></button>
+                    <button class="tool-btn" onclick="selectTool('clay')" id="toolClay"><span data-i18n="clayBtn">🏺 Clay (add)</span></button>
                 </div>
-                <button onclick="resetSculpt()">🔄 Reset Block</button>
+                <button onclick="resetSculpt()" data-i18n="resetBlockBtn">🔄 Reset Block</button>
             </div>
         </div>
 
-        <div class="status" id="statusText">
+        <div class="status" id="statusText" data-i18n="initialStatusText">
             Sculpt the shape to match the target. The residual curve updates as you sculpt.
         </div>
     </div>
 
     <script>
+        // i18n Translations Object
+        const translations = {
+            en: {
+                title: 'Shape Comparison Game',
+                howToPlay: 'How to Play',
+                goal: 'Goal:',
+                goalDesc: 'Shape the block on the right to match the red target shape on the left',
+                sculpting: 'Sculpting:',
+                sculptingDesc: 'The right panel shows your block as a grid of particles. Use Chisel to remove particles and Clay to add them back',
+                feedback: 'Feedback:',
+                feedbackDesc: 'Your current shape appears in green on the left. The error curve shows how close you are, lower values are better',
+                whyMatters: 'Why This Matters',
+                matterText1: 'Humans naturally compare shapes and judge how closely objects match. Sculptors show this skill at its highest level, constantly adjusting their work against a target until the pieces look identical',
+                matterText2: 'Robots need systems that help them compare shapes properly so they can know whether they are manipulating the object in the desired direction towards the target shape or away from it',
+                targetShapeLabel: 'Target Shape',
+                shapeResidualNote: 'Shape mismatch residual: lower is better',
+                sculptingCanvasLabel: 'Sculpting Canvas (try to match target)',
+                chiselBtn: '🔨 Chisel (remove)',
+                clayBtn: '🏺 Clay (add)',
+                resetBlockBtn: '🔄 Reset Block',
+                initialStatusText: 'Sculpt the shape to match the target. The residual curve updates as you sculpt.',
+                statusText: 'Sculpt the shape to match the target.'
+            },
+            es: {
+                title: 'Juego de Comparación de Formas',
+                howToPlay: 'Cómo Jugar',
+                goal: 'Objetivo:',
+                goalDesc: 'Da forma al bloque de la derecha para que coincida con la forma de destino roja de la izquierda',
+                sculpting: 'Esculpido:',
+                sculptingDesc: 'El panel derecho muestra tu bloque como una cuadrícula de partículas. Usa Cincel para eliminar partículas y Arcilla para agregarlas de nuevo',
+                feedback: 'Retroalimentación:',
+                feedbackDesc: 'Tu forma actual aparece en verde a la izquierda. La curva de error muestra qué tan cerca estás, los valores más bajos son mejores',
+                whyMatters: 'Por Qué Es Importante',
+                matterText1: 'Los humanos comparan naturalmente formas y juzgan qué tan cerca coinciden los objetos. Los escultores muestran esta habilidad en su nivel más alto, ajustando constantemente su trabajo contra un objetivo hasta que las piezas se vean idénticas',
+                matterText2: 'Los robots necesitan sistemas que les ayuden a comparar formas correctamente para que sepan si están manipulando el objeto en la dirección deseada hacia la forma de destino o alejándose de ella',
+                targetShapeLabel: 'Forma Objetivo',
+                shapeResidualNote: 'Residuo de desajuste de forma: más bajo es mejor',
+                sculptingCanvasLabel: 'Lienzo de Esculpido (intenta coincidir con objetivo)',
+                chiselBtn: '🔨 Cincel (eliminar)',
+                clayBtn: '🏺 Arcilla (agregar)',
+                resetBlockBtn: '🔄 Reiniciar Bloque',
+                initialStatusText: 'Esculpe la forma para que coincida con el objetivo. La curva de residuo se actualiza mientras esculpes.',
+                statusText: 'Esculpe la forma para que coincida con el objetivo.'
+            }
+        };
+
+        // i18n Functions
+        let currentLanguage = localStorage.getItem('language') || 'en';
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('language', lang);
+            applyTranslations();
+            updateLanguageButtons();
+        }
+
+        function applyTranslations() {
+            const t = translations[currentLanguage];
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (t[key]) {
+                    element.textContent = t[key];
+                }
+            });
+            document.documentElement.lang = currentLanguage;
+        }
+
+        function updateLanguageButtons() {
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === currentLanguage);
+            });
+        }
+
+        // Initialize i18n on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if parent page has set a language preference
+            const parentLang = window.parent.document ? window.parent.document.documentElement.lang : null;
+            if (parentLang && (parentLang === 'en' || parentLang === 'es')) {
+                currentLanguage = parentLang;
+                localStorage.setItem('language', parentLang);
+            }
+            
+            applyTranslations();
+            updateLanguageButtons();
+
+            // Attach language button listeners
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setLanguage(btn.getAttribute('data-lang'));
+                });
+            });
+            
+            // Apply dark theme if parent page has it
+            if (window.parent.document.body.classList.contains('dark-theme')) {
+                document.body.classList.add('dark-theme');
+            }
+        });
+
+        // Listen for language changes from parent window
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'setLanguage') {
+                setLanguage(event.data.language);
+            }
+        });
+
         const targetCanvas = document.getElementById('targetCanvas');
         const targetCtx = targetCanvas.getContext('2d');
         const shapesCanvas = document.getElementById('shapesCanvas');
@@ -919,7 +1078,13 @@
                 lastResidual = computeAreaResidual(targetShape, currentSculptShape);
                 residualHistory.push(lastResidual);
                 if (residualHistory.length > 200) residualHistory.shift();
-                statusText.textContent = `Current shape mismatch (lower is better): ${lastResidual.toFixed(4)}`;
+                
+                // Translate the status text based on current language
+                const t = translations[currentLanguage];
+                const statusMsg = currentLanguage === 'es' 
+                    ? `Desajuste actual de forma (más bajo es mejor): ${lastResidual.toFixed(4)}`
+                    : `Current shape mismatch (lower is better): ${lastResidual.toFixed(4)}`;
+                statusText.textContent = statusMsg;
                 statusText.style.background = '#ecf0f1';
             }
 
@@ -962,7 +1127,10 @@
 
             residualHistory = [];
             currentSculptShape = [];
-            statusText.textContent = 'Sculpt the shape to match the target.';
+            
+            // Translate the status text based on current language
+            const t = translations[currentLanguage];
+            statusText.textContent = t.statusText;
             statusText.style.background = '#ecf0f1';
 
             updateResidualAndRender();

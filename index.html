@@ -112,6 +112,44 @@
             border-bottom-color: #ecf0f1;
         }
 
+        .lang-btn {
+            padding: 6px 12px;
+            background: #ecf0f1;
+            border: 1px solid #dfe6e9;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover {
+            background: #dfe6e9;
+        }
+
+        .lang-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+
+        body.dark-theme .lang-btn {
+            background: #1f2633;
+            border-color: #2a3140;
+            color: #e6e6e6;
+        }
+
+        body.dark-theme .lang-btn:hover {
+            background: #2a3140;
+        }
+
+        body.dark-theme .lang-btn.active {
+            background: #2c6fb3;
+            border-color: #3b82c4;
+            color: #ffffff;
+        }
+
         h2 {
             font-size: 1.8em;
             color: #2c3e50;
@@ -272,7 +310,45 @@
             color: #ffffff;
         }
 
-        .publication-meta {
+        /* Language Switcher */
+        .lang-btn {
+            padding: 6px 12px;
+            background: #ecf0f1;
+            border: 1px solid #dfe6e9;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover {
+            background: #dfe6e9;
+        }
+
+        .lang-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+        }
+
+        body.dark-theme .lang-btn {
+            background: #1f2633;
+            border-color: #2a3140;
+            color: #e6e6e6;
+        }
+
+        body.dark-theme .lang-btn:hover {
+            background: #2a3140;
+        }
+
+        body.dark-theme .lang-btn.active {
+            background: #2c6fb3;
+            border-color: #3b82c4;
+            color: #ffffff;
+        }
             font-style: italic;
             color: #7f8c8d;
             font-size: 0.9em;
@@ -635,6 +711,27 @@
             border-left-color: #2c6fb3;
         }
 
+        body.dark-theme .demo-intro h3 {
+            color: #e6e6e6;
+        }
+
+        body.dark-theme .demo-intro p {
+            color: #a7b3c2;
+        }
+
+        body.dark-theme .demo-callout {
+            background: #1f2633 !important;
+            border-left-color: #2c6fb3 !important;
+        }
+
+        body.dark-theme .demo-callout h4 {
+            color: #e6e6e6 !important;
+        }
+
+        body.dark-theme .demo-callout p {
+            color: #a7b3c2 !important;
+        }
+
         body.dark-theme .publication-item,
         body.dark-theme .bib-list li {
             border-left-color: #2c6fb3;
@@ -691,68 +788,83 @@
             <img src="assets/images/icz_photo.jpg" alt="Ignacio Cuiral-Zueco" class="header-photo">
             <div class="header-content">
                 <h1>Ignacio Cuiral-Zueco</h1>
-                <p>Zaragoza, Spain</p>
+                <p data-i18n="location">Zaragoza, Spain</p>
                 <p><a href="mailto:ignaciocuiral@unizar.es">ignaciocuiral@unizar.es</a></p>
-                <div style="margin-top: 15px; display: flex; gap: 12px; align-items: center;">
-                    <a href="https://scholar.google.es/citations?user=hj9OZJEAAAAJ&hl=es" target="_blank" class="header-btn">
+                <div style="margin-top: 15px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                    <a href="https://scholar.google.es/citations?user=hj9OZJEAAAAJ&hl=es" target="_blank" class="header-btn" data-i18n="googleScholar">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                             <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 14.5c-3.6 0-6.5-2.9-6.5-6.5S4.4 1.5 8 1.5s6.5 2.9 6.5 6.5-2.9 6.5-6.5 6.5z"/>
                             <path d="M8 3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm3 8H5v-1.5c0-1.4 1.6-2 3-2s3 .6 3 2V11z"/>
                         </svg>
                         Google Scholar
                     </a>
-                    <a href="bibliography.bib" download class="header-btn">
+                    <a href="bibliography.bib" download class="header-btn" data-i18n="downloadBibtex">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                             <path d="M8 12L3 7h3V1h4v6h3l-5 5z"/>
                             <path d="M2 14h12v1H2z"/>
                         </svg>
                         Download BibTeX
                     </a>
+                    <div style="border-left: 2px solid rgba(255, 255, 255, 0.2); padding-left: 12px; margin-left: 0;"></div>
+                    <div id="language-switcher" style="display: flex; gap: 6px;">
+                        <button id="lang-en" class="lang-btn active" data-lang="en">EN</button>
+                        <button id="lang-es" class="lang-btn" data-lang="es">ES</button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <nav class="section-tabs" role="tablist">
-            <button class="section-tab-btn active" type="button" data-target="panel-news">News</button>
-            <button class="section-tab-btn" type="button" data-target="panel-cv">CV</button>
-            <button class="section-tab-btn" type="button" data-target="panel-research">Research</button>
-            <button class="section-tab-btn" type="button" data-target="panel-publications">Publications</button>
+            <button class="section-tab-btn active" type="button" data-target="panel-news" data-i18n="navNews">News</button>
+            <button class="section-tab-btn" type="button" data-target="panel-cv" data-i18n="navCv">CV</button>
+            <button class="section-tab-btn" type="button" data-target="panel-research" data-i18n="navResearch">Research</button>
+            <button class="section-tab-btn" type="button" data-target="panel-dissemination" data-i18n="navDissemination">Dissemination</button>
+            <button class="section-tab-btn" type="button" data-target="panel-publications" data-i18n="navPublications">Publications</button>
         </nav>
 
         <div id="panel-news" class="section-panel active">
-            <h2 id="news"><span>News</span> <span class="toggle-icon">▼</span></h2>
-            <div class="section-content">
             <ul class="summary-list">
-                <li><strong>Profile:</strong> Postdoctoral researcher in deformable object manipulation and shape control.</li>
-                <li><strong>Focus:</strong> Perception-to-manipulation pipelines, shape analysis, continuum mechanics, non-linear control, data-driven estimation and control.</li>
+                <li><strong data-i18n="profileLabel">Profile:</strong> <span data-i18n="profileText">Postdoctoral researcher in deformable object manipulation and shape control.</span></li>
+                <li><strong data-i18n="focusLabel">Focus:</strong> <span data-i18n="focusText">Perception-to-manipulation pipelines, shape analysis, continuum mechanics, non-linear control, data-driven estimation and control.</span></li>
             </ul>
 
+            <h2 id="news"><span data-i18n="sectionNews">News</span> <span class="toggle-icon">▼</span></h2>
+            <div class="section-content">
+
             <div class="award" style="margin-top: 10px;">
-                <strong>🏆 Best Robotics PhD Thesis Award (2025)</strong>, Spanish Committee of Automatic Control (CEA).
+                <strong data-i18n="award1Title">🏆 Best Robotics PhD Thesis Award (2025)</strong>, <span data-i18n="award1Org">Spanish Committee of Automatic Control (CEA)</span>.
                 <div>
                     <img src="assets/images/price_CEA.jpg" alt="CEA Award" class="award-photo">
-                    <div class="award-caption">CEA Best Robotics PhD Thesis Award</div>
+                    <div class="award-caption" data-i18n="award1Caption">CEA Best Robotics PhD Thesis Award</div>
                 </div>
+            </div>
+
+            <div class="award" style="margin-top: 10px;">
+                <strong data-i18n="award2Title">🏆 Best Iberian Robotics PhD Thesis Award (2025)</strong>, <span data-i18n="award2Desc">conferred by the Spanish Society for Research and Development in Robotics (SEIDROB) and the Portuguese Robotics Society (SPR)</span>.
+            </div>
+
+            <div class="award" style="margin-top: 10px;">
+                <strong><span data-i18n="award3Title">🏆</span> <a href="https://eu-robotics.net/georges-giralt-phd-award/" data-i18n="award3Link">Georges Giralt PhD Award Finalist</a></strong> — <span data-i18n="award3Desc">finalist for Europe's most prestigious recognition for PhD excellence in robotics, selected among over 50 candidates and presented at the European Robotics Forum 2025</span>.
             </div>
 
             <div class="news-highlight">
                 <div class="news-text">
-                    <strong>Invited Visiting Scholar</strong>
-                    <div>ELLIIT Focus Period, Lund University, Sweden</div>
-                    <div class="news-meta">Seminar on data-driven deformable object manipulation · Nov 2025</div>
-                    <div style="margin-top: 6px;"><a href="https://elliit.se/news-and-events/focus-period-lund-2025/">Event page</a></div>
+                    <strong data-i18n="visitingScholarTitle">Invited Visiting Scholar</strong>
+                    <div data-i18n="visitingScholarInst">ELLIIT Focus Period, Lund University, Sweden</div>
+                    <div class="news-meta" data-i18n="visitingScholarDate">Seminar on data-driven deformable object manipulation · Nov 2025</div>
+                    <div style="margin-top: 6px;"><a href="https://elliit.se/news-and-events/focus-period-lund-2025/" data-i18n="eventPage">Event page</a></div>
                 </div>
                 <div>
                     <img src="assets/images/elliit_focus_period.jpg" alt="ELLIIT Focus Period Lund 2025" class="award-photo" style="width: 150px;">
-                    <div class="award-caption">ELLIIT Focus Period · Lund University 2025</div>
+                    <div class="award-caption" data-i18n="visitingScholarCaption">ELLIIT Focus Period · Lund University 2025</div>
                 </div>
             </div>
 
-            <h3 style="margin-top: 20px;">Highlighted Publications</h3>
+            <h3 data-i18n="highlightedPublications" style="margin-top: 20px;">Highlighted Publications</h3>
             <div class="publication-item">
                 <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Time Consistent Surface Mapping for Deformable Object Shape Control," <em>IEEE Transactions on Automation Science and Engineering</em>, vol. 22, pp. 11099–11111, 2025, doi: <a href="https://doi.org/10.1109/TASE.2025.3529180">10.1109/TASE.2025.3529180</a>.
                 <ul class="nested-list">
-                    <li><a href="https://github.com/nachocz/time-consistent-surface-mapping" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon">Code Available</a></li>
+                    <li><a href="https://github.com/nachocz/time-consistent-surface-mapping" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon"><span data-i18n="codeAvailable">Code Available</span></a></li>
                 </ul>
                 <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/tWMJCbUwZOM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -761,7 +873,7 @@
             <div class="publication-item">
                 <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Multiscale Procrustes-Based 3-D Shape Control," <em>IEEE/ASME Transactions on Mechatronics</em>, vol. 29, no. 3, pp. 1738-1748, June 2024, doi: <a href="https://doi.org/10.1109/TMECH.2023.3325934">10.1109/TMECH.2023.3325934</a>.
                 <ul class="nested-list">
-                    <li><a href="https://github.com/nachocz/Multi-scale-Procrustes-based-3D-shape-control" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon">Code Available</a></li>
+                    <li><a href="https://github.com/nachocz/Multi-scale-Procrustes-based-3D-shape-control" class="icon-link"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" alt="GitHub" class="github-icon"><span data-i18n="codeAvailable">Code Available</span></a></li>
                 </ul>
                 <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/a2cZTjaVBmM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -771,113 +883,123 @@
         </div>
 
         <div id="panel-cv" class="section-panel">
-            <h2 id="cv"><span>CV</span> <span class="toggle-icon">▼</span></h2>
+            <h2 id="cv"><span data-i18n="sectionCv">CV</span> <span class="toggle-icon">▼</span></h2>
             <div class="section-content">
             <div class="cv-section">
-                <h3>Education</h3>
+                <h3 data-i18n="educationTitle">Education</h3>
                 <ul>
-                    <li><strong>PhD (2019–2024):</strong> Systems Engineering and Computer Science, University of Zaragoza. <em>Thesis:</em> Shape Control of Deformable Objects (International Mention, Cum Laude). <a href="https://zaguan.unizar.es/record/151097/files/">[Link]</a></li>
-                    <li><strong>MSc (2017–2019):</strong> Industrial Engineering, University of Zaragoza. <em>Thesis:</em> RGB-D Visual SLAM for Manipulator Control in Deformable Environments (Distinction).</li>
-                    <li><strong>BSc (2013–2017):</strong> Industrial Technologies Engineering, University of Zaragoza. <em>Thesis:</em> Stereo Visual SLAM for Medical Endoscopy (Distinction).</li>
+                    <li><strong data-i18n="phd">PhD (2019–2024):</strong> Systems Engineering and Computer Science, University of Zaragoza. <em data-i18n="phdThesis">Thesis:</em> Shape Control of Deformable Objects (International Mention, Cum Laude). <a href="https://zaguan.unizar.es/record/151097/files/">[Link]</a></li>
+                    <li><strong data-i18n="msc">MSc (2017–2019):</strong> Industrial Engineering, University of Zaragoza. <em data-i18n="mscThesis">Thesis:</em> RGB-D Visual SLAM for Manipulator Control in Deformable Environments (Distinction).</li>
+                    <li><strong data-i18n="bsc">BSc (2013–2017):</strong> Industrial Technologies Engineering, University of Zaragoza. <em data-i18n="bscThesis">Thesis:</em> Stereo Visual SLAM for Medical Endoscopy (Distinction).</li>
                 </ul>
             </div>
 
             <div class="cv-section">
-                <h3>Academic Experience</h3>
+                <h3 data-i18n="academicExperienceTitle">Academic Experience</h3>
                 <ul>
-                    <li><strong>2025–Present:</strong> Postdoctoral Researcher, CA-INP <a href="http://www.institutpascal.uca.fr/index.php/en/">Institut Pascal</a>, France.</li>
-                    <li><strong>2024–2025:</strong> Adjunct Professor, Systems Engineering and Automation, University of Zaragoza.</li>
-                    <li><strong>2024–2025:</strong> Researcher N3, European Project DeFORMS, University of Zaragoza.</li>
-                    <li><strong>2020–2024:</strong> Researcher N3, Project FROSCAT, University of Zaragoza.</li>
-                    <li><strong>2019–2020:</strong> Researcher N4, European Project COMMANDIA, University of Zaragoza.</li>
+                    <li><strong data-i18n="postdoc">2025–Present:</strong> <span data-i18n="postdocDesc">Postdoctoral Researcher, CA-INP</span> <a href="http://www.institutpascal.uca.fr/index.php/en/">Institut Pascal</a>, France.</li>
+                    <li><strong data-i18n="adjunct">2024–2025:</strong> <span data-i18n="adjunctDesc">Adjunct Professor, Systems Engineering and Automation, University of Zaragoza.</span></li>
+                    <li><strong data-i18n="deforms">2024–2025:</strong> <span data-i18n="deformsDesc">Researcher N3, European Project DeFORMS, University of Zaragoza.</span></li>
+                    <li><strong data-i18n="froscat">2020–2024:</strong> <span data-i18n="froscatDesc">Researcher N3, Project FROSCAT, University of Zaragoza.</span></li>
+                    <li><strong data-i18n="commandia">2019–2020:</strong> <span data-i18n="commandiaDesc">Researcher N4, European Project COMMANDIA, University of Zaragoza.</span></li>
                 </ul>
             </div>
 
             <div class="cv-section">
-                <h3>Awards & Honors</h3>
+                <h3 data-i18n="awardsTitle">Awards & Honors</h3>
                 <ul>
-                    <li>🏆 Best Robotics PhD Thesis Award (2025), Spanish Committee of Automatic Control (CEA).</li>
-                    <li>🏆 Best Iberian Robotics PhD Thesis Award (2025), conferred by the Spanish Society for Research and Development in Robotics (SEIDROB) and the Portuguese Robotics Society (SPR).</li>
-                    <li>🏆 <a href="https://eu-robotics.net/georges-giralt-phd-award/">Georges Giralt PhD Award Finalist</a> — finalist for Europe's most prestigious recognition for PhD excellence in robotics, selected among over 50 candidates and presented at the European Robotics Forum 2025.</li>
+                    <li>🏆 <span data-i18n="award1Short">Best Robotics PhD Thesis Award (2025), Spanish Committee of Automatic Control (CEA).</span></li>
+                    <li>🏆 <span data-i18n="award2Short">Best Iberian Robotics PhD Thesis Award (2025), conferred by the Spanish Society for Research and Development in Robotics (SEIDROB) and the Portuguese Robotics Society (SPR).</span></li>
+                    <li>🏆 <a href="https://eu-robotics.net/georges-giralt-phd-award/" data-i18n="award3Short">Georges Giralt PhD Award Finalist — finalist for Europe's most prestigious recognition for PhD excellence in robotics, selected among over 50 candidates and presented at the European Robotics Forum 2025.</a></li>
                 </ul>
             </div>
 
             <div class="cv-section">
-                <h3>Research Stays & Invited Talks</h3>
+                <h3 data-i18n="researchStaysTitle">Research Stays & Invited Talks</h3>
                 <ul>
-                    <li><strong>Nov 2025:</strong> Invited Visiting Scholar, <a href="https://elliit.se/news-and-events/focus-period-lund-2025/">ELLIIT Focus Period</a>, Lund University, Sweden. Seminar on data-driven deformable object manipulation.</li>
-                    <li><strong>Mar 2025:</strong> <a href="https://erf2025.eu/">European Robotics Forum (ERF)</a>, Stuttgart — PhD Award finalist presentation.</li>
-                    <li><strong>Sep–Nov 2022:</strong> Research stay, <a href="https://www.control.lth.se/">Lund University (LTH)</a>, Sweden.</li>
-                    <li><strong>May–Aug 2021:</strong> Research stay, <a href="https://www.isr.uc.pt/">University of Coimbra</a>, Portugal.</li>
+                    <li><strong data-i18n="nov2025">Nov 2025:</strong> <span data-i18n="nov2025Desc">Invited Visiting Scholar,</span> <a href="https://elliit.se/news-and-events/focus-period-lund-2025/">ELLIIT Focus Period</a>, <span data-i18n="lundDesc">Lund University, Sweden. Seminar on data-driven deformable object manipulation.</span></li>
+                    <li><strong data-i18n="mar2025">Mar 2025:</strong> <a href="https://erf2025.eu/">European Robotics Forum (ERF)</a>, <span data-i18n="erfDesc">Stuttgart — PhD Award finalist presentation.</span></li>
+                    <li><strong data-i18n="sep2022">Sep–Nov 2022:</strong> <span data-i18n="sep2022Desc">Research stay,</span> <a href="https://www.control.lth.se/">Lund University (LTH)</a>, <span data-i18n="lundLocation">Sweden.</span></li>
+                    <li><strong data-i18n="may2021">May–Aug 2021:</strong> <span data-i18n="may2021Desc">Research stay,</span> <a href="https://www.isr.uc.pt/">University of Coimbra</a>, <span data-i18n="coimbra">Portugal.</span></li>
                 </ul>
             </div>
 
             <div class="cv-section">
-                <h3>Projects, Service & Outreach</h3>
+                <h3 data-i18n="projectsTitle">Projects, Service & Outreach</h3>
                 <ul>
-                    <li><strong>Project COMMANDIA:</strong> COllaborative robotic Mobile MANipulation of Deformable objects in Industrial Applications — SOE2/P1/F0638 (Interreg Sudoe Programme, ERDF). <a href="https://commandia.unizar.es/">Project site</a>.</li>
-                    <li><strong>Project REMAIN:</strong> robotic REMAnufacturing of deformable INdustrial products — S1/1.1/E0111 (Interreg Sudoe Programme, ERDF). <a href="https://interreg-sudoe.eu/en/proyecto-interreg/remain/">Project site</a>.</li>
-                    <li><strong>Project COUNTRYBOTS:</strong> Cooperative robots for monitorization and deformable goods transport in the countryside, PID2021-124137OB-I00. <a href="https://ropert.i3a.es/countrybots/">Project site</a>.</li>
-                    <li><strong>Project DeFORMS:</strong> Deformation control of Flexible Objects with cooperative Robots in Manufacturing Sectors, TED2021-130224B-I00. <a href="https://ropert.i3a.es/deforms/">Project site</a>.</li>
-                    <li><strong>Mentoring:</strong> Supervised 1 MSc and 2 BSc theses; 150+ hours of extracurricular research internships.</li>
-                    <li><strong>Service:</strong> Organizing committee (XLIV Jornadas de Automática 2023, IEEE SWYP 2020).</li>
-                    <li><strong>Research Group:</strong> Member of <a href="https://i3a.unizar.es/es/grupos-de-investigacion/ropert">ROPERT</a> (Robotics, Computer Vision and AI).</li>
+                    <li><strong data-i18n="commandiaProj">Project COMMANDIA:</strong> <span data-i18n="commandiaProjDesc">COllaborative robotic Mobile MANipulation of Deformable objects in Industrial Applications — SOE2/P1/F0638 (Interreg Sudoe Programme, ERDF).</span> <a href="https://commandia.unizar.es/">Project site</a>.</li>
+                    <li><strong data-i18n="remainProj">Project REMAIN:</strong> <span data-i18n="remainProjDesc">robotic REMAnufacturing of deformable INdustrial products — S1/1.1/E0111 (Interreg Sudoe Programme, ERDF).</span> <a href="https://interreg-sudoe.eu/en/proyecto-interreg/remain/">Project site</a>.</li>
+                    <li><strong data-i18n="countrybotsProj">Project COUNTRYBOTS:</strong> <span data-i18n="countrybotsProjDesc">Cooperative robots for monitorization and deformable goods transport in the countryside, PID2021-124137OB-I00.</span> <a href="https://ropert.i3a.es/countrybots/">Project site</a>.</li>
+                    <li><strong data-i18n="deformsProj">Project DeFORMS:</strong> <span data-i18n="deformsProjDesc">Deformation control of Flexible Objects with cooperative Robots in Manufacturing Sectors, TED2021-130224B-I00.</span> <a href="https://ropert.i3a.es/deforms/">Project site</a>.</li>
+                    <li><strong data-i18n="mentoringLabel">Mentoring:</strong> <span data-i18n="mentoringDesc">Supervised 1 MSc and 2 BSc theses; 150+ hours of extracurricular research internships.</span></li>
+                    <li><strong data-i18n="serviceLabel">Service:</strong> <span data-i18n="serviceDesc">Organizing committee (XLIV Jornadas de Automática 2023, IEEE SWYP 2020).</span></li>
+                    <li><strong data-i18n="rgroupLabel">Research Group:</strong> <span data-i18n="rgroupDesc">Member of</span> <a href="https://i3a.unizar.es/es/grupos-de-investigacion/ropert">ROPERT</a> (Robotics, Computer Vision and AI).</li>
                 </ul>
             </div>
             </div>
         </div>
 
         <div id="panel-research" class="section-panel">
-            <h2 id="research"><span>Research</span> <span class="toggle-icon">▼</span></h2>
+            <h2 id="research"><span data-i18n="sectionResearch">Research</span> <span class="toggle-icon">▼</span></h2>
             <div class="section-content">
             <div class="research-intro">
-                <p>I study how robots perceive, model, and control deformable objects. My work connects shape perception, mapping, and manipulation with a focus on robust, data-efficient methods and multi-robot coordination.</p>
+                <p data-i18n="researchIntro">I study how robots perceive, model, and control deformable objects. My work connects shape perception, mapping, and manipulation with a focus on robust, data-efficient methods and multi-robot coordination.</p>
                 <ul style="margin: 0;">
-                    <li><strong>Main research line:</strong> Shape control.</li>
-                    <li><strong>Core topics:</strong> Shape control, deformable object manipulation, robot perception, and visual servoing.</li>
-                    <li><strong>Applications:</strong> Robotic manipulation, cooperative robotics, and manufacturing.</li>
+                    <li><strong data-i18n="mainResearch">Main research line:</strong> <span data-i18n="mainResearchDesc">Shape control.</span></li>
+                    <li><strong data-i18n="coreTopics">Core topics:</strong> <span data-i18n="coreTopicsDesc">Shape control, deformable object manipulation, robot perception, and visual servoing.</span></li>
+                    <li><strong data-i18n="applications">Applications:</strong> <span data-i18n="applicationsDesc">Robotic manipulation, cooperative robotics, and manufacturing.</span></li>
                 </ul>
             </div>
+
+            <div class="research-intro" style="border-left-color: #3498db; margin-top: 20px;">
+                <p><strong data-i18n="demoIntro">Interactive Demos:</strong> <span data-i18n="demoIntroDesc">For a more accessible introduction to my research, check out the</span> <button class="section-tab-btn" style="display: inline-block; padding: 4px 10px; font-size: 0.95em; margin-left: 6px; vertical-align: middle; cursor: pointer;" onclick="document.querySelector('[data-target=panel-dissemination]').click();" data-i18n="disseminationButton">Dissemination</button> <span data-i18n="demoIntroEnd">section with interactive visualizations designed for a general audience.</span></p>
+            </div>
+            </div>
+        </div>
+
+        <div id="panel-dissemination" class="section-panel">
+            <h2 id="dissemination"><span data-i18n="sectionDissemination">Dissemination</span> <span class="toggle-icon">▼</span></h2>
+            <div class="section-content">
             <div class="demo-intro">
-                <h3>Demos</h3>
-                <p>These interactive demos showcase my main research interests in shape perception, mapping, and control of deformable objects.</p>
+                <h3 data-i18n="interactiveDerosTitle">Interactive Demos</h3>
+                <p data-i18n="interactiveDemosDesc">These interactive demos showcase my main research interests in shape perception, mapping, and control of deformable objects.</p>
             </div>
 
             <div class="demo-tabs" role="tablist">
-                <button class="demo-tab-btn active" type="button" data-target="demo-shape-control">Shape Control of Deformable Objects</button>
-                <button class="demo-tab-btn" type="button" data-target="demo-shape-compare">Shape Analysis and Comparison</button>
+                <button class="demo-tab-btn active" type="button" data-target="demo-shape-control" data-i18n="demoShapeControl">Shape Control of Deformable Objects</button>
+                <button class="demo-tab-btn" type="button" data-target="demo-shape-compare" data-i18n="demoShapeComparison">Shape Analysis and Comparison</button>
             </div>
 
             <div id="demo-shape-control" class="demo-panel active">
                 <div class="demo-callout" style="background: linear-gradient(135deg, #3498db15 0%, #3498db08 100%); border-left: 4px solid #3498db; padding: 15px; border-radius: 6px; margin: 18px 0;">
-                    <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;">Shape Control of Deformable Objects</h4>
-                    <p style="font-size: 0.95em; color: #7f8c8d; margin-bottom: 12px; margin: 0;">
+                    <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;" data-i18n="demoShapeTitle">Shape Control of Deformable Objects</h4>
+                    <p style="font-size: 0.95em; color: #7f8c8d; margin-bottom: 12px; margin: 0;" data-i18n="demoShapeRelated">
                         Related papers:
                         <a href="https://doi.org/10.1109/LRA.2023.3292617">RA-L 2023</a> ·
                         <a href="https://doi.org/10.1109/TMECH.2023.3325934">TMECH 2024</a>
                     </p>
                 </div>
-                <iframe src="robotics-demo.html" class="demo-iframe" title="Interactive 2-Robot Cable Manipulation Demo"></iframe>
+                <iframe src="robotics-demo.html" class="demo-iframe" title="Interactive 2-Robot Cable Manipulation Demo" id="robotics-iframe"></iframe>
             </div>
 
             <div id="demo-shape-compare" class="demo-panel">
                 <div class="demo-callout" style="background: linear-gradient(135deg, #27ae6015 0%, #27ae6008 100%); border-left: 4px solid #27ae60; padding: 15px; border-radius: 6px; margin: 18px 0;">
-                    <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;">Shape Analysis and Comparison</h4>
-                    <p style="font-size: 0.95em; color: #7f8c8d; margin: 0;">
+                    <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;" data-i18n="demoAnalysisTitle">Shape Analysis and Comparison</h4>
+                    <p style="font-size: 0.95em; color: #7f8c8d; margin: 0;" data-i18n="demoAnalysisRelated">
                         Related papers:
                         <a href="https://doi.org/10.1109/TASE.2025.3529180">T-ASE (surface mapping)</a> ·
                         <a href="https://doi.org/10.1016/j.robot.2025.105134">RAS (elastic contour mapping)</a>
                     </p>
                 </div>
-                <iframe src="shape-comparison.html" class="demo-iframe" title="Shape Analysis and Comparison Tool"></iframe>
+                <iframe src="shape-comparison.html" class="demo-iframe" title="Shape Analysis and Comparison Tool" id="shape-iframe"></iframe>
             </div>
             </div>
         </div>
 
         <div id="panel-publications" class="section-panel">
-            <h2 id="publications"><span>Publications</span> <span class="toggle-icon">▼</span></h2>
+            <h2 id="publications"><span data-i18n="sectionPublications">Publications</span> <span class="toggle-icon">▼</span></h2>
             <div class="section-content">
-            <h3>Journals</h3>
+            <h3 data-i18n="journalsTitle">Journals</h3>
             <ol class="bib-list">
                 <li><span class="bib-label">[J1]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Multi-scale elastic contour mapping for deformable object shape control,” <em>Robotics and Autonomous Systems</em>, vol. 194, p. 105134, 2025. doi: <a href="https://doi.org/10.1016/j.robot.2025.105134">10.1016/j.robot.2025.105134</a>.</li>
                 <li><span class="bib-label">[J2]</span> M. Aranda, <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Distributed Control of Flexible Chained Multiagent Formations,” <em>IEEE Control Systems Letters</em>, vol. 9, pp. 2018–2023, 2025. doi: <a href="https://doi.org/10.1109/LCSYS.2025.3590428">10.1109/LCSYS.2025.3590428</a>.</li>
@@ -888,7 +1010,7 @@
                 <li><span class="bib-label">[J7]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “RGB-D Tracking and Optimal Perception of Deformable Objects,” <em>IEEE Access</em>, vol. 8, pp. 136884–136897, 2020. doi: <a href="https://doi.org/10.1109/ACCESS.2020.3012067">10.1109/ACCESS.2020.3012067</a>.</li>
             </ol>
 
-            <h3>Conferences</h3>
+            <h3 data-i18n="conferencesTitle">Conferences</h3>
             <ol class="bib-list">
                 <li><span class="bib-label">[C1]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Elastic Contour Mapping for the Estimation of Abrupt Shape Deformations,” <em>Proc. Iberian Robotics Conf.</em>, pp. 400–408, 2023.</li>
                 <li><span class="bib-label">[C2]</span> <strong>I. Cuiral-Zueco</strong>, G. López-Nicolás and H. Araujo, “Gripper positioning for object deformation tasks,” <em>Proc. IEEE Int. Conf. Robot. Autom.</em> (ICRA), pp. 2403–2409, 2022. doi: <a href="https://doi.org/10.1109/ICRA46639.2022.9812304">10.1109/ICRA46639.2022.9812304</a>.</li>
@@ -901,6 +1023,307 @@
     </div>
 
     <script>
+        // i18n Translations Object
+        const translations = {
+            en: {
+                // Navigation & Sections
+                navNews: 'News',
+                navCv: 'CV',
+                navResearch: 'Research',
+                navDissemination: 'Dissemination',
+                navPublications: 'Publications',
+                sectionNews: 'News',
+                sectionCv: 'CV',
+                sectionResearch: 'Research',
+                sectionDissemination: 'Dissemination',
+                sectionPublications: 'Publications',
+
+                // Header
+                location: 'Zaragoza, Spain',
+                googleScholar: 'Google Scholar',
+                downloadBibtex: 'Download BibTeX',
+
+                // Summary
+                profileLabel: 'Profile:',
+                profileText: 'Postdoctoral researcher in deformable object manipulation and shape control.',
+                focusLabel: 'Focus:',
+                focusText: 'Perception-to-manipulation pipelines, shape analysis, continuum mechanics, non-linear control, data-driven estimation and control.',
+
+                // Awards & News
+                award1Title: '🏆 Best Robotics PhD Thesis Award (2025)',
+                award1Org: 'Spanish Committee of Automatic Control (CEA)',
+                award1Caption: 'CEA Best Robotics PhD Thesis Award',
+                award2Title: '🏆 Best Iberian Robotics PhD Thesis Award (2025)',
+                award2Desc: 'conferred by the Spanish Society for Research and Development in Robotics (SEIDROB) and the Portuguese Robotics Society (SPR)',
+                award3Title: '🏆',
+                award3Link: 'Georges Giralt PhD Award Finalist',
+                award3Desc: 'finalist for Europe\'s most prestigious recognition for PhD excellence in robotics, selected among over 50 candidates and presented at the European Robotics Forum 2025',
+                award1Short: 'Best Robotics PhD Thesis Award (2025), Spanish Committee of Automatic Control (CEA).',
+                award2Short: 'Best Iberian Robotics PhD Thesis Award (2025), conferred by the Spanish Society for Research and Development in Robotics (SEIDROB) and the Portuguese Robotics Society (SPR).',
+                award3Short: 'Georges Giralt PhD Award Finalist — finalist for Europe\'s most prestigious recognition for PhD excellence in robotics, selected among over 50 candidates and presented at the European Robotics Forum 2025.',
+
+                // Visiting Scholar
+                visitingScholarTitle: 'Invited Visiting Scholar',
+                visitingScholarInst: 'ELLIIT Focus Period, Lund University, Sweden',
+                visitingScholarDate: 'Seminar on data-driven deformable object manipulation · Nov 2025',
+                visitingScholarCaption: 'ELLIIT Focus Period · Lund University 2025',
+                eventPage: 'Event page',
+                highlightedPublications: 'Highlighted Publications',
+                codeAvailable: 'Code Available',
+
+                // CV Section
+                educationTitle: 'Education',
+                phd: 'PhD (2019–2024):',
+                phdThesis: 'Thesis:',
+                msc: 'MSc (2017–2019):',
+                mscThesis: 'Thesis:',
+                bsc: 'BSc (2013–2017):',
+                bscThesis: 'Thesis:',
+                academicExperienceTitle: 'Academic Experience',
+                postdoc: '2025–Present:',
+                postdocDesc: 'Postdoctoral Researcher, CA-INP',
+                adjunct: '2024–2025:',
+                adjunctDesc: 'Adjunct Professor, Systems Engineering and Automation, University of Zaragoza.',
+                deforms: '2024–2025:',
+                deformsDesc: 'Researcher N3, European Project DeFORMS, University of Zaragoza.',
+                froscat: '2020–2024:',
+                froscatDesc: 'Researcher N3, Project FROSCAT, University of Zaragoza.',
+                commandia: '2019–2020:',
+                commandiaDesc: 'Researcher N4, European Project COMMANDIA, University of Zaragoza.',
+                awardsTitle: 'Awards & Honors',
+                researchStaysTitle: 'Research Stays & Invited Talks',
+                nov2025: 'Nov 2025:',
+                nov2025Desc: 'Invited Visiting Scholar,',
+                lundDesc: 'Lund University, Sweden. Seminar on data-driven deformable object manipulation.',
+                mar2025: 'Mar 2025:',
+                erfDesc: 'Stuttgart — PhD Award finalist presentation.',
+                sep2022: 'Sep–Nov 2022:',
+                sep2022Desc: 'Research stay,',
+                lundLocation: 'Sweden.',
+                may2021: 'May–Aug 2021:',
+                may2021Desc: 'Research stay,',
+                coimbra: 'Portugal.',
+                projectsTitle: 'Projects, Service & Outreach',
+                commandiaProj: 'Project COMMANDIA:',
+                commandiaProjDesc: 'COllaborative robotic Mobile MANipulation of Deformable objects in Industrial Applications — SOE2/P1/F0638 (Interreg Sudoe Programme, ERDF).',
+                remainProj: 'Project REMAIN:',
+                remainProjDesc: 'robotic REMAnufacturing of deformable INdustrial products — S1/1.1/E0111 (Interreg Sudoe Programme, ERDF).',
+                countrybotsProj: 'Project COUNTRYBOTS:',
+                countrybotsProjDesc: 'Cooperative robots for monitorization and deformable goods transport in the countryside, PID2021-124137OB-I00.',
+                deformsProj: 'Project DeFORMS:',
+                deformsProjDesc: 'Deformation control of Flexible Objects with cooperative Robots in Manufacturing Sectors, TED2021-130224B-I00.',
+                mentoringLabel: 'Mentoring:',
+                mentoringDesc: 'Supervised 1 MSc and 2 BSc theses; 150+ hours of extracurricular research internships.',
+                serviceLabel: 'Service:',
+                serviceDesc: 'Organizing committee (XLIV Jornadas de Automática 2023, IEEE SWYP 2020).',
+                rgroupLabel: 'Research Group:',
+                rgroupDesc: 'Member of',
+
+                // Research
+                researchIntro: 'I study how robots perceive, model, and control deformable objects. My work connects shape perception, mapping, and manipulation with a focus on robust, data-efficient methods and multi-robot coordination.',
+                mainResearch: 'Main research line:',
+                mainResearchDesc: 'Shape control.',
+                coreTopics: 'Core topics:',
+                coreTopicsDesc: 'Shape control, deformable object manipulation, robot perception, and visual servoing.',
+                applications: 'Applications:',
+                applicationsDesc: 'Robotic manipulation, cooperative robotics, and manufacturing.',
+                demoIntro: 'Interactive Demos:',
+                demoIntroDesc: 'For a more accessible introduction to my research, check out the',
+                disseminationButton: 'Dissemination',
+                demoIntroEnd: 'section with interactive visualizations designed for a general audience.',
+
+                // Dissemination
+                interactiveDerosTitle: 'Interactive Demos',
+                interactiveDemosDesc: 'These interactive demos showcase my main research interests in shape perception, mapping, and control of deformable objects.',
+                demoShapeControl: 'Shape Control of Deformable Objects',
+                demoShapeComparison: 'Shape Analysis and Comparison',
+                demoShapeTitle: 'Shape Control of Deformable Objects',
+                demoShapeRelated: 'Related papers:',
+                demoAnalysisTitle: 'Shape Analysis and Comparison',
+                demoAnalysisRelated: 'Related papers:',
+
+                // Publications
+                sectionPublications: 'Publications',
+                journalsTitle: 'Journals',
+                conferencesTitle: 'Conferences',
+                code: 'Code'
+            },
+            es: {
+                // Navigation & Sections
+                navNews: 'Noticias',
+                navCv: 'CV',
+                navResearch: 'Investigación',
+                navDissemination: 'Divulgación',
+                navPublications: 'Publicaciones',
+                sectionNews: 'Noticias',
+                sectionCv: 'CV',
+                sectionResearch: 'Investigación',
+                sectionDissemination: 'Divulgación',
+                sectionPublications: 'Publicaciones',
+
+                // Header
+                location: 'Zaragoza, España',
+                googleScholar: 'Google Scholar',
+                downloadBibtex: 'Descargar BibTeX',
+
+                // Summary
+                profileLabel: 'Perfil:',
+                profileText: 'Investigador postdoctoral en manipulación y control de forma de objetos deformables.',
+                focusLabel: 'Enfoque:',
+                focusText: 'Tuberías de percepción a manipulación, análisis de formas, mecánica de continuos, control no lineal, estimación y control basados en datos.',
+
+                // Awards & News
+                award1Title: '🏆 Premio a la Mejor Tesis de Doctorado en Robótica (2025)',
+                award1Org: 'Comité Español de Control Automático (CEA)',
+                award1Caption: 'Premio CEA a la Mejor Tesis de Doctorado en Robótica',
+                award2Title: '🏆 Premio a la Mejor Tesis de Doctorado en Robótica Ibérica (2025)',
+                award2Desc: 'otorgado por la Sociedad Española de Robótica (SEIDROB) y la Sociedad Portuguesa de Robótica (SPR)',
+                award3Title: '🏆',
+                award3Link: 'Finalista del Premio PhD Georges Giralt',
+                award3Desc: 'finalista del reconocimiento más prestigioso de Europa para excelencia doctoral en robótica, seleccionado entre más de 50 candidatos y presentado en el Foro Europeo de Robótica 2025',
+                award1Short: 'Premio a la Mejor Tesis de Doctorado en Robótica (2025), Comité Español de Control Automático (CEA).',
+                award2Short: 'Premio a la Mejor Tesis de Doctorado en Robótica Ibérica (2025), otorgado por la Sociedad Española de Robótica (SEIDROB) y la Sociedad Portuguesa de Robótica (SPR).',
+                award3Short: 'Finalista del Premio PhD Georges Giralt — finalista del reconocimiento más prestigioso de Europa para excelencia doctoral en robótica, seleccionado entre más de 50 candidatos y presentado en el Foro Europeo de Robótica 2025.',
+
+                // Visiting Scholar
+                visitingScholarTitle: 'Investigador Visitante Invitado',
+                visitingScholarInst: 'Período de Enfoque ELLIIT, Universidad de Lund, Suecia',
+                visitingScholarDate: 'Seminario sobre manipulación de objetos deformables basada en datos · Nov 2025',
+                visitingScholarCaption: 'Período de Enfoque ELLIIT · Universidad de Lund 2025',
+                eventPage: 'Página del evento',
+                highlightedPublications: 'Publicaciones Destacadas',
+                codeAvailable: 'Código Disponible',
+
+                // CV Section
+                educationTitle: 'Educación',
+                phd: 'Doctorado (2019–2024):',
+                phdThesis: 'Tesis:',
+                msc: 'Máster (2017–2019):',
+                mscThesis: 'Tesis:',
+                bsc: 'Licenciatura (2013–2017):',
+                bscThesis: 'Tesis:',
+                academicExperienceTitle: 'Experiencia Académica',
+                postdoc: '2025–Presente:',
+                postdocDesc: 'Investigador Postdoctoral, CA-INP',
+                adjunct: '2024–2025:',
+                adjunctDesc: 'Profesor Asociado, Ingeniería de Sistemas y Automática, Universidad de Zaragoza.',
+                deforms: '2024–2025:',
+                deformsDesc: 'Investigador N3, Proyecto Europeo DeFORMS, Universidad de Zaragoza.',
+                froscat: '2020–2024:',
+                froscatDesc: 'Investigador N3, Proyecto FROSCAT, Universidad de Zaragoza.',
+                commandia: '2019–2020:',
+                commandiaDesc: 'Investigador N4, Proyecto Europeo COMMANDIA, Universidad de Zaragoza.',
+                awardsTitle: 'Premios y Honores',
+                researchStaysTitle: 'Estancias de Investigación y Charlas Invitadas',
+                nov2025: 'Nov 2025:',
+                nov2025Desc: 'Investigador Visitante Invitado,',
+                lundDesc: 'Universidad de Lund, Suecia. Seminario sobre manipulación de objetos deformables basada en datos.',
+                mar2025: 'Mar 2025:',
+                erfDesc: 'Stuttgart — Presentación finalista del Premio de Doctorado.',
+                sep2022: 'Sep–Nov 2022:',
+                sep2022Desc: 'Estancia de investigación,',
+                lundLocation: 'Suecia.',
+                may2021: 'May–Aug 2021:',
+                may2021Desc: 'Estancia de investigación,',
+                coimbra: 'Portugal.',
+                projectsTitle: 'Proyectos, Servicio y Divulgación',
+                commandiaProj: 'Proyecto COMMANDIA:',
+                commandiaProjDesc: 'Manipulación Colaborativa Robótica Móvil de Objetos Deformables en Aplicaciones Industriales — SOE2/P1/F0638 (Programa Interreg Sudoe, ERDF).',
+                remainProj: 'Proyecto REMAIN:',
+                remainProjDesc: 'Remanufactura Robótica de productos industriales Deformables — S1/1.1/E0111 (Programa Interreg Sudoe, ERDF).',
+                countrybotsProj: 'Proyecto COUNTRYBOTS:',
+                countrybotsProjDesc: 'Robots cooperativos para monitorización y transporte de bienes deformables en zonas rurales, PID2021-124137OB-I00.',
+                deformsProj: 'Proyecto DeFORMS:',
+                deformsProjDesc: 'Control de deformación de Objetos Flexibles con Robots cooperativos en Sectores de Manufactura, TED2021-130224B-I00.',
+                mentoringLabel: 'Tutoría:',
+                mentoringDesc: 'Supervisión de 1 Máster y 2 Licenciatura; 150+ horas de prácticas de investigación extracurriculares.',
+                serviceLabel: 'Servicio:',
+                serviceDesc: 'Comité organizador (XLIV Jornadas de Automática 2023, IEEE SWYP 2020).',
+                rgroupLabel: 'Grupo de Investigación:',
+                rgroupDesc: 'Miembro de',
+
+                // Research
+                researchIntro: 'Estudio cómo los robots perciben, modelan y controlan objetos deformables. Mi trabajo conecta la percepción de formas, mapeo y manipulación con enfoque en métodos robustos, eficientes en datos y coordinación multi-robot.',
+                mainResearch: 'Línea principal de investigación:',
+                mainResearchDesc: 'Control de formas.',
+                coreTopics: 'Temas principales:',
+                coreTopicsDesc: 'Control de formas, manipulación de objetos deformables, percepción robótica y control visual.',
+                applications: 'Aplicaciones:',
+                applicationsDesc: 'Manipulación robótica, robótica cooperativa y manufactura.',
+                demoIntro: 'Demostraciones Interactivas:',
+                demoIntroDesc: 'Para una introducción más accesible a mi investigación, consulte la sección',
+                disseminationButton: 'Divulgación',
+                demoIntroEnd: 'con visualizaciones interactivas diseñadas para una audiencia general.',
+
+                // Dissemination
+                interactiveDerosTitle: 'Demostraciones Interactivas',
+                interactiveDemosDesc: 'Estas demostraciones interactivas muestran mis principales intereses de investigación en percepción de formas, mapeo y control de objetos deformables.',
+                demoShapeControl: 'Control de Forma de Objetos Deformables',
+                demoShapeComparison: 'Análisis y Comparación de Formas',
+                demoShapeTitle: 'Control de Forma de Objetos Deformables',
+                demoShapeRelated: 'Artículos relacionados:',
+                demoAnalysisTitle: 'Análisis y Comparación de Formas',
+                demoAnalysisRelated: 'Artículos relacionados:',
+
+                // Publications
+                sectionPublications: 'Publicaciones',
+                journalsTitle: 'Revistas',
+                conferencesTitle: 'Conferencias',
+                code: 'Código'
+            }
+        };
+
+        // i18n Functions
+        let currentLanguage = localStorage.getItem('language') || 'en';
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('language', lang);
+            applyTranslations();
+            updateLanguageButtons();
+            
+            // Notify iframes of language change
+            const roboticsIframe = document.getElementById('robotics-iframe');
+            const shapeIframe = document.getElementById('shape-iframe');
+            if (roboticsIframe && roboticsIframe.contentWindow) {
+                roboticsIframe.contentWindow.postMessage({ type: 'setLanguage', language: lang }, '*');
+            }
+            if (shapeIframe && shapeIframe.contentWindow) {
+                shapeIframe.contentWindow.postMessage({ type: 'setLanguage', language: lang }, '*');
+            }
+        }
+
+        function applyTranslations() {
+            const t = translations[currentLanguage];
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (t[key]) {
+                    element.textContent = t[key];
+                }
+            });
+            document.documentElement.lang = currentLanguage;
+        }
+
+        function updateLanguageButtons() {
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === currentLanguage);
+            });
+        }
+
+        // Initialize i18n on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTranslations();
+            updateLanguageButtons();
+
+            // Attach language button listeners
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setLanguage(btn.getAttribute('data-lang'));
+                });
+            });
+        });
+
+        // Section Navigation
         const sectionTabButtons = document.querySelectorAll('.section-tab-btn');
         const sectionPanels = document.querySelectorAll('.section-panel');
 
@@ -919,6 +1342,7 @@
             });
         });
 
+        // Demo Navigation
         const demoTabButtons = document.querySelectorAll('.demo-tab-btn');
         const demoPanels = document.querySelectorAll('.demo-panel');
 
