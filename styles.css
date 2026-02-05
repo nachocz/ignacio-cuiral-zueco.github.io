@@ -892,14 +892,17 @@ body.dark-theme .bib-list li {
     }
 
     nav.section-tabs {
-        flex-direction: row;
-        gap: 8px;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 10px;
     }
 
     .section-tab-btn {
         width: auto;
         text-align: center;
         white-space: nowrap;
+        padding: 8px 10px;
+        font-size: 0.85em;
     }
 
     h2 {
