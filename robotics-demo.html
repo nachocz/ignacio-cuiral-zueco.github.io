@@ -385,21 +385,22 @@
     <div class="demo-container">
         <h1 data-i18n="title">Robot Cable Manipulation</h1>
         
+        <p style="text-align: center; margin: 15px auto 20px; max-width: 700px; font-size: 0.95em; color: #555; line-height: 1.6;">
+            <span data-i18n="controllerTitle">Use sliders to move robots and manipulate blue cable towards green target shape</span>
+        </p>
+        
+        <div class="visualization-container">
+            <div class="plot-wrapper">
+                <p class="plot-label" data-i18n="errorPlotLabel">Cable alignment error (shape error) over time</p>
+                <canvas id="errorPlot" width="300" height="250"></canvas>
+            </div>
+            <div class="robot-wrapper">
+                <canvas id="roboticsCanvas" width="600" height="450"></canvas>
+            </div>
+        </div>
+        
         <div class="instructions">
-            <p style="margin: 0 0 12px 0; font-weight: 600;" data-i18n="howToPlay">How to Play</p>
-            <ul style="margin: 0 0 12px 0; padding-left: 20px; line-height: 1.8;">
-                <li><strong data-i18n="goal">Goal:</strong> <span data-i18n="goalDesc">Adjust the robot joints to shape the cable and match the target shape shown as a green dashed line</span></li>
-                <li><strong data-i18n="controls">Controls:</strong> <span data-i18n="controlsDesc">Use the sliders to change joint angles for each robot. The blue robot on the left and brown robot on the right work together to control the cable</span></li>
-                <li><strong data-i18n="feedback">Feedback:</strong> <span data-i18n="feedbackDesc">The error curve shows how close you are to the target. Lower values are better. Try "New Target Shape" for different challenges</span></li>
-            </ul>
-            
-            <p style="margin: 0 0 12px 0; font-weight: 600;" data-i18n="whyMatters">Why This Matters</p>
-            <ul style="margin: 0 0 12px 20px; padding-left: 20px; line-height: 1.8;">
-                <li data-i18n="matterText1">Manipulating soft objects like cables and ropes is a key challenge in robotics. These materials show up constantly in real tasks</li>
-                <li><strong data-i18n="note">Note:</strong> <span data-i18n="matterText2">Not all target shapes can be achieved with this cable and robot setup. Determining whether a shape is reachable for a given object and manipulation method is still an open research question</span></li>
-            </ul>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 12px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
                 <div>
                     <h4 style="margin: 0 0 8px 0; font-size: 0.9em;" data-i18n="leftRobot">Left Robot (Blue)</h4>
                     <div class="control-card">
@@ -433,27 +434,29 @@
                 </div>
             </div>
             
-            <div style="text-align: center; margin-top: 12px;">
+            <div style="text-align: center; margin-bottom: 12px;">
+                <div style="margin-bottom: 10px;">
+                    <span data-i18n="cableAlignmentError">Current cable alignment error:</span> <span id="errorDisplay" style="font-weight: 600; color: #3498db;">0.00</span>
+                </div>
                 <button id="newTargetBtn" style="padding: 10px 24px; font-weight: 600; font-size: 0.95em;" data-i18n="newTargetBtn">New Target Shape</button>
             </div>
-        </div>
-        
-        <div class="visualization-container">
-            <div class="plot-wrapper">
-                <p class="plot-label" data-i18n="errorPlotLabel">Error Over Time <span style="font-weight: 400; color: #95a5a6;" data-i18n="errorPlotNote">(lower is better)</span></p>
-                <canvas id="errorPlot" width="300" height="250"></canvas>
-            </div>
-            <div class="robot-wrapper">
-                <canvas id="roboticsCanvas" width="600" height="450"></canvas>
-            </div>
+            
+            <p style="margin: 0 0 12px 0; font-weight: 600;" data-i18n="howToPlay">How to Play</p>
+            <ul style="margin: 0 0 12px 0; padding-left: 20px; line-height: 1.8;">
+                <li><strong data-i18n="goal">Goal:</strong> <span data-i18n="goalDesc">Adjust the robot joints to shape the cable and match the target shape shown as a green dashed line</span></li>
+                <li><strong data-i18n="controls">Controls:</strong> <span data-i18n="controlsDesc">Use the sliders to change joint angles for each robot. The blue robot on the left and brown robot on the right work together to control the cable</span></li>
+                <li><strong data-i18n="feedback">Feedback:</strong> <span data-i18n="feedbackDesc">The error curve shows how close you are to the target. Lower values are better. Try "New Target Shape" for different challenges</span></li>
+            </ul>
+            
+            <p style="margin: 0 0 12px 0; font-weight: 600;" data-i18n="whyMatters">Why This Matters</p>
+            <ul style="margin: 0 0 12px 20px; padding-left: 20px; line-height: 1.8;">
+                <li data-i18n="matterText1">Manipulating soft objects like cables and ropes is a key challenge in robotics. These materials show up constantly in real tasks</li>
+                <li><strong data-i18n="note">Note:</strong> <span data-i18n="matterText2">Not all target shapes can be achieved with this cable and robot setup. Determining whether a shape is reachable for a given object and manipulation method is still an open research question</span></li>
+            </ul>
         </div>
         
         <div class="controls" style="margin-top: 15px;">
             <div class="control-section">
-            </div>
-            
-            <div class="status">
-                <span data-i18n="cableAlignmentError">Current cable alignment error:</span> <span id="errorDisplay">0.00</span>
             </div>
         </div>
     </div>
@@ -463,6 +466,7 @@
         const translations = {
             en: {
                 title: 'Robot Cable Manipulation',
+                controllerTitle: 'Use sliders to move robots and manipulate blue cable towards green target shape',
                 howToPlay: 'How to Play',
                 goal: 'Objective:',
                 goalDesc: 'Adjust the robot joints so that the cable acquires the target shape (dashed green line)',
@@ -471,20 +475,22 @@
                 feedback: 'Feedback:',
                 feedbackDesc: 'The error graph indicates how close you are to the target (the lower, the better). Use the "New Target Shape" button to get a new target shape',
                 whyMatters: 'Why does this matter?',
-                matterText1: 'Manipulating soft objects (cables, ropes, fabrics) is a big challenge in robotics. These materials frequently appear in real-world applications',
+                matterText1: 'Manipulating soft objects (cables, ropes, fabrics) is a big challenge in robotics. These materials frequently appear in real-world applications such as domestic manipulation (clothes, food), agriculture (plants, fruits), manufacturing (fabrics, foams), and more.',
                 note: 'Note:',
-                matterText2: 'Not all target shapes are achievable with this setup. Determining which shapes can be achieved with a given object and manipulation method remains an open research problem',
+                matterText2: 'Not all target shapes are achievable with this setup: material limits, robot movement constraints, grasping points... all condition the possible achievable shapes. Determining which shapes can be achieved with a given object and manipulation capabilities is still an open research problem',
                 leftRobot: 'Left Robot (Blue)',
                 rightRobot: 'Right Robot (Brown)',
                 joint1: 'Joint 1',
                 joint2: 'Joint 2',
                 newTargetBtn: 'New Target Shape',
-                errorPlotLabel: 'Error Over Time',
-                errorPlotNote: '(lower is better)',
-                cableAlignmentError: 'Current cable alignment error:'
+                errorPlotLabel: 'Cable alignment error (shape error) over time',
+                cableAlignmentError: 'Current cable alignment error:',
+                legendTargetShape: 'Target shape',
+                legendCurrentShape: 'Current shape'
             },
             es: {
-                title: 'Manipulación de Cable Robótico',
+                title: 'Manipulación Robótica de un Cable',
+                controllerTitle: 'Usa los deslizadores para mover los robots y manipular el cable azul hacia la forma objetivo verde',
                 howToPlay: 'Cómo Jugar',
                 goal: 'Objetivo:',
                 goalDesc: 'Ajusta las articulaciones de los robots para que el cable adopte la forma objetivo (línea verde discontinua)',
@@ -493,17 +499,18 @@
                 feedback: 'Retroalimentación:',
                 feedbackDesc: 'La gráfica de error indica cómo de cerca estás del objetivo (cuanto más bajo, mejor). Usa el botón "Nueva Forma Objetivo" para obtener una nueva forma objetivo',
                 whyMatters: '¿Por qué es esto importante?',
-                matterText1: 'Manipular objetos blandos (cables, cuerdas, tejidos) es un reto clave en robótica. Estos materiales aparecen constantemente en aplicaciones reales',
+                matterText1: 'Manipular objetos blandos (cables, cuerdas, tejidos) es un reto clave en robótica. Estos materiales aparecen constantemente en aplicaciones reales como manipulación doméstica (ropa, comida), agricultura (plantas, frutas), fabricación (telas, espumas), etc.',
                 note: 'Nota:',
-                matterText2: 'No todas las formas objetivo son alcanzables con esta configuración. Determinar qué formas se pueden conseguir con un objeto y método de manipulación dados sigue siendo un problema abierto de investigación',
+                matterText2: 'No todas las formas objetivo son alcanzables dado un objeto y una configuración para su manipulación: los límites del material, del movimiento de los robots, los puntos de agarre... todo condiciona las posibles formas alcanzables. Determinar y caracterizar qué formas se pueden conseguir con un objeto y unas capacidades de actuación dadas sigue siendo un problema abierto de investigación',
                 leftRobot: 'Robot Izquierdo (Azul)',
                 rightRobot: 'Robot Derecho (Marrón)',
                 joint1: 'Articulación 1',
                 joint2: 'Articulación 2',
                 newTargetBtn: 'Nueva Forma Objetivo',
-                errorPlotLabel: 'Error en el Tiempo',
-                errorPlotNote: '(más bajo es mejor)',
-                cableAlignmentError: 'Error actual de alineación del cable:'
+                errorPlotLabel: 'Error de alineación del cable (error de forma) a lo largo del tiempo',
+                cableAlignmentError: 'Error actual de alineación del cable:',
+                legendTargetShape: 'Forma objetivo',
+                legendCurrentShape: 'Forma actual'
             }
         };
 
@@ -971,130 +978,272 @@
             // Draw left robot arm
             const ee1 = getEndEffector();
             
-            // Draw robot base (rectangular platform)
-            ctx.fillStyle = '#1a1a1a';
+            // Draw robot base with gradient
+            const baseGradient1 = ctx.createLinearGradient(ee1.j0[0] - 25, ee1.j0[1] - 8, ee1.j0[0] - 25, ee1.j0[1] + 8);
+            baseGradient1.addColorStop(0, '#2a2a2a');
+            baseGradient1.addColorStop(0.5, '#1a1a1a');
+            baseGradient1.addColorStop(1, '#0f0f0f');
+            ctx.fillStyle = baseGradient1;
             ctx.fillRect(ee1.j0[0] - 25, ee1.j0[1] - 8, 50, 16);
             
-            // Draw base outline
+            // Base outline
             ctx.strokeStyle = '#2c3e50';
             ctx.lineWidth = 2;
             ctx.strokeRect(ee1.j0[0] - 25, ee1.j0[1] - 8, 50, 16);
             
-            // Draw links with shadow effect
-            ctx.strokeStyle = 'rgba(44, 62, 80, 0.2)';
-            ctx.lineWidth = 8;
-            ctx.lineCap = 'round';
-            ctx.beginPath();
-            ctx.moveTo(ee1.j0[0] + 1, ee1.j0[1] + 1);
-            ctx.lineTo(ee1.j1[0] + 1, ee1.j1[1] + 1);
-            ctx.lineTo(ee1.j2[0] + 1, ee1.j2[1] + 1);
-            ctx.stroke();
+            // Draw links with metallic gradient effect
+            for (let i = 0; i < 2; i++) {
+                const start = i === 0 ? ee1.j0 : ee1.j1;
+                const end = i === 0 ? ee1.j1 : ee1.j2;
+                
+                // Shadow
+                ctx.strokeStyle = 'rgba(44, 62, 80, 0.15)';
+                ctx.lineWidth = 18;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(start[0] + 2, start[1] + 2);
+                ctx.lineTo(end[0] + 2, end[1] + 2);
+                ctx.stroke();
+                
+                // Gradient for metallic look
+                const linkGradient = ctx.createLinearGradient(
+                    start[0], start[1] - 8,
+                    start[0], start[1] + 8
+                );
+                linkGradient.addColorStop(0, '#3d5a6b');
+                linkGradient.addColorStop(0.5, '#2c3e50');
+                linkGradient.addColorStop(1, '#1a252e');
+                ctx.strokeStyle = linkGradient;
+                ctx.lineWidth = 16;
+                ctx.beginPath();
+                ctx.moveTo(start[0], start[1]);
+                ctx.lineTo(end[0], end[1]);
+                ctx.stroke();
+            }
             
-            // Draw links
-            ctx.strokeStyle = '#2c3e50';
-            ctx.lineWidth = 8;
-            ctx.lineCap = 'round';
-            ctx.beginPath();
-            ctx.moveTo(ee1.j0[0], ee1.j0[1]);
-            ctx.lineTo(ee1.j1[0], ee1.j1[1]);
-            ctx.lineTo(ee1.j2[0], ee1.j2[1]);
-            ctx.stroke();
-            
-            // Draw joints (darker)
-            ctx.fillStyle = '#34495e';
+            // Draw joints with radial gradient (3D effect)
             for (let j of [ee1.j0, ee1.j1]) {
+                // Outer shadow
+                const shadowGradient = ctx.createRadialGradient(j[0], j[1], 0, j[0], j[1], 12);
+                shadowGradient.addColorStop(0, 'rgba(52, 73, 94, 0)');
+                shadowGradient.addColorStop(0.8, 'rgba(52, 73, 94, 0)');
+                shadowGradient.addColorStop(1, 'rgba(52, 73, 94, 0.3)');
+                ctx.fillStyle = shadowGradient;
+                ctx.beginPath();
+                ctx.arc(j[0], j[1], 12, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Joint with radial gradient
+                const jointGradient = ctx.createRadialGradient(j[0] - 2, j[1] - 2, 0, j[0], j[1], 10);
+                jointGradient.addColorStop(0, '#4a6278');
+                jointGradient.addColorStop(0.7, '#34495e');
+                jointGradient.addColorStop(1, '#2c3e50');
+                ctx.fillStyle = jointGradient;
                 ctx.beginPath();
                 ctx.arc(j[0], j[1], 10, 0, Math.PI * 2);
                 ctx.fill();
+                
+                // Highlight
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.beginPath();
+                ctx.arc(j[0] - 2, j[1] - 2, 3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Center bolt
+                ctx.fillStyle = '#1a252e';
+                ctx.beginPath();
+                ctx.arc(j[0], j[1], 2, 0, Math.PI * 2);
+                ctx.fill();
             }
             
-            // Draw simple V-shaped gripper (two fingers)
+            // Draw parallel jaw gripper (more realistic)
             const gripperAngle = theta1 + theta2;
-            const fingerLength = 12;
-            const fingerSpread = 0.3; // radians
+            const gripperWidth = 18;
+            const jawLength = 12;
+            const jawWidth = 4;
             
-            // Left finger
-            ctx.strokeStyle = '#34495e';
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
+            // Gripper base (small connecting piece)
+            ctx.fillStyle = '#34495e';
             ctx.beginPath();
-            ctx.moveTo(ee1.j2[0], ee1.j2[1]);
-            const fx1 = ee1.j2[0] + fingerLength * Math.cos(gripperAngle + fingerSpread);
-            const fy1 = ee1.j2[1] + fingerLength * Math.sin(gripperAngle + fingerSpread);
-            ctx.lineTo(fx1, fy1);
-            ctx.stroke();
+            ctx.arc(ee1.j2[0], ee1.j2[1], 5, 0, Math.PI * 2);
+            ctx.fill();
             
-            // Right finger
-            ctx.beginPath();
-            ctx.moveTo(ee1.j2[0], ee1.j2[1]);
-            const fx2 = ee1.j2[0] + fingerLength * Math.cos(gripperAngle - fingerSpread);
-            const fy2 = ee1.j2[1] + fingerLength * Math.sin(gripperAngle - fingerSpread);
-            ctx.lineTo(fx2, fy2);
-            ctx.stroke();
+            // Draw two parallel jaws
+            for (let side of [-1, 1]) {
+                const perpAngle = gripperAngle + Math.PI / 2;
+                const jawBaseX = ee1.j2[0] + side * (gripperWidth / 2) * Math.cos(perpAngle);
+                const jawBaseY = ee1.j2[1] + side * (gripperWidth / 2) * Math.sin(perpAngle);
+                
+                // Jaw with gradient
+                const jawGradient = ctx.createLinearGradient(
+                    jawBaseX, jawBaseY - jawWidth / 2,
+                    jawBaseX, jawBaseY + jawWidth / 2
+                );
+                jawGradient.addColorStop(0, '#4a6278');
+                jawGradient.addColorStop(0.5, '#34495e');
+                jawGradient.addColorStop(1, '#2c3e50');
+                
+                ctx.save();
+                ctx.translate(jawBaseX, jawBaseY);
+                ctx.rotate(gripperAngle);
+                ctx.fillStyle = jawGradient;
+                ctx.fillRect(0, -jawWidth / 2, jawLength, jawWidth);
+                ctx.strokeStyle = '#2c3e50';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(0, -jawWidth / 2, jawLength, jawWidth);
+                ctx.restore();
+            }
             
             // Draw right robot arm (mirror)
             const ee2 = getEndEffector2();
             
-            // Draw robot base (rectangular platform)
-            ctx.fillStyle = '#1a1a1a';
+            // Draw robot base with gradient
+            const baseGradient2 = ctx.createLinearGradient(ee2.j0[0] - 25, ee2.j0[1] - 8, ee2.j0[0] - 25, ee2.j0[1] + 8);
+            baseGradient2.addColorStop(0, '#2a2a2a');
+            baseGradient2.addColorStop(0.5, '#1a1a1a');
+            baseGradient2.addColorStop(1, '#0f0f0f');
+            ctx.fillStyle = baseGradient2;
             ctx.fillRect(ee2.j0[0] - 25, ee2.j0[1] - 8, 50, 16);
             
-            // Draw base outline
+            // Base outline
             ctx.strokeStyle = '#8b4513';
             ctx.lineWidth = 2;
             ctx.strokeRect(ee2.j0[0] - 25, ee2.j0[1] - 8, 50, 16);
             
-            // Draw links with shadow effect
-            ctx.strokeStyle = 'rgba(44, 62, 80, 0.2)';
-            ctx.lineWidth = 8;
-            ctx.lineCap = 'round';
-            ctx.beginPath();
-            ctx.moveTo(ee2.j0[0] + 1, ee2.j0[1] + 1);
-            ctx.lineTo(ee2.j1[0] + 1, ee2.j1[1] + 1);
-            ctx.lineTo(ee2.j2[0] + 1, ee2.j2[1] + 1);
-            ctx.stroke();
+            // Draw links with metallic gradient effect
+            for (let i = 0; i < 2; i++) {
+                const start = i === 0 ? ee2.j0 : ee2.j1;
+                const end = i === 0 ? ee2.j1 : ee2.j2;
+                
+                // Shadow
+                ctx.strokeStyle = 'rgba(139, 69, 19, 0.15)';
+                ctx.lineWidth = 18;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(start[0] + 2, start[1] + 2);
+                ctx.lineTo(end[0] + 2, end[1] + 2);
+                ctx.stroke();
+                
+                // Gradient for metallic look
+                const linkGradient = ctx.createLinearGradient(
+                    start[0], start[1] - 8,
+                    start[0], start[1] + 8
+                );
+                linkGradient.addColorStop(0, '#a0653a');
+                linkGradient.addColorStop(0.5, '#8b4513');
+                linkGradient.addColorStop(1, '#6b3410');
+                ctx.strokeStyle = linkGradient;
+                ctx.lineWidth = 16;
+                ctx.beginPath();
+                ctx.moveTo(start[0], start[1]);
+                ctx.lineTo(end[0], end[1]);
+                ctx.stroke();
+            }
             
-            // Draw links
-            ctx.strokeStyle = '#8b4513';
-            ctx.lineWidth = 8;
-            ctx.lineCap = 'round';
-            ctx.beginPath();
-            ctx.moveTo(ee2.j0[0], ee2.j0[1]);
-            ctx.lineTo(ee2.j1[0], ee2.j1[1]);
-            ctx.lineTo(ee2.j2[0], ee2.j2[1]);
-            ctx.stroke();
-            
-            // Draw joints (darker brown)
-            ctx.fillStyle = '#654321';
+            // Draw joints with radial gradient (3D effect)
             for (let j of [ee2.j0, ee2.j1]) {
+                // Outer shadow
+                const shadowGradient = ctx.createRadialGradient(j[0], j[1], 0, j[0], j[1], 12);
+                shadowGradient.addColorStop(0, 'rgba(101, 67, 33, 0)');
+                shadowGradient.addColorStop(0.8, 'rgba(101, 67, 33, 0)');
+                shadowGradient.addColorStop(1, 'rgba(101, 67, 33, 0.3)');
+                ctx.fillStyle = shadowGradient;
+                ctx.beginPath();
+                ctx.arc(j[0], j[1], 12, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Joint with radial gradient
+                const jointGradient = ctx.createRadialGradient(j[0] - 2, j[1] - 2, 0, j[0], j[1], 10);
+                jointGradient.addColorStop(0, '#8b6239');
+                jointGradient.addColorStop(0.7, '#654321');
+                jointGradient.addColorStop(1, '#4a2f18');
+                ctx.fillStyle = jointGradient;
                 ctx.beginPath();
                 ctx.arc(j[0], j[1], 10, 0, Math.PI * 2);
                 ctx.fill();
+                
+                // Highlight
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.beginPath();
+                ctx.arc(j[0] - 2, j[1] - 2, 3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Center bolt
+                ctx.fillStyle = '#3a2410';
+                ctx.beginPath();
+                ctx.arc(j[0], j[1], 2, 0, Math.PI * 2);
+                ctx.fill();
             }
             
-            // Draw simple V-shaped gripper (two fingers)
+            // Draw parallel jaw gripper (more realistic)
             const gripperAngle2 = theta3 + theta4;
-            const fingerLength2 = 12;
-            const fingerSpread2 = 0.3; // radians
+            const gripperWidth2 = 18;
+            const jawLength2 = 12;
+            const jawWidth2 = 4;
             
-            // Left finger
-            ctx.strokeStyle = '#654321';
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
+            // Gripper base (small connecting piece)
+            ctx.fillStyle = '#654321';
             ctx.beginPath();
-            ctx.moveTo(ee2.j2[0], ee2.j2[1]);
-            const fx3 = ee2.j2[0] + fingerLength2 * Math.cos(gripperAngle2 + fingerSpread2);
-            const fy3 = ee2.j2[1] + fingerLength2 * Math.sin(gripperAngle2 + fingerSpread2);
-            ctx.lineTo(fx3, fy3);
-            ctx.stroke();
+            ctx.arc(ee2.j2[0], ee2.j2[1], 5, 0, Math.PI * 2);
+            ctx.fill();
             
-            // Right finger
+            // Draw two parallel jaws
+            for (let side of [-1, 1]) {
+                const perpAngle = gripperAngle2 + Math.PI / 2;
+                const jawBaseX = ee2.j2[0] + side * (gripperWidth2 / 2) * Math.cos(perpAngle);
+                const jawBaseY = ee2.j2[1] + side * (gripperWidth2 / 2) * Math.sin(perpAngle);
+                
+                // Jaw with gradient
+                const jawGradient = ctx.createLinearGradient(
+                    jawBaseX, jawBaseY - jawWidth2 / 2,
+                    jawBaseX, jawBaseY + jawWidth2 / 2
+                );
+                jawGradient.addColorStop(0, '#8b6239');
+                jawGradient.addColorStop(0.5, '#654321');
+                jawGradient.addColorStop(1, '#4a2f18');
+                
+                ctx.save();
+                ctx.translate(jawBaseX, jawBaseY);
+                ctx.rotate(gripperAngle2);
+                ctx.fillStyle = jawGradient;
+                ctx.fillRect(0, -jawWidth2 / 2, jawLength2, jawWidth2);
+                ctx.strokeStyle = '#4a2f18';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(0, -jawWidth2 / 2, jawLength2, jawWidth2);
+                ctx.restore();
+            }
+            
+            // Draw legend in top-left corner
+            const legendX = 10;
+            const legendY = 10;
+            const lineLength = 30;
+            const lineSpacing = 20;
+            
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            
+            // Green dashed line (target shape)
+            ctx.strokeStyle = '#27ae60';
+            ctx.lineWidth = 4;
+            ctx.setLineDash([6, 4]);
             ctx.beginPath();
-            ctx.moveTo(ee2.j2[0], ee2.j2[1]);
-            const fx4 = ee2.j2[0] + fingerLength2 * Math.cos(gripperAngle2 - fingerSpread2);
-            const fy4 = ee2.j2[1] + fingerLength2 * Math.sin(gripperAngle2 - fingerSpread2);
-            ctx.lineTo(fx4, fy4);
+            ctx.moveTo(legendX, legendY);
+            ctx.lineTo(legendX + lineLength, legendY);
             ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillText(translations[currentLanguage].legendTargetShape, legendX + lineLength + 8, legendY);
+            
+            // Blue solid line (current shape)
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(legendX, legendY + lineSpacing);
+            ctx.lineTo(legendX + lineLength, legendY + lineSpacing);
+            ctx.stroke();
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillText(translations[currentLanguage].legendCurrentShape, legendX + lineLength + 8, legendY + lineSpacing);
         }
         
         // Render error plot

@@ -111,6 +111,8 @@ const translations = {
         demoIntroDesc: 'For a more accessible introduction to my research, check out the',
         disseminationButton: 'Dissemination',
         demoIntroEnd: 'section with interactive visualizations designed for a general audience.',
+        experimentCaption: 'Example of the shape control of a foam piece with two ABB IRB120 robots',
+        experimentPaperLink: 'IEEE T-ASE 2025',
 
         // Dissemination
         interactiveDerosTitle: 'Interactive Demos',
@@ -249,6 +251,8 @@ const translations = {
         demoIntroDesc: 'Para una introducción más accesible, visita la sección',
         disseminationButton: 'Divulgación',
         demoIntroEnd: 'con visualizaciones interactivas pensadas para el público general.',
+        experimentCaption: 'Ejemplo de control de forma de una pieza de espuma con dos robots ABB IRB120',
+        experimentPaperLink: 'IEEE T-ASE 2025',
 
         // Dissemination
         interactiveDerosTitle: 'Demostraciones Interactivas',

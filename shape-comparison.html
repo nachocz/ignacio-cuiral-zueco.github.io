@@ -341,6 +341,33 @@
     <div class="demo-container">
         <h1 data-i18n="title">Shape Comparison Game</h1>
         
+        <p style="text-align: center; margin: 15px auto 20px; max-width: 700px; font-size: 0.95em; color: #555; line-height: 1.6;">
+            <span data-i18n="gameInstructions">Remove or add material from the clay block (right) to make its shape fit the target shape (left).</span>
+            <strong data-i18n="gameTip">Tip:</strong> <span data-i18n="gameTipText">Start removing material from the sides.</span>
+        </p>
+        
+        <div class="layout">
+            <div class="panel">
+                <h3 data-i18n="targetShapeLabel">Target Shape</h3>
+                <canvas id="targetCanvas" width="400" height="400"></canvas>
+                <canvas id="errorCanvas" width="400" height="150" style="margin-top: 12px;"></canvas>
+                <div class="plot-note" data-i18n="shapeResidualNote">Shape mismatch, lower is better</div>
+            </div>
+            
+            <div class="panel">
+                <h3 data-i18n="sculptingCanvasLabel">Sculpting Canvas (try to match target)</h3>
+                <canvas id="shapesCanvas" width="400" height="400"></canvas>
+                <div class="tools" style="margin-top: 12px;">
+                    <button class="tool-btn active" onclick="selectTool('chisel')" id="toolChisel"><span data-i18n="chiselBtn">🔨 Chisel (remove material)</span></button>
+                    <button class="tool-btn" onclick="selectTool('clay')" id="toolClay"><span data-i18n="clayBtn">🏺 Clay (add material)</span></button>
+                </div>
+                <button onclick="resetSculpt()" data-i18n="resetBlockBtn">🔄 Reset Block</button>
+            </div>
+        </div>
+
+        <div class="status" id="statusText" style="min-height: 20px;">
+        </div>
+        
         <div class="instructions">
             <strong data-i18n="howToPlay">How to Play</strong>
             <ul style="margin: 12px 0 12px 20px; line-height: 1.8; color: #2c3e50;">
@@ -355,29 +382,6 @@
                 <li data-i18n="matterText2">Robots need systems that help them compare shapes properly so they can know whether they are manipulating the object in the desired direction towards the target shape or away from it</li>
             </ul>
         </div>
-
-        <div class="layout">
-            <div class="panel">
-                <h3 data-i18n="targetShapeLabel">Target Shape</h3>
-                <canvas id="targetCanvas" width="400" height="400"></canvas>
-                <canvas id="errorCanvas" width="400" height="150" style="margin-top: 12px;"></canvas>
-                <div class="plot-note" data-i18n="shapeResidualNote">Shape mismatch residual: lower is better</div>
-            </div>
-            
-            <div class="panel">
-                <h3 data-i18n="sculptingCanvasLabel">Sculpting Canvas (try to match target)</h3>
-                <canvas id="shapesCanvas" width="400" height="400"></canvas>
-                <div class="tools" style="margin-top: 12px;">
-                    <button class="tool-btn active" onclick="selectTool('chisel')" id="toolChisel"><span data-i18n="chiselBtn">🔨 Chisel (remove)</span></button>
-                    <button class="tool-btn" onclick="selectTool('clay')" id="toolClay"><span data-i18n="clayBtn">🏺 Clay (add)</span></button>
-                </div>
-                <button onclick="resetSculpt()" data-i18n="resetBlockBtn">🔄 Reset Block</button>
-            </div>
-        </div>
-
-        <div class="status" id="statusText" data-i18n="initialStatusText">
-            Sculpt the shape to match the target. The residual curve updates as you sculpt.
-        </div>
     </div>
 
     <script>
@@ -385,6 +389,9 @@
         const translations = {
             en: {
                 title: 'Shape Comparison Game',
+                gameInstructions: 'Remove or add material from the clay block (right) to make its shape fit the target shape (left).',
+                gameTip: 'Tip:',
+                gameTipText: 'Start removing material from the sides and do so uniformly.',
                 howToPlay: 'How to Play',
                 goal: 'Goal:',
                 goalDesc: 'Shape the block on the right so that its contour matches the red shape on the left',
@@ -394,18 +401,23 @@
                 feedbackDesc: 'The shape of your "sculpture" appears in green on the left. The error graph shows how close you are to the target shape; the lower the values, the better',
                 whyMatters: 'What does this example illustrate?',
                 matterText1: 'Humans are capable of comparing shapes naturally and robustly, accurately judging the degree of similarity between the shapes of objects. Sculptors are a clear example of this skill: they constantly adjust the sculpture against a model or reference image until the piece and the reference model are nearly identical',
-                matterText2: 'Similarly, robots need systems that help them compare shapes correctly to know whether they are manipulating the object towards the target reference shape or away from it',
+                matterText2: 'Similarly, robots need systems that help them compare shapes correctly to know whether they are manipulating the object towards the target reference shape or away from it. Part of my research focuses on developing shape comparison systems to help robots understand how close they are to the target shape and in which direction they should manipulate the object to get closer to it.',
                 targetShapeLabel: 'Target Shape',
-                shapeResidualNote: 'Shape mismatch residual: lower is better',
-                sculptingCanvasLabel: 'Sculpting Canvas (try to match target)',
-                chiselBtn: '🔨 Chisel (remove)',
-                clayBtn: '🏺 Clay (add)',
+                shapeResidualNote: 'Shape mismatch (how different the red and green shapes are), lower is better',
+                sculptingCanvasLabel: 'Sculpting Canvas',
+                chiselBtn: '🔨 Chisel (remove material)',
+                clayBtn: '🏺 Clay (add material)',
                 resetBlockBtn: '🔄 Reset Block',
                 initialStatusText: 'Sculpt the shape to match the target. The residual curve updates as you sculpt.',
-                statusText: 'Sculpt the shape to match the target.'
+                statusText: 'Sculpt the shape to match the target.',
+                legendTargetShape: 'Target shape',
+                legendCurrentShape: 'Current shape'
             },
             es: {
                 title: 'Juego de Comparación de Formas',
+                gameInstructions: 'Elimina o añade material del bloque de arcilla (derecha) para que su forma encaje con la forma objetivo (izquierda).',
+                gameTip: 'Consejo:',
+                gameTipText: 'Empieza eliminando material desde los lados y de forma uniforme.',
                 howToPlay: 'Cómo Jugar',
                 goal: 'Objetivo:',
                 goalDesc: 'Dar forma al bloque de la derecha para que su contorno coincida con la forma roja de la izquierda',
@@ -415,15 +427,17 @@
                 feedbackDesc: 'La forma de tu "escultura" aparece en verde a la izquierda. La gráfica de error muestra lo cerca que estás de la forma objetivo, cuanto más bajos sean los valores, mejor',
                 whyMatters: '¿Qué ilustra este ejemplo?',
                 matterText1: 'Los seres humanos son capaces de comparar formas de forma natural y robusta, juzgando con acierto el grado de similitud entre la forma de los objetos. Los escultores son un claro ejemplo de esta habilidad: ajustan constantemente la escultura con respecto a un modelo o imagen de referencia hasta que la pieza y el modelo de referencia son casi idénticos',
-                matterText2: 'De forma similar, los robots necesitan sistemas que les ayuden a comparar formas correctamente para saber si están manipulando el objeto hacia la forma de referencia objetivo o alejándose de ella',
+                matterText2: 'De forma similar, los robots necesitan sistemas que les ayuden a comparar formas correctamente para saber si están manipulando el objeto hacia la forma de referencia objetivo o alejándose de ella. Parte de mi investigación se centra en desarrollar sistemas de comparación de formas para ayudar a los robots a entender cómo de cerca están de la forma objetivo y en qué dirección deben manipular el objeto para acercarse a ella.',
                 targetShapeLabel: 'Forma Objetivo',
-                shapeResidualNote: 'Residuo de desajuste de forma: más bajo es mejor',
-                sculptingCanvasLabel: 'Lienzo de Esculpido (intenta coincidir con objetivo)',
-                chiselBtn: '🔨 Cincel (eliminar)',
-                clayBtn: '🏺 Arcilla (agregar)',
+                shapeResidualNote: 'Error de forma (cómo de diferentes son las formas roja y verde), cuanto más bajo, mejor',
+                sculptingCanvasLabel: 'Bloque a esculpir',
+                chiselBtn: '🔨 Cincel (eliminar material)',
+                clayBtn: '🏺 Arcilla (agregar material)',
                 resetBlockBtn: '🔄 Reiniciar Bloque',
                 initialStatusText: 'Esculpe la forma para que coincida con el objetivo. La curva de residuo se actualiza mientras esculpes.',
-                statusText: 'Esculpe la forma para que coincida con el objetivo.'
+                statusText: 'Esculpe la forma para que coincida con el objetivo.',
+                legendTargetShape: 'Forma objetivo',
+                legendCurrentShape: 'Forma actual'
             }
         };
 
@@ -435,6 +449,12 @@
             localStorage.setItem('language', lang);
             applyTranslations();
             updateLanguageButtons();
+            // Re-render canvases to update legend text
+            if (targetLoaded) {
+                drawTargetShape();
+                drawErrorPlot();
+                renderSculpt();
+            }
         }
 
         function applyTranslations() {
@@ -527,10 +547,13 @@
         const sculptCtx = shapesCanvas.getContext('2d');
         
         // Particle grid for sculpting
-        const GRID_COLS = 30;
-        const GRID_ROWS = 34;
+        const GRID_COLS = 40;
+        const GRID_ROWS = 45;
         let particleGrid = [];  // 2D array of {x, y, alive}
-        const PARTICLE_RADIUS = 2;
+        let fallingParticles = [];  // Array of {x, y, vx, vy, life} for animation
+        let isAnimating = false;  // Flag to prevent multiple animation loops
+        const PARTICLE_RADIUS = 6.5;  // Larger particles for clay-like appearance
+        const PARTICLE_COLOR = '#8B6F47';  // Brownish clay color
         const ERASE_RADIUS = 20;
         const ALPHA_RADIUS = 15;  // Concavity parameter
 
@@ -911,6 +934,36 @@
                 drawShape(targetCtx, currentSculptShape, '#27ae60', 3, false);
             }
             
+            // Draw legend in top-left corner
+            const legendX = 10;
+            const legendY = 10;
+            const lineLength = 30;
+            const lineSpacing = 20;
+            
+            targetCtx.font = '14px Arial';
+            targetCtx.textAlign = 'left';
+            targetCtx.textBaseline = 'middle';
+            
+            // Red solid line (target shape)
+            targetCtx.strokeStyle = '#e74c3c';
+            targetCtx.lineWidth = 3;
+            targetCtx.beginPath();
+            targetCtx.moveTo(legendX, legendY);
+            targetCtx.lineTo(legendX + lineLength, legendY);
+            targetCtx.stroke();
+            targetCtx.fillStyle = '#2c3e50';
+            targetCtx.fillText(translations[currentLanguage].legendTargetShape, legendX + lineLength + 8, legendY);
+            
+            // Green solid line (current shape)
+            targetCtx.strokeStyle = '#27ae60';
+            targetCtx.lineWidth = 3;
+            targetCtx.beginPath();
+            targetCtx.moveTo(legendX, legendY + lineSpacing);
+            targetCtx.lineTo(legendX + lineLength, legendY + lineSpacing);
+            targetCtx.stroke();
+            targetCtx.fillStyle = '#2c3e50';
+            targetCtx.fillText(translations[currentLanguage].legendCurrentShape, legendX + lineLength + 8, legendY + lineSpacing);
+            
             targetCtx.fillStyle = '#2c3e50';
             targetCtx.font = 'bold 14px Arial';
         }
@@ -1058,17 +1111,57 @@
                 for (let col = 0; col < particleGrid[row].length; col++) {
                     const p = particleGrid[row][col];
                     if (p.alive) {
-                        sculptCtx.fillStyle = '#1a1a1a';
+                        sculptCtx.fillStyle = PARTICLE_COLOR;
                         sculptCtx.beginPath();
                         sculptCtx.arc(p.x, p.y, PARTICLE_RADIUS, 0, Math.PI * 2);
                         sculptCtx.fill();
                     }
                 }
             }
+            
+            // Draw falling particles
+            for (let i = 0; i < fallingParticles.length; i++) {
+                const p = fallingParticles[i];
+                const alpha = Math.max(0, p.life / 60);
+                // Extract RGB values from PARTICLE_COLOR hex (#8B6F47)
+                const r = parseInt(PARTICLE_COLOR.slice(1, 3), 16);
+                const g = parseInt(PARTICLE_COLOR.slice(3, 5), 16);
+                const b = parseInt(PARTICLE_COLOR.slice(5, 7), 16);
+                sculptCtx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                sculptCtx.beginPath();
+                sculptCtx.arc(p.x, p.y, PARTICLE_RADIUS * 0.8, 0, Math.PI * 2);
+                sculptCtx.fill();
+            }
 
             // Draw contour
             if (currentSculptShape.length > 0) {
                 drawShape(sculptCtx, currentSculptShape, '#d0d0d0', 2, false);
+            }
+        }
+        
+        // Animation loop for falling particles
+        function animateFallingParticles() {
+            if (fallingParticles.length > 0) {
+                // Update falling particles
+                for (let i = fallingParticles.length - 1; i >= 0; i--) {
+                    const p = fallingParticles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.3; // gravity
+                    p.life--;
+                    
+                    if (p.life <= 0 || p.y > sculptCanvas.height) {
+                        fallingParticles.splice(i, 1);
+                    }
+                }
+                
+                // Re-render if there are still falling particles
+                renderSculpt();
+                drawTargetShape();
+                drawErrorPlot();
+                requestAnimationFrame(animateFallingParticles);
+            } else {
+                isAnimating = false;
             }
         }
 
@@ -1186,6 +1279,8 @@
 
             // Initialize particle grid
             particleGrid = [];
+            fallingParticles = []; // Clear falling particles
+            isAnimating = false; // Reset animation flag
             const startX = 50;
             const startY = 40;
             const endX = sculptCanvas.width - 50;
@@ -1217,6 +1312,7 @@
 
         function eraseAt(x, y) {
             let changed = false;
+            let particlesRemoved = false;
             for (let row = 0; row < particleGrid.length; row++) {
                 for (let col = 0; col < particleGrid[row].length; col++) {
                     const p = particleGrid[row][col];
@@ -1230,6 +1326,15 @@
                             if (p.alive) {
                                 p.alive = false;
                                 changed = true;
+                                particlesRemoved = true;
+                                // Spawn falling particle animation
+                                fallingParticles.push({
+                                    x: p.x,
+                                    y: p.y,
+                                    vx: (Math.random() - 0.5) * 3,
+                                    vy: Math.random() * 2 + 1,
+                                    life: 60
+                                });
                             }
                         } else {
                             // Add material (clay)
@@ -1241,7 +1346,14 @@
                     }
                 }
             }
-            if (changed) scheduleUpdate();
+            if (changed) {
+                scheduleUpdate();
+                // Start animation if particles were removed and not already animating
+                if (particlesRemoved && !isAnimating) {
+                    isAnimating = true;
+                    animateFallingParticles();
+                }
+            }
         }
 
         function getCanvasPos(e) {
