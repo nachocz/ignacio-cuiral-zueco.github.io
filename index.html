@@ -1025,7 +1025,7 @@
                     <p data-i18n="locoVerseIntro" style="margin: 20px 0 15px 0; line-height: 1.7;">My specific role centered on the creation of the <strong>LoCoVerse</strong>, a fictional ecosystem where these robotic platforms existed as newly discovered species. We used this lore to frame technical lessons within a compelling narrative, blending storytelling with a scientific approach.</p>
                     
                     <div class="video-container" style="margin: 20px 0;">
-                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/gARHGLxpAdU" title="LoCoVerse - Educational Robotics Narrative" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe id="locoVerseVideo" width="100%" height="315" src="https://www.youtube.com/embed/gARHGLxpAdU" title="LoCoVerse - Educational Robotics Narrative" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
                 </div>
             </div>
@@ -1322,6 +1322,14 @@
             localStorage.setItem('language', lang);
             applyTranslations();
             updateLanguageButtons();
+            
+            // Update LoCo CORP video based on language
+            const locoVideo = document.getElementById('locoVerseVideo');
+            if (locoVideo) {
+                locoVideo.src = lang === 'es' 
+                    ? 'https://www.youtube.com/embed/0rMbIkIO2SI'
+                    : 'https://www.youtube.com/embed/gARHGLxpAdU';
+            }
             
             // Notify iframes of language change
             const roboticsIframe = document.getElementById('robotics-iframe');
