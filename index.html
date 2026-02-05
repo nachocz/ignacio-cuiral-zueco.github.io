@@ -649,6 +649,25 @@
             color: #e6e6e6;
         }
 
+        body.dark-theme .loco-corp-section {
+            background: linear-gradient(135deg, #27ae601a 0%, #27ae600f 100%) !important;
+            border-left-color: #27ae60 !important;
+        }
+
+        body.dark-theme .loco-content-card {
+            background: #1a2128 !important;
+            border-color: #2a3140 !important;
+        }
+
+        body.dark-theme .loco-image-box {
+            background: #0f1115 !important;
+            border-left-color: #27ae60 !important;
+        }
+
+        body.dark-theme .loco-image-label {
+            color: #b8d4e6 !important;
+        }
+
         body.dark-theme .section-tab-btn.active {
             background: #2c6fb3;
             border-color: #3b82c4;
@@ -1012,21 +1031,21 @@
             </div>
 
             <!-- Separator -->
-            <div style="margin: 40px 0 30px 0; border-top: 2px solid #34495e; border-bottom: 1px dashed #7f8c8d; padding: 15px 0;"></div>
+            <div style="margin: 50px 0 40px 0; position: relative; height: 1px; background: linear-gradient(90deg, transparent 0%, #34495e 20%, #34495e 80%, transparent 100%);"></div>
 
             <!-- Educational Robotics Section -->
-            <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #27ae6012 0%, #27ae6008 100%); border-left: 5px solid #27ae60; border-radius: 8px;">
+            <div class="loco-corp-section" style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #27ae6012 0%, #27ae6008 100%); border-left: 5px solid #27ae60; border-radius: 8px;">
                 <h3 data-i18n="locoCorpTitle" style="color: #27ae60; font-size: 1.35em; margin: 0 0 20px 0; font-weight: 600;">Educational Robotics: LoCo CORP</h3>
                 
-                <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ecf0f1;">
-                    <p data-i18n="locoCorpIntro" style="margin: 0 0 15px 0; line-height: 1.7;">I was involved in the LoCo CORP initiative, a project dedicated to transforming how robotics is taught in schools and high schools. While we developed <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" style="color: #3498db; text-decoration: none; border-bottom: 1px solid #3498db;">Noctis and Aurel</a> as our core robotic platforms, they were really just the tools for a broader educational mission. Through our workshops, we pushed past the idea of robots as simple toys and instead used them to immerse students in the real engineering underneath. We guided them through the actual electronics, programming, and hardware design required to bring a machine to life, encouraging them to stop being passive consumers and start understanding the technology in their hands.</p>
+                <div class="loco-content-card" style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ecf0f1;">
+                    <p style="margin: 0 0 15px 0; line-height: 1.7;"><span data-i18n="locoCorpIntro"></span> <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" style="color: #3498db; text-decoration: none; border-bottom: 1px solid #3498db;" data-i18n="locoCorpKickstarter">Learn more</a></p>
                     
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 3px solid #27ae60;">
-                        <p style="margin: 0 0 10px 0; font-weight: 500; color: #2c3e50; font-size: 0.95em;">Programming in a learning-friendly way:</p>
+                    <div class="loco-image-box" style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 3px solid #27ae60;">
+                        <p class="loco-image-label" style="margin: 0 0 10px 0; font-weight: 500; color: #2c3e50; font-size: 0.95em;">Programming in a learning-friendly way:</p>
                         <img src="assets/images/microbit.gif" alt="Noctis programming with micro:bit" style="max-width: 100%; height: auto; border-radius: 4px;">
                     </div>
 
-                    <p data-i18n="locoVerseIntro" style="margin: 20px 0 15px 0; line-height: 1.7;">My specific role centered on the creation of the <strong>LoCoVerse</strong>, a fictional ecosystem where these robotic platforms existed as newly discovered species. We used this lore to frame technical lessons within a compelling narrative, blending storytelling with a scientific approach.</p>
+                    <p style="margin: 20px 0 15px 0; line-height: 1.7;"><span data-i18n="locoVerseIntro"></span></p>
                     
                     <div class="video-container" style="margin: 20px 0;">
                         <iframe id="locoVerseVideo" width="100%" height="315" src="https://www.youtube.com/embed/gARHGLxpAdU" title="LoCoVerse - Educational Robotics Narrative" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -1181,8 +1200,9 @@
                 demoAnalysisTitle: 'Shape Analysis and Comparison',
                 demoAnalysisRelated: 'Related papers:',
                 locoCorpTitle: 'Educational Robotics: LoCo CORP',
-                locoCorpIntro: 'I was involved in the LoCo CORP initiative, a project dedicated to transforming how robotics is taught in schools and high schools. While we developed <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" style="color: #3498db; text-decoration: none; border-bottom: 1px solid #3498db;">Noctis and Aurel</a> as our core robotic platforms, they were really just the tools for a broader educational mission. Through our workshops, we pushed past the idea of robots as simple toys and instead used them to immerse students in the real engineering underneath. We guided them through the actual electronics, programming, and hardware design required to bring a machine to life, encouraging them to stop being passive consumers and start understanding the technology in their hands.',
-                locoVerseIntro: 'My specific role centered on the creation of the <strong>LoCoVerse</strong>, a fictional ecosystem where these robotic platforms existed as newly discovered species. We used this lore to frame technical lessons within a compelling narrative, blending storytelling with a scientific approach.',
+                locoCorpIntro: 'I was involved in the LoCo CORP initiative, a project dedicated to transforming how robotics is taught in schools and high schools. While we developed Noctis and Aurel as our core robotic platforms, they were really just the tools for a broader educational mission. Through our workshops, we pushed past the idea of robots as simple toys and instead used them to immerse students in the real engineering underneath. We guided them through the actual electronics, programming, and hardware design required to bring a machine to life, encouraging them to stop being passive consumers and start understanding the technology in their hands.',
+                locoCorpKickstarter: 'Learn more about Noctis and Aurel',
+                locoVerseIntro: 'My specific role centered on the creation of the LoCoVerse, a fictional ecosystem where these robotic platforms existed as newly discovered species. We used this lore to frame technical lessons within a compelling narrative, blending storytelling with a scientific approach.',
 
                 // Publications
                 sectionPublications: 'Publications',
@@ -1307,8 +1327,9 @@
                 demoAnalysisTitle: 'Análisis y Comparación de Formas',
                 demoAnalysisRelated: 'Artículos relacionados:',
                 locoCorpTitle: 'Robótica Educativa: LoCo CORP',
-                locoCorpIntro: 'Participé en la iniciativa LoCo CORP, un proyecto dedicado a transformar la enseñanza de la robótica en escuelas e institutos. Aunque desarrollamos <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" style="color: #3498db; text-decoration: none; border-bottom: 1px solid #3498db;">Noctis y Aurel</a> como nuestras plataformas robóticas principales, eran realmente solo las herramientas para una misión educativa más amplia. A través de nuestros talleres, superamos la idea de los robots como simples juguetes e hicimos que los estudiantes se sumergieran en la ingeniería real que hay detrás. Los guiamos a través de la electrónica actual, la programación y el diseño de hardware necesarios para dar vida a una máquina, animándolos a dejar de ser consumidores pasivos y a comenzar a entender la tecnología en sus manos.',
-                locoVerseIntro: 'Mi papel específico se centró en la creación del <strong>LoCoVerse</strong>, un ecosistema ficticio donde estas plataformas robóticas existían como especies recién descubiertas. Usamos esta narrativa para enmarcar las lecciones técnicas dentro de una historia convincente, combinando la narración con un enfoque científico.',
+                locoCorpIntro: 'Participé en la iniciativa LoCo CORP, un proyecto dedicado a transformar la enseñanza de la robótica en escuelas e institutos. Aunque desarrollamos Noctis y Aurel como nuestras plataformas robóticas principales, eran realmente solo las herramientas para una misión educativa más amplia. A través de nuestros talleres, superamos la idea de los robots como simples juguetes e hicimos que los estudiantes se sumergieran en la ingeniería real que hay detrás. Los guiamos a través de la electrónica actual, la programación y el diseño de hardware necesarios para dar vida a una máquina, animándolos a dejar de ser consumidores pasivos y a comenzar a entender la tecnología en sus manos.',
+                locoCorpKickstarter: 'Descubre más sobre Noctis y Aurel',
+                locoVerseIntro: 'Mi papel específico se centró en la creación del LoCoVerse, un ecosistema ficticio donde estas plataformas robóticas existían como especies recién descubiertas. Usamos esta narrativa para enmarcar las lecciones técnicas dentro de una historia convincente, combinando la narración con un enfoque científico.',
 
                 // Publications
                 sectionPublications: 'Publicaciones',
