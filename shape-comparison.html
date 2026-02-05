@@ -249,6 +249,85 @@
             background: #2c6fb3;
             border-color: #3b82c4;
         }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .demo-container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.4em;
+            }
+
+            .layout {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .panel {
+                padding: 10px;
+            }
+
+            .panel h3 {
+                font-size: 0.85em;
+                margin-bottom: 8px;
+            }
+
+            #targetCanvas,
+            #shapesCanvas {
+                width: 100%;
+                height: auto;
+            }
+
+            #errorCanvas {
+                width: 100%;
+                height: auto;
+                margin-top: 8px;
+            }
+
+            .instructions {
+                font-size: 0.85em;
+                padding: 10px;
+            }
+
+            .instructions ul {
+                margin: 8px 0 8px 12px;
+                line-height: 1.6;
+            }
+
+            .instructions li {
+                font-size: 0.85em;
+            }
+
+            button {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+
+            .tools {
+                display: flex;
+                gap: 6px;
+            }
+
+            .tool-btn {
+                flex: 1;
+                padding: 6px 4px;
+                font-size: 0.75em;
+            }
+
+            .plot-note {
+                font-size: 0.7em;
+            }
+
+            .status {
+                font-size: 0.8em;
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 <body class="dark-theme">
@@ -329,14 +408,14 @@
                 title: 'Juego de Comparación de Formas',
                 howToPlay: 'Cómo Jugar',
                 goal: 'Objetivo:',
-                goalDesc: 'Da forma al bloque de la derecha para que coincida con la forma de destino roja de la izquierda',
+                goalDesc: 'Esculpe el bloque de la derecha hasta que coincida con la forma objetivo roja de la izquierda',
                 sculpting: 'Esculpido:',
-                sculptingDesc: 'El panel derecho muestra tu bloque como una cuadrícula de partículas. Usa Cincel para eliminar partículas y Arcilla para agregarlas de nuevo',
+                sculptingDesc: 'El panel derecho muestra tu bloque como una cuadrícula de partículas. Usa el Cincel para quitar partículas y la Arcilla para añadirlas',
                 feedback: 'Retroalimentación:',
-                feedbackDesc: 'Tu forma actual aparece en verde a la izquierda. La curva de error muestra qué tan cerca estás, los valores más bajos son mejores',
-                whyMatters: 'Por Qué Es Importante',
-                matterText1: 'Los humanos comparan naturalmente formas y juzgan qué tan cerca coinciden los objetos. Los escultores muestran esta habilidad en su nivel más alto, ajustando constantemente su trabajo contra un objetivo hasta que las piezas se vean idénticas',
-                matterText2: 'Los robots necesitan sistemas que les ayuden a comparar formas correctamente para que sepan si están manipulando el objeto en la dirección deseada hacia la forma de destino o alejándose de ella',
+                feedbackDesc: 'Tu forma actual aparece en verde (izquierda). La gráfica de error indica cómo de cerca estás (cuanto más bajo, mejor)',
+                whyMatters: 'Por Qué Importa',
+                matterText1: 'Los humanos comparamos formas de manera natural y juzgamos cuánto se parecen los objetos. Los escultores llevan esta habilidad al máximo, ajustando continuamente su obra hasta que coincide perfectamente con el objetivo',
+                matterText2: 'Los robots necesitan sistemas para comparar formas correctamente y saber si están manipulando el objeto en la dirección correcta o no',
                 targetShapeLabel: 'Forma Objetivo',
                 shapeResidualNote: 'Residuo de desajuste de forma: más bajo es mejor',
                 sculptingCanvasLabel: 'Lienzo de Esculpido (intenta coincidir con objetivo)',

@@ -179,7 +179,7 @@
         }
 
         .section-content {
-            max-height: 2000px;
+            max-height: 3000px;
             overflow: hidden;
             transition: max-height 0.3s ease, opacity 0.3s ease;
             opacity: 1;
@@ -775,6 +775,22 @@
                 max-height: 10000px;
             }
 
+            .news-highlight {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .news-highlight img {
+                width: 100%;
+                max-width: 100%;
+                margin: 0 0 10px 0;
+            }
+
+            .award-photo {
+                width: 100%;
+                max-width: 100%;
+            }
+
             .demo-iframe {
                 height: 70vh;
                 min-height: 520px;
@@ -973,8 +989,8 @@
             <div id="demo-shape-control" class="demo-panel active">
                 <div class="demo-callout" style="background: linear-gradient(135deg, #3498db15 0%, #3498db08 100%); border-left: 4px solid #3498db; padding: 15px; border-radius: 6px; margin: 18px 0;">
                     <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;" data-i18n="demoShapeTitle">Shape Control of Deformable Objects</h4>
-                    <p style="font-size: 0.95em; color: #7f8c8d; margin-bottom: 12px; margin: 0;" data-i18n="demoShapeRelated">
-                        Related papers:
+                    <p style="font-size: 0.95em; color: #7f8c8d; margin-bottom: 12px; margin: 0;">
+                        <span data-i18n="demoShapeRelated">Related papers:</span>
                         <a href="https://doi.org/10.1109/LRA.2023.3292617">RA-L 2023</a> ·
                         <a href="https://doi.org/10.1109/TMECH.2023.3325934">TMECH 2024</a>
                     </p>
@@ -985,14 +1001,33 @@
             <div id="demo-shape-compare" class="demo-panel">
                 <div class="demo-callout" style="background: linear-gradient(135deg, #27ae6015 0%, #27ae6008 100%); border-left: 4px solid #27ae60; padding: 15px; border-radius: 6px; margin: 18px 0;">
                     <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;" data-i18n="demoAnalysisTitle">Shape Analysis and Comparison</h4>
-                    <p style="font-size: 0.95em; color: #7f8c8d; margin: 0;" data-i18n="demoAnalysisRelated">
-                        Related papers:
+                    <p style="font-size: 0.95em; color: #7f8c8d; margin: 0;">
+                        <span data-i18n="demoAnalysisRelated">Related papers:</span>
                         <a href="https://doi.org/10.1109/TASE.2025.3529180">T-ASE (surface mapping)</a> ·
                         <a href="https://doi.org/10.1016/j.robot.2025.105134">RAS (elastic contour mapping)</a>
                     </p>
                 </div>
                 <iframe src="shape-comparison.html" class="demo-iframe" title="Shape Analysis and Comparison Tool" id="shape-iframe"></iframe>
             </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3 data-i18n="locoCorpTitle" style="color: #2c3e50; font-size: 1.3em; margin-bottom: 15px;">Educational Robotics: LoCo CORP</h3>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #27ae60; margin-bottom: 20px;">
+                    <p data-i18n="locoCorpIntro" style="margin: 0 0 15px 0; line-height: 1.7;">I was involved in the LoCo CORP initiative, a project dedicated to transforming how robotics is taught in schools and high schools. While we developed <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" style="color: #3498db; text-decoration: none; border-bottom: 1px solid #3498db;">Noctis and Aurel</a> as our core robotic platforms, they were really just the tools for a broader educational mission. Through our workshops, we pushed past the idea of robots as simple toys and instead used them to immerse students in the real engineering underneath. We guided them through the actual electronics, programming, and hardware design required to bring a machine to life, encouraging them to stop being passive consumers and start understanding the technology in their hands.</p>
+                    
+                    <div style="background: white; padding: 15px; border-radius: 6px; margin: 15px 0;">
+                        <p style="margin: 0 0 10px 0; font-weight: 500; color: #2c3e50; font-size: 0.95em;">Programming in a learning-friendly way:</p>
+                        <img src="assets/images/microbit.gif" alt="Noctis programming with micro:bit" style="max-width: 100%; height: auto; border-radius: 4px;">
+                    </div>
+
+                    <p data-i18n="locoVerseIntro" style="margin: 20px 0 15px 0; line-height: 1.7;">My specific role centered on the creation of the <strong>LoCoVerse</strong>, a fictional ecosystem where these robotic platforms existed as newly discovered species. We used this lore to frame technical lessons within a compelling narrative, blending storytelling with a scientific approach.</p>
+                    
+                    <div class="video-container" style="margin: 20px 0;">
+                        <iframe width="100%" height="315" src="https://www.youtube.com/embed/gARHGLxpAdU" title="LoCoVerse - Educational Robotics Narrative" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1141,6 +1176,9 @@
                 demoShapeRelated: 'Related papers:',
                 demoAnalysisTitle: 'Shape Analysis and Comparison',
                 demoAnalysisRelated: 'Related papers:',
+                locoCorpTitle: 'Educational Robotics: LoCo CORP',
+                locoCorpIntro: 'I was involved in the LoCo CORP initiative, a project dedicated to transforming how robotics is taught in schools and high schools. While we developed <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" style="color: #3498db; text-decoration: none; border-bottom: 1px solid #3498db;">Noctis and Aurel</a> as our core robotic platforms, they were really just the tools for a broader educational mission. Through our workshops, we pushed past the idea of robots as simple toys and instead used them to immerse students in the real engineering underneath. We guided them through the actual electronics, programming, and hardware design required to bring a machine to life, encouraging them to stop being passive consumers and start understanding the technology in their hands.',
+                locoVerseIntro: 'My specific role centered on the creation of the <strong>LoCoVerse</strong>, a fictional ecosystem where these robotic platforms existed as newly discovered species. We used this lore to frame technical lessons within a compelling narrative, blending storytelling with a scientific approach.',
 
                 // Publications
                 sectionPublications: 'Publications',
@@ -1168,22 +1206,22 @@
 
                 // Summary
                 profileLabel: 'Perfil:',
-                profileText: 'Investigador postdoctoral en manipulación y control de forma de objetos deformables.',
+                profileText: 'Investigador postdoctoral en manipulación y control de objetos deformables.',
                 focusLabel: 'Enfoque:',
-                focusText: 'Tuberías de percepción a manipulación, análisis de formas, mecánica de continuos, control no lineal, estimación y control basados en datos.',
+                focusText: 'Percepción y manipulación, análisis de forma, mecánica del continuo, control no lineal, métodos basados en datos.',
 
                 // Awards & News
-                award1Title: '🏆 Premio a la Mejor Tesis de Doctorado en Robótica (2025)',
+                award1Title: '🏆 Premio a la Mejor Tesis Doctoral en Robótica (2025)',
                 award1Org: 'Comité Español de Control Automático (CEA)',
-                award1Caption: 'Premio CEA a la Mejor Tesis de Doctorado en Robótica',
-                award2Title: '🏆 Premio a la Mejor Tesis de Doctorado en Robótica Ibérica (2025)',
-                award2Desc: 'otorgado por la Sociedad Española de Robótica (SEIDROB) y la Sociedad Portuguesa de Robótica (SPR)',
+                award1Caption: 'Premio CEA a la Mejor Tesis Doctoral en Robótica',
+                award2Title: '🏆 Premio a la Mejor Tesis Doctoral en Robótica Ibérica (2025)',
+                award2Desc: 'concedido por la Sociedad Española de Robótica (SEIDROB) y la Sociedad Portuguesa de Robótica (SPR)',
                 award3Title: '🏆',
                 award3Link: 'Finalista del Premio PhD Georges Giralt',
-                award3Desc: 'finalista del reconocimiento más prestigioso de Europa para excelencia doctoral en robótica, seleccionado entre más de 50 candidatos y presentado en el Foro Europeo de Robótica 2025',
-                award1Short: 'Premio a la Mejor Tesis de Doctorado en Robótica (2025), Comité Español de Control Automático (CEA).',
-                award2Short: 'Premio a la Mejor Tesis de Doctorado en Robótica Ibérica (2025), otorgado por la Sociedad Española de Robótica (SEIDROB) y la Sociedad Portuguesa de Robótica (SPR).',
-                award3Short: 'Finalista del Premio PhD Georges Giralt — finalista del reconocimiento más prestigioso de Europa para excelencia doctoral en robótica, seleccionado entre más de 50 candidatos y presentado en el Foro Europeo de Robótica 2025.',
+                award3Desc: 'finalista del reconocimiento europeo más prestigioso en robótica, seleccionado entre más de 50 candidatos y presentado en el Foro Europeo de Robótica 2025',
+                award1Short: 'Premio a la Mejor Tesis Doctoral en Robótica (2025), Comité Español de Control Automático (CEA).',
+                award2Short: 'Premio a la Mejor Tesis Doctoral en Robótica Ibérica (2025), concedido por la Sociedad Española de Robótica (SEIDROB) y la Sociedad Portuguesa de Robótica (SPR).',
+                award3Short: 'Finalista del Premio PhD Georges Giralt — finalista del reconocimiento más prestigioso de Europa en excelencia doctoral en robótica, seleccionado entre más de 50 candidatos y presentado en el Foro Europeo de Robótica 2025.',
 
                 // Visiting Scholar
                 visitingScholarTitle: 'Investigador Visitante Invitado',
@@ -1219,7 +1257,7 @@
                 nov2025Desc: 'Investigador Visitante Invitado,',
                 lundDesc: 'Universidad de Lund, Suecia. Seminario sobre manipulación de objetos deformables basada en datos.',
                 mar2025: 'Mar 2025:',
-                erfDesc: 'Stuttgart — Presentación finalista del Premio de Doctorado.',
+                erfDesc: 'Stuttgart — Presentación finalista del Premio Doctoral.',
                 sep2022: 'Sep–Nov 2022:',
                 sep2022Desc: 'Estancia de investigación,',
                 lundLocation: 'Suecia.',
@@ -1243,27 +1281,30 @@
                 rgroupDesc: 'Miembro de',
 
                 // Research
-                researchIntro: 'Estudio cómo los robots perciben, modelan y controlan objetos deformables. Mi trabajo conecta la percepción de formas, mapeo y manipulación con enfoque en métodos robustos, eficientes en datos y coordinación multi-robot.',
-                mainResearch: 'Línea principal de investigación:',
-                mainResearchDesc: 'Control de formas.',
-                coreTopics: 'Temas principales:',
-                coreTopicsDesc: 'Control de formas, manipulación de objetos deformables, percepción robótica y control visual.',
+                researchIntro: 'Estudio cómo los robots perciben, modelan y controlan objetos deformables. Mi trabajo conecta percepción, modelado y manipulación, con especial interés en métodos robustos y coordinación entre múltiples robots.',
+                mainResearch: 'Línea principal:',
+                mainResearchDesc: 'Control de forma.',
+                coreTopics: 'Temas clave:',
+                coreTopicsDesc: 'Control de forma, manipulación de objetos deformables, percepción robótica y control visual.',
                 applications: 'Aplicaciones:',
-                applicationsDesc: 'Manipulación robótica, robótica cooperativa y manufactura.',
-                demoIntro: 'Demostraciones Interactivas:',
-                demoIntroDesc: 'Para una introducción más accesible a mi investigación, consulte la sección',
+                applicationsDesc: 'Manipulación robótica, robótica cooperativa y automatización industrial.',
+                demoIntro: 'Demostraciones interactivas:',
+                demoIntroDesc: 'Para una introducción más accesible, ver la sección',
                 disseminationButton: 'Divulgación',
-                demoIntroEnd: 'con visualizaciones interactivas diseñadas para una audiencia general.',
+                demoIntroEnd: 'con visualizaciones interactivas para público general.',
 
                 // Dissemination
                 interactiveDerosTitle: 'Demostraciones Interactivas',
-                interactiveDemosDesc: 'Estas demostraciones interactivas muestran mis principales intereses de investigación en percepción de formas, mapeo y control de objetos deformables.',
+                interactiveDemosDesc: 'Estas demostraciones muestran mis principales líneas de investigación: percepción, modelado y control de objetos deformables.',
                 demoShapeControl: 'Control de Forma de Objetos Deformables',
                 demoShapeComparison: 'Análisis y Comparación de Formas',
                 demoShapeTitle: 'Control de Forma de Objetos Deformables',
                 demoShapeRelated: 'Artículos relacionados:',
                 demoAnalysisTitle: 'Análisis y Comparación de Formas',
                 demoAnalysisRelated: 'Artículos relacionados:',
+                locoCorpTitle: 'Robótica Educativa: LoCo CORP',
+                locoCorpIntro: 'Participé en la iniciativa LoCo CORP, un proyecto dedicado a transformar la enseñanza de la robótica en escuelas e institutos. Aunque desarrollamos <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" style="color: #3498db; text-decoration: none; border-bottom: 1px solid #3498db;">Noctis y Aurel</a> como nuestras plataformas robóticas principales, eran realmente solo las herramientas para una misión educativa más amplia. A través de nuestros talleres, superamos la idea de los robots como simples juguetes e hicimos que los estudiantes se sumergieran en la ingeniería real que hay detrás. Los guiamos a través de la electrónica actual, la programación y el diseño de hardware necesarios para dar vida a una máquina, animándolos a dejar de ser consumidores pasivos y a comenzar a entender la tecnología en sus manos.',
+                locoVerseIntro: 'Mi papel específico se centró en la creación del <strong>LoCoVerse</strong>, un ecosistema ficticio donde estas plataformas robóticas existían como especies recién descubiertas. Usamos esta narrativa para enmarcar las lecciones técnicas dentro de una historia convincente, combinando la narración con un enfoque científico.',
 
                 // Publications
                 sectionPublications: 'Publicaciones',

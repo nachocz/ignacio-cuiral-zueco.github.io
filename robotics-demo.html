@@ -288,6 +288,89 @@
             color: #e6e6e6;
         }
 
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .demo-container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.4em;
+            }
+
+            .visualization-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .plot-wrapper,
+            .robot-wrapper {
+                width: 100%;
+            }
+
+            .plot-label {
+                font-size: 0.75em;
+                margin-bottom: 6px;
+            }
+
+            #roboticsCanvas {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            #errorPlot {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            .instructions {
+                font-size: 0.85em;
+                padding: 10px;
+            }
+
+            .instructions ul {
+                padding-left: 12px;
+                line-height: 1.6;
+            }
+
+            .instructions li {
+                font-size: 0.85em;
+            }
+
+            .keyboard-info {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+
+            .control-section h3 {
+                font-size: 0.85em;
+            }
+
+            .control-card {
+                padding: 8px;
+            }
+
+            .control-card h4 {
+                font-size: 0.8em;
+            }
+
+            .control-card label {
+                font-size: 0.75em;
+            }
+
+            button {
+                padding: 6px 12px;
+                font-size: 0.8em;
+            }
+
+            .status {
+                font-size: 0.8em;
+                padding: 8px;
+            }
+        }
 
     </style>
 </head>
@@ -404,15 +487,15 @@
                 title: 'Manipulación de Cable Robótico',
                 howToPlay: 'Cómo Jugar',
                 goal: 'Objetivo:',
-                goalDesc: 'Ajusta las articulaciones del robot para dar forma al cable y coincidir con la forma objetivo mostrada como una línea discontinua verde',
+                goalDesc: 'Ajusta las articulaciones de los robots para que el cable adopte la forma objetivo (línea verde discontinua)',
                 controls: 'Controles:',
-                controlsDesc: 'Usa los deslizadores para cambiar los ángulos de articulación de cada robot. El robot azul a la izquierda y el robot marrón a la derecha trabajan juntos para controlar el cable',
+                controlsDesc: 'Usa los deslizadores para cambiar los ángulos de cada articulación. El robot azul (izquierda) y el marrón (derecha) controlan el cable conjuntamente',
                 feedback: 'Retroalimentación:',
-                feedbackDesc: 'La curva de error muestra qué tan cerca estás del objetivo. Los valores más bajos son mejores. Intenta "Nueva Forma Objetivo" para diferentes desafíos',
-                whyMatters: 'Por Qué Es Importante',
-                matterText1: 'Manipular objetos blandos como cables y cuerdas es un desafío clave en robótica. Estos materiales aparecen constantemente en tareas reales',
+                feedbackDesc: 'La gráfica de error indica cómo de cerca estás del objetivo (cuanto más bajo, mejor). Prueba "Nueva Forma Objetivo" para más retos',
+                whyMatters: 'Por Qué Importa',
+                matterText1: 'Manipular objetos blandos (cables, cuerdas, tejidos) es un reto clave en robótica. Estos materiales aparecen constantemente en aplicaciones reales',
                 note: 'Nota:',
-                matterText2: 'No todas las formas objetivo se pueden lograr con esta configuración de cable y robot. Determinar si una forma es alcanzable para un objeto y método de manipulación determinados sigue siendo una pregunta de investigación abierta',
+                matterText2: 'No todas las formas objetivo son alcanzables con esta configuración. Determinar qué formas se pueden conseguir con un objeto y método de manipulación dados sigue siendo un problema abierto de investigación',
                 leftRobot: 'Robot Izquierdo (Azul)',
                 rightRobot: 'Robot Derecho (Marrón)',
                 joint1: 'Articulación 1',
