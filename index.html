@@ -275,6 +275,14 @@
             border-bottom-color: #3498db;
         }
 
+        a.loco-corp-learn:empty {
+            display: none;
+        }
+
+        a.loco-corp-learn {
+            margin-left: 6px;
+        }
+
         .award a {
             display: inline;
             padding: 0;
@@ -997,15 +1005,16 @@
             </div>
 
             <div class="award" style="margin-top: 10px;">
-                <strong><span data-i18n="award3Title">🏆</span> <a href="https://eu-robotics.net/georges-giralt-phd-award/" data-i18n="award3Link">Georges Giralt PhD Award Finalist</a>:</strong> <span data-i18n="award3Desc">finalist for Europe's most prestigious recognition for PhD excellence in robotics, selected among over 50 candidates and presented at the European Robotics Forum 2025</span>.
+                <strong><span data-i18n="award3Title">🏆</span> <a href="https://eu-robotics.net/georges-giralt-phd-award/" data-i18n="award3Link">Georges Giralt PhD Award Finalist</a> <span data-i18n="award3Year">(2025)</span>:</strong> <span data-i18n="award3Desc">finalist for Europe's most prestigious recognition for PhD excellence in robotics, selected among over 50 candidates and presented at the European Robotics Forum 2025</span>.
             </div>
 
             <div class="news-highlight">
                 <div class="news-text">
                     <strong data-i18n="visitingScholarTitle">Invited Visiting Scholar</strong>
-                    <div data-i18n="visitingScholarInst">ELLIIT Focus Period, Lund University, Sweden</div>
+                    <div>
+                        <a href="https://elliit.se/news-and-events/focus-period-lund-2025/" data-i18n="visitingScholarEventLink">ELLIIT Focus Period 2025 on robot learning</a><span data-i18n="visitingScholarEventSuffix">, Lund University, Sweden</span>
+                    </div>
                     <div class="news-meta" data-i18n="visitingScholarDate">Seminar on data-driven deformable object manipulation · Nov 2025</div>
-                    <div style="margin-top: 6px;"><a href="https://elliit.se/news-and-events/focus-period-lund-2025/" data-i18n="eventPage">Event page</a></div>
                 </div>
                 <div>
                     <img src="assets/images/elliit_focus_period.jpg" alt="ELLIIT Focus Period Lund 2025" class="award-photo" style="width: 150px;">
@@ -1105,7 +1114,7 @@
             </div>
 
             <div class="research-intro" style="border-left-color: #3498db; margin-top: 20px;">
-                <p><strong data-i18n="demoIntro">Interactive Demos:</strong> <span data-i18n="demoIntroDesc">For a more accessible introduction to my research, check out the</span> <button class="section-tab-btn" style="display: inline-block; padding: 4px 10px; font-size: 0.95em; margin-left: 6px; vertical-align: middle; cursor: pointer;" onclick="document.querySelector('[data-target=panel-dissemination]').click();" data-i18n="disseminationButton">Dissemination</button> <span data-i18n="demoIntroEnd">section with interactive visualizations designed for a general audience.</span></p>
+                <p><strong data-i18n="demoIntro">Interactive Demos:</strong> <span data-i18n="demoIntroDesc">For a more accessible introduction to my research, check out the</span> <button class="section-tab-btn" type="button" data-target="panel-dissemination" style="display: inline-block; padding: 4px 10px; font-size: 0.95em; margin-left: 6px; vertical-align: middle; cursor: pointer;" onclick="openDisseminationFromResearch();" data-i18n="disseminationButton">Dissemination</button> <span data-i18n="demoIntroEnd">section with interactive visualizations designed for a general audience.</span></p>
             </div>
             </div>
         </div>
@@ -1163,7 +1172,7 @@
                 </button>
                 <div class="dissemination-content">
                     <div class="loco-content-card" style="background: white; padding: 20px; border-radius: 8px; margin-top: 15px; margin-bottom: 20px; border: 1px solid #ecf0f1;">
-                        <p style="margin: 0 0 15px 0; line-height: 1.7;"><span data-i18n="locoCorpIntro"></span> <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" style="color: #3498db; text-decoration: none; border-bottom: 1px solid #3498db;" data-i18n="locoCorpKickstarter">Learn more</a></p>
+                        <p style="margin: 0 0 15px 0; line-height: 1.7;"><span data-i18n="locoCorpIntroPrefix"></span> <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" style="color: #3498db; text-decoration: none; border-bottom: 1px solid #3498db;" data-i18n="locoCorpNoctisLink">Noctis and Aurel</a><span data-i18n="locoCorpIntroSuffix"></span></p>
                         
                         <div class="loco-image-box" style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 3px solid #27ae60;">
                             <p class="loco-image-label" style="margin: 0 0 10px 0; font-weight: 500; color: #2c3e50; font-size: 0.95em;">Programming in a learning-friendly way:</p>
@@ -1247,13 +1256,16 @@
                 award1Short: 'Best Robotics PhD Thesis Award (2025), Spanish Committee of Automatic Control (CEA).',
                 award2Short: 'Best Iberian Robotics PhD Thesis Award (2025), conferred by the Spanish Society for Research and Development in Robotics (SEIDROB) and the Portuguese Robotics Society (SPR).',
                 award3Short: 'Georges Giralt PhD Award Finalist: finalist for Europe\'s most prestigious recognition for PhD excellence in robotics, selected among over 50 candidates and presented at the European Robotics Forum 2025.',
+                award3Year: '(2025)',
 
                 // Visiting Scholar
                 visitingScholarTitle: 'Invited Visiting Scholar',
                 visitingScholarInst: 'ELLIIT Focus Period, Lund University, Sweden',
+                visitingScholarEventLink: 'ELLIIT Focus Period 2025 on robot learning',
+                visitingScholarEventSuffix: ', Lund University, Sweden',
                 visitingScholarDate: 'Seminar on data-driven deformable object manipulation · Nov 2025',
                 visitingScholarCaption: 'ELLIIT Focus Period · Lund University 2025',
-                eventPage: 'Event page',
+                eventPage: 'Ellit Focus Period 2025 on robot Learning',
                 highlightedPublications: 'Highlighted Publications',
                 codeAvailable: 'Code Available',
 
@@ -1331,9 +1343,10 @@
                 demoAnalysisTitle: 'Shape Analysis and Comparison',
                 demoAnalysisRelated: 'Related papers:',
                 locoCorpTitle: 'Educational Robotics: LoCo CORP',
-                locoCorpIntro: 'I was involved in the LoCo CORP initiative, a project dedicated to transforming how robotics is taught in schools and high schools. While we developed Noctis and Aurel as our core robotic platforms, they were really just the tools for a broader educational mission. Through our workshops, we pushed past the idea of robots as simple toys and instead used them to immerse students in the real engineering underneath. We guided them through the actual electronics, programming, and hardware design required to bring a machine to life, encouraging them to stop being passive consumers and start understanding the technology in their hands.',
-                locoCorpKickstarter: 'Learn more about Noctis and Aurel',
-                locoVerseIntro: 'My specific role centered on the creation of the LoCoVerse, a fictional ecosystem where these robotic platforms existed as newly discovered species. We used this lore to frame technical lessons within a compelling narrative, blending storytelling with a scientific approach.',
+                locoCorpIntroPrefix: 'I was one of the founders and participants of the LoCo CORP initiative, a project dedicated to transforming the teaching of robotics in classrooms. Although we developed the',
+                locoCorpNoctisLink: 'Noctis and Aurel',
+                locoCorpIntroSuffix: ' educational robotics platforms as part of this project, these were not the end goal, but rather one of the many tools we created (workshops, courses, etc.) to update technology education in schools and high schools. In our workshops, we left behind the idea of the robot as a simple toy to immerse students in more technical content. We guided them through electronics, programming, and hardware design, encouraging them to stop being passive consumers and understand the technological reality around them.',
+                locoVerseIntro: 'Programming with a pedagogical approach: My role focused on creating the LoCoVerso, a fictional ecosystem where these robotic platforms existed as newly discovered “species” on a remote planet. We used this narrative to combine technical lessons with an engaging story in which students could feel like real researchers and scientific discoverers, as well as give free rein to their creativity and artistic abilities with the design and customisation of new species (robots).',
 
                 // Publications
                 sectionPublications: 'Publications',
@@ -1377,13 +1390,16 @@
                 award1Short: 'Premio a la Mejor Tesis Doctoral en Robótica (2025), Comité Español de Control Automático (CEA).',
                 award2Short: 'Premio a la Mejor Tesis Doctoral en Robótica de la península Ibérica (2025), concedido por la Sociedad Española de Robótica (SEIDROB) y la Sociedad Portuguesa de Robótica (SPR).',
                 award3Short: 'Finalista del Premio PhD Georges Giralt: finalista del reconocimiento europeo más prestigioso en excelencia doctoral en robótica, seleccionado entre más de 50 candidaturas y presentado en el Foro Europeo de Robótica 2025.',
+                award3Year: '(2025)',
 
                 // Visiting Scholar
                 visitingScholarTitle: 'Investigador visitante invitado',
                 visitingScholarInst: 'Período de Enfoque ELLIIT, Universidad de Lund (Suecia)',
+                visitingScholarEventLink: 'ELLIIT Focus Period 2025 on robot learning',
+                visitingScholarEventSuffix: ', Universidad de Lund, Suecia',
                 visitingScholarDate: 'Seminario sobre manipulación de objetos deformables basada en datos · nov 2025',
                 visitingScholarCaption: 'Período de Enfoque ELLIIT · Universidad de Lund 2025',
-                eventPage: 'Página del evento',
+                eventPage: 'Ellit Focus Period 2025 on robot Learning',
                 highlightedPublications: 'Publicaciones Destacadas',
                 codeAvailable: 'Código Disponible',
 
@@ -1461,9 +1477,10 @@
                 demoAnalysisTitle: 'Análisis y Comparación de Formas',
                 demoAnalysisRelated: 'Artículos relacionados:',
                 locoCorpTitle: 'Robótica Educativa: LoCo CORP',
-                locoCorpIntro: 'Participé en la iniciativa LoCo CORP, un proyecto dedicado a transformar cómo se enseña la robótica en colegios e institutos. Aunque desarrollamos Noctis y Aurel como plataformas principales, eran sobre todo la herramienta para una misión educativa más amplia. En nuestros talleres dejamos atrás la idea de los robots como simples juguetes y los usamos para sumergir al alumnado en la ingeniería real que hay detrás. Les guiamos por la electrónica, la programación y el diseño de hardware necesarios para dar vida a una máquina, animándoles a dejar de ser consumidores pasivos y a comprender la tecnología que tienen entre manos.',
-                locoCorpKickstarter: 'Descubre más sobre Noctis y Aurel',
-                locoVerseIntro: 'Mi papel se centró en la creación del LoCoVerse, un ecosistema ficticio en el que estas plataformas robóticas existían como especies recién descubiertas. Utilizamos esta narrativa para enmarcar las lecciones técnicas dentro de una historia atractiva, combinando divulgación y enfoque científico.',
+                locoCorpIntroPrefix: 'Fui uno de los fundadores y participantes de la iniciativa empresarial LoCo CORP, un proyecto dedicado a transformar la enseñanza de la robótica en las aulas. Si bien en el contexto de este proyecto desarrollamos las plataformas robóticas educativas',
+                locoCorpNoctisLink: 'Noctis y Aurel',
+                locoCorpIntroSuffix: ', estas no eran el fin, sino uno de los múltiples medios que creamos (talleres, cursos, etc.) para actualizar la educación en tecnología en colegios e institutos. En nuestros talleres, dejamos atrás la idea del robot como simple juguete para sumergir al alumnado en contenidos más técnicos. Los guiamos a través de la electrónica, la programación y el diseño de hardware, animándolos a dejar de ser consumidores pasivos y a comprender la realidad tecnológica que les rodea.',
+                locoVerseIntro: 'Mi papel se centró en crear el LoCoVerso, un ecosistema ficticio donde estas plataformas robóticas existían como "especies" recién descubiertas en un planeta remoto. Utilizamos esta narrativa para combinar las lecciones técnicas con una historia atractiva en la que el alumnado podía sentirse como auténticos investigadores y descubridores científicos, así como dar rienda suelta a su creatividad y a sus capacidades artísticas con el diseño y la personalización de nuevas especies (robots).',
 
                 // Publications
                 sectionPublications: 'Publicaciones',
@@ -1579,6 +1596,24 @@
                 }
             });
         });
+
+        function openDisseminationFromResearch() {
+            const disseminationTab = document.querySelector('[data-target="panel-dissemination"]');
+            if (disseminationTab) {
+                disseminationTab.click();
+            }
+
+            setTimeout(() => {
+                const disseminationPanel = document.getElementById('panel-dissemination');
+                if (disseminationPanel) {
+                    const firstItem = disseminationPanel.querySelector('.dissemination-item');
+                    if (firstItem) {
+                        firstItem.classList.add('expanded');
+                    }
+                    disseminationPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 50);
+        }
 
         // Dissemination Item Toggle
         function toggleDisseminationItem(button) {
