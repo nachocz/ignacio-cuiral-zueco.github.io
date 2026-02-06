@@ -6,7 +6,7 @@
 
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    background: #0a0e27 !important;
     color: #e0e0e0;
     min-height: 100vh;
     padding: 20px;
@@ -31,8 +31,8 @@ body {
 }
 
 .panel {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #0f3460;
+    border: 1px solid rgba(100, 255, 218, 0.3);
     border-radius: 10px;
     padding: 20px;
 }
@@ -393,4 +393,93 @@ canvas {
 .try-again-btn:hover {
     background: #4ecdc4;
     transform: translateY(-2px);
+}
+
+#scenarioResults {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.scenario-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(100, 255, 218, 0.5);
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.scenario-card:hover {
+    border-color: #64ffda;
+    background: rgba(100, 255, 218, 0.05);
+}
+
+.scenario-card.success {
+    border-color: #00d084;
+    background: rgba(0, 208, 132, 0.1);
+}
+
+.scenario-card.warning {
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.scenario-card.danger {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+}
+
+.scenario-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #64ffda;
+    margin-bottom: 10px;
+}
+
+.scenario-desc {
+    font-size: 0.85rem;
+    color: #a0a0a0;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.scenario-stat {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.scenario-stat-label {
+    color: #a0a0a0;
+}
+
+.scenario-stat-value {
+    font-weight: bold;
+    color: #64ffda;
+}
+
+.scenario-stat-value.positive {
+    color: #00d084;
+}
+
+.scenario-stat-value.negative {
+    color: #ff6b6b;
+}
+
+.scenario-verdict {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid #64ffda;
+    font-size: 0.85rem;
+    color: #e0e0e0;
+    text-align: center;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
