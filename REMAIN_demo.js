@@ -1,60 +1,125 @@
+// ========================================
+// REMAIN FACTORY RESILIENCE STRESS TEST
+// Multi-Scenario Simulation Engine
+// ========================================
+
 // ===== CONSTANTS =====
 const TOTAL_BUDGET = 1000000;
 const STARTING_CAPITAL = 200000;
-const SIMULATION_MONTHS = 120; // 10 years
-const MAX_WASTE = 1000; // tons
+const SIMULATION_YEARS = 10;
+const MONTHS_PER_YEAR = 12;
+const TOTAL_MONTHS = SIMULATION_YEARS * MONTHS_PER_YEAR;
 
 // ===== SCENARIO DEFINITIONS =====
-const SCENARIOS = [
-    {
-        id: 'optimistic',
-        name: '🌈 Optimistic (Utopia)',
-        description: 'Infinite cheap resources, no waste regulations, stable high demand. The traditional manufacturing dream.',
-        materialCostMultiplier: 0.8,
-        materialCostGrowth: 0.001, // 0.1% monthly growth
-        wasteTaxPerTon: 0,
-        wasteTaxGrowth: 0,
-        demandBase: 120,
-        demandVolatility: 0.02,
-        circularDemandBonus: 0
+const SCENARIOS = {
+    cornucopia: {
+        id: 'cornucopia',
+        name: '🌈 Cornucopia',
+        subtitle: 'Business as Usual',
+        description: 'Resources are infinite, climate crisis ignored, consumption unchecked.',
+        color: '#00d084',
+        lineStyle: 'dashed',
+        // Economic parameters
+        baseMaterialCost: 1.0,           // €/kg - stays low
+        materialGrowthRate: 0.001,       // 0.1% monthly
+        wasteBaseTax: 0,                 // No waste tax
+        wasteTaxGrowthRate: 0,
+        energyCostBase: 0.10,            // €/kWh
+        energyVolatility: 0.02,
+        demandGrowth: 0.005,             // 0.5% monthly demand growth
+        circularPremium: 0,              // No premium for sustainability
+        // Event probabilities (monthly)
+        supplyShockProb: 0.005,          // 0.5% chance
+        regulationEventProb: 0,          // No regulation events
+        marketCrashProb: 0.003           // 0.3% chance
     },
-    {
-        id: 'moderate',
-        name: '📊 Business as Usual',
-        description: 'Gradual resource inflation, emerging sustainability awareness, steady market growth.',
-        materialCostMultiplier: 1.0,
-        materialCostGrowth: 0.005, // 0.5% monthly
-        wasteTaxPerTon: 500,
-        wasteTaxGrowth: 0.01, // grows over time
-        demandBase: 100,
-        demandVolatility: 0.05,
-        circularDemandBonus: 0.1
-    },
-    {
+    transition: {
         id: 'transition',
-        name: '🔄 Green Transition',
-        description: 'Resource prices spike mid-simulation, moderate waste taxes, growing demand for sustainable products.',
-        materialCostMultiplier: 1.0,
-        materialCostGrowth: 0.01, // 1% monthly
-        wasteTaxPerTon: 2000,
-        wasteTaxGrowth: 0.02,
-        demandBase: 100,
-        demandVolatility: 0.08,
-        circularDemandBonus: 0.25
+        name: '⚖️ Transition',
+        subtitle: 'EU Green Deal Path',
+        description: 'Volatile markets, gradual green regulations. Current EU trajectory.',
+        color: '#ffd700',
+        lineStyle: 'solid',
+        baseMaterialCost: 1.0,
+        materialGrowthRate: 0.008,       // Grows to ~€4 by year 10
+        wasteBaseTax: 0,                 // Starts at 0, introduced year 5
+        wasteTaxIntroYear: 5,
+        wasteTaxAfterIntro: 50,          // €50/ton after introduction
+        wasteTaxGrowthRate: 0.02,        // 2% monthly after intro
+        energyCostBase: 0.12,
+        energyVolatility: 0.15,          // High volatility (geopolitics)
+        demandGrowth: 0.003,
+        circularPremium: 0.15,           // 15% premium for circular products
+        supplyShockProb: 0.02,           // 2% chance
+        regulationEventProb: 0.01,       // 1% chance
+        marketCrashProb: 0.008
     },
-    {
-        id: 'critical',
-        name: '⚠️ Resource Crisis',
-        description: 'Materials become scarce and expensive, strict waste laws enforced, supply chains disrupted. Circular strategies thrive.',
-        materialCostMultiplier: 1.5,
-        materialCostGrowth: 0.02, // 2% monthly
-        wasteTaxPerTon: 5000,
-        wasteTaxGrowth: 0.03,
-        demandBase: 80,
-        demandVolatility: 0.15,
-        circularDemandBonus: 0.5
+    scarcity: {
+        id: 'scarcity',
+        name: '⚠️ Scarcity',
+        subtitle: 'Resource Crisis',
+        description: 'Depletion, aggressive carbon taxes, enforced circularity.',
+        color: '#ff6b6b',
+        lineStyle: 'solid',
+        baseMaterialCost: 2.0,           // Starts higher
+        materialGrowthRate: 0.02,        // Exponential growth to €15+
+        wasteBaseTax: 200,               // €200/ton from start
+        wasteTaxGrowthRate: 0.015,       // Grows to €1000+
+        energyCostBase: 0.20,
+        energyVolatility: 0.25,
+        demandGrowth: -0.002,            // Demand contracts
+        circularPremium: 0.40,           // 40% premium for circular
+        supplyShockProb: 0.05,           // 5% chance
+        regulationEventProb: 0.03,       // 3% new regulations
+        marketCrashProb: 0.015
     }
-];
+};
+
+// ===== EVENT DEFINITIONS =====
+const EVENTS = {
+    supplyShock: {
+        name: 'Supply Chain Disruption',
+        icon: '🚢',
+        effect: (state) => { state.materialCostMultiplier *= 1.5; },
+        duration: 6,
+        message: 'Global supply chain disruption! Material costs +50% for 6 months.'
+    },
+    energySpike: {
+        name: 'Energy Crisis',
+        icon: '⚡',
+        effect: (state) => { state.energyCostMultiplier *= 2; },
+        duration: 4,
+        message: 'Energy crisis! Energy costs doubled for 4 months.'
+    },
+    newRegulation: {
+        name: 'Environmental Regulation',
+        icon: '📜',
+        effect: (state) => { state.wasteTax *= 1.25; },
+        duration: -1, // Permanent
+        message: 'New environmental law passed! Waste tax increased 25%.'
+    },
+    marketCrash: {
+        name: 'Market Downturn',
+        icon: '📉',
+        effect: (state) => { state.demandMultiplier *= 0.7; },
+        duration: 8,
+        message: 'Market crash! Demand down 30% for 8 months.'
+    },
+    circularIncentive: {
+        name: 'Circular Economy Subsidy',
+        icon: '💰',
+        effect: (state) => { state.circularBonus += 10000; },
+        duration: 12,
+        message: 'Government subsidy for circular manufacturing! +€10,000/month for 1 year.'
+    },
+    techBreakthrough: {
+        name: 'Technology Breakthrough',
+        icon: '🔬',
+        effect: (state) => { state.circularEfficiency *= 1.2; },
+        duration: -1,
+        message: 'R&D breakthrough! Circular efficiency permanently +20%.'
+    }
+};
 
 // ===== DOM ELEMENTS =====
 const sliders = {
@@ -76,7 +141,19 @@ const startBtn = document.getElementById('startBtn');
 const resetBtn = document.getElementById('resetBtn');
 const initialMessage = document.getElementById('initialMessage');
 const loadingSpinner = document.getElementById('loadingSpinner');
-const scenarioResults = document.getElementById('scenarioResults');
+const loadingStatus = document.getElementById('loadingStatus');
+const survivalMatrix = document.getElementById('survivalMatrix');
+const scenarioCards = document.getElementById('scenarioCards');
+const chartSection = document.getElementById('chartSection');
+const eventLogSection = document.getElementById('eventLogSection');
+const eventLog = document.getElementById('eventLog');
+const verdictSection = document.getElementById('verdictSection');
+const profitCanvas = document.getElementById('profitChart');
+const investmentSummary = document.getElementById('investmentSummary');
+const factoryProfile = document.getElementById('factoryProfile');
+
+let simulationResults = null;
+let selectedScenario = null;
 
 // ===== BUDGET MANAGEMENT =====
 function updateBudget() {
@@ -106,208 +183,594 @@ Object.keys(sliders).forEach(key => {
     sliders[key].addEventListener('input', updateBudget);
 });
 
+// ===== FACTORY MODEL =====
+class Factory {
+    constructor(investments) {
+        this.investments = investments;
+        
+        // Traditional line capacity (units/month)
+        this.traditionalCapacity = investments.traditional / 5000;
+        
+        // Detection effectiveness (0-1)
+        this.detectionLevel = investments.detection / TOTAL_BUDGET;
+        this.qualityRate = 0.70 + (this.detectionLevel * 0.28); // 70% to 98%
+        
+        // Circular capacity
+        this.circularCapacity = investments.robotics / 8000;
+        
+        // Material recovery rate (30% base, up to 85% with eco-design)
+        this.recoveryRate = 0.30 + (investments.ecodesign / TOTAL_BUDGET) * 0.55;
+        
+        // Operating costs per month (as fraction of investment)
+        this.traditionalOpex = investments.traditional * 0.003;
+        this.circularOpex = investments.robotics * 0.004;
+    }
+    
+    calculateMonth(marketState) {
+        const results = {
+            traditionalRevenue: 0,
+            circularRevenue: 0,
+            materialCosts: 0,
+            energyCosts: 0,
+            wasteCosts: 0,
+            operatingCosts: 0,
+            wasteGenerated: 0
+        };
+        
+        // === TRADITIONAL MANUFACTURING ===
+        const tradUnits = this.traditionalCapacity * marketState.demandMultiplier;
+        const tradMaterialPerUnit = 10; // kg per unit
+        const tradWastePerUnit = 3;     // kg waste per unit
+        const tradEnergyPerUnit = 5;    // kWh per unit
+        const baseUnitPrice = 150;      // € per unit
+        
+        results.traditionalRevenue = tradUnits * baseUnitPrice * this.qualityRate;
+        results.materialCosts += tradUnits * tradMaterialPerUnit * marketState.materialCost;
+        results.energyCosts += tradUnits * tradEnergyPerUnit * marketState.energyCost;
+        results.wasteGenerated += tradUnits * tradWastePerUnit * (1 - this.detectionLevel * 0.3);
+        
+        // === CIRCULAR MANUFACTURING ===
+        const circUnits = this.circularCapacity * marketState.demandMultiplier;
+        const circMaterialPerUnit = 10 * (1 - this.recoveryRate); // Less virgin material needed
+        const circWastePerUnit = 0.5 * (1 - this.recoveryRate);   // Much less waste
+        const circEnergyPerUnit = 8;    // Higher energy (disassembly + remanufacturing)
+        const circPriceMultiplier = 1 + marketState.circularPremium;
+        
+        results.circularRevenue = circUnits * baseUnitPrice * circPriceMultiplier * this.qualityRate;
+        results.materialCosts += circUnits * circMaterialPerUnit * marketState.materialCost;
+        results.energyCosts += circUnits * circEnergyPerUnit * marketState.energyCost;
+        results.wasteGenerated += circUnits * circWastePerUnit;
+        
+        // Add circular bonus if applicable
+        results.circularRevenue += marketState.circularBonus * (this.circularCapacity / 100);
+        
+        // === WASTE DISPOSAL ===
+        results.wasteCosts = results.wasteGenerated * marketState.wasteTax;
+        
+        // === OPERATING COSTS ===
+        results.operatingCosts = this.traditionalOpex + this.circularOpex;
+        
+        // === NET PROFIT ===
+        results.totalRevenue = results.traditionalRevenue + results.circularRevenue;
+        results.totalCosts = results.materialCosts + results.energyCosts + results.wasteCosts + results.operatingCosts;
+        results.netProfit = results.totalRevenue - results.totalCosts;
+        
+        return results;
+    }
+}
+
 // ===== SIMULATION ENGINE =====
-function runScenario(investments, scenario) {
-    let balance = STARTING_CAPITAL + (TOTAL_BUDGET - Object.values(investments).reduce((a, b) => a + b, 0));
-    let waste = 0;
-    let materialCost = scenario.materialCostMultiplier;
-    let wasteTax = scenario.wasteTaxPerTon;
-    let demand = scenario.demandBase;
-    const balanceHistory = [balance];
+function runScenario(factory, scenario, eventCallback) {
+    const history = {
+        months: [],
+        balance: [STARTING_CAPITAL],
+        profit: [0],
+        waste: [0],
+        events: []
+    };
+    
+    let balance = STARTING_CAPITAL;
+    let totalWaste = 0;
     let bankruptMonth = null;
-    let wasteShutdownMonth = null;
-
-    for (let month = 1; month <= SIMULATION_MONTHS; month++) {
-        // Update market conditions with randomness
-        materialCost *= (1 + scenario.materialCostGrowth + (Math.random() - 0.5) * 0.01);
-        wasteTax *= (1 + scenario.wasteTaxGrowth);
-        demand = scenario.demandBase + (Math.random() - 0.5) * scenario.demandVolatility * 100;
-        demand = Math.max(50, Math.min(150, demand)); // Clamp demand
-
-        // Calculate monthly economics
-        const monthlyFactor = 1 / 12;
+    
+    // Market state (modified by events)
+    const state = {
+        materialCost: scenario.baseMaterialCost,
+        materialCostMultiplier: 1,
+        wasteTax: scenario.wasteBaseTax,
+        energyCost: scenario.energyCostBase,
+        energyCostMultiplier: 1,
+        demandMultiplier: 1,
+        circularPremium: scenario.circularPremium,
+        circularBonus: 0,
+        circularEfficiency: 1
+    };
+    
+    // Active effects (with remaining duration)
+    const activeEffects = [];
+    
+    for (let month = 1; month <= TOTAL_MONTHS; month++) {
+        const year = Math.ceil(month / 12);
         
-        // Traditional manufacturing
-        const traditionalCapacity = (investments.traditional / 10000) * monthlyFactor;
-        const traditionalMaterialCost = traditionalCapacity * 150 * materialCost;
-        const traditionalWaste = traditionalCapacity * 0.8; // High waste
-        const traditionalRevenue = traditionalCapacity * 800 * (demand / 100);
-
-        // Detection systems improve quality (reduce defects)
-        const detectionLevel = investments.detection / TOTAL_BUDGET;
-        const qualityMultiplier = 0.6 + (detectionLevel * 0.4); // 60% to 100% quality
-
-        // Circular manufacturing (robotics + eco-design)
-        const roboticsCapacity = (investments.robotics / 10000) * monthlyFactor;
-        const ecodesignEfficiency = 0.3 + (investments.ecodesign / TOTAL_BUDGET) * 0.6; // 30% to 90% material recovery
+        // === UPDATE MARKET CONDITIONS ===
+        // Material cost growth
+        state.materialCost *= (1 + scenario.materialGrowthRate);
         
-        const circularMaterialCost = roboticsCapacity * 50 * materialCost * (1 - ecodesignEfficiency);
-        const circularWaste = roboticsCapacity * 0.2 * (1 - ecodesignEfficiency); // Much lower waste
-        const circularDemandMultiplier = 1 + scenario.circularDemandBonus; // Premium for sustainable products
-        const circularRevenue = roboticsCapacity * 700 * (demand / 100) * circularDemandMultiplier;
-
-        // Operating costs
-        const operatingCosts = ((investments.traditional * 0.04) + (investments.robotics * 0.06)) * monthlyFactor;
-
-        // Total calculations
-        const totalRevenue = (traditionalRevenue + circularRevenue) * qualityMultiplier;
-        const totalMaterialCost = traditionalMaterialCost + circularMaterialCost;
-        const monthWaste = traditionalWaste + circularWaste;
-        const wasteDisposalCost = monthWaste * wasteTax;
-        const totalCosts = totalMaterialCost + operatingCosts + wasteDisposalCost;
-
-        const netProfit = totalRevenue - totalCosts;
-        balance += netProfit;
-        waste += monthWaste;
-
-        // Check failure conditions
+        // Waste tax (with possible delayed introduction)
+        if (scenario.wasteTaxIntroYear && year >= scenario.wasteTaxIntroYear) {
+            if (state.wasteTax === 0) {
+                state.wasteTax = scenario.wasteTaxAfterIntro;
+                history.events.push({
+                    month, scenario: scenario.id, icon: '📜',
+                    message: `Year ${year}: Waste tax introduced at €${scenario.wasteTaxAfterIntro}/ton`
+                });
+            }
+            state.wasteTax *= (1 + scenario.wasteTaxGrowthRate);
+        } else if (!scenario.wasteTaxIntroYear) {
+            state.wasteTax *= (1 + (scenario.wasteTaxGrowthRate || 0));
+        }
+        
+        // Energy volatility
+        const energyShock = 1 + (Math.random() - 0.5) * scenario.energyVolatility;
+        state.energyCost = scenario.energyCostBase * energyShock * state.energyCostMultiplier;
+        
+        // Demand growth
+        state.demandMultiplier *= (1 + scenario.demandGrowth);
+        state.demandMultiplier = Math.max(0.3, Math.min(2, state.demandMultiplier));
+        
+        // === RANDOM EVENTS ===
+        // Supply shock
+        if (Math.random() < scenario.supplyShockProb && !activeEffects.find(e => e.type === 'supplyShock')) {
+            activeEffects.push({ type: 'supplyShock', remaining: 6 });
+            state.materialCostMultiplier *= 1.5;
+            history.events.push({
+                month, scenario: scenario.id, icon: '🚢',
+                message: `Month ${month}: Supply chain disruption! Material costs +50%`
+            });
+        }
+        
+        // Regulation event
+        if (Math.random() < (scenario.regulationEventProb || 0)) {
+            state.wasteTax *= 1.25;
+            history.events.push({
+                month, scenario: scenario.id, icon: '📜',
+                message: `Month ${month}: New environmental regulation. Waste tax +25%`
+            });
+        }
+        
+        // Market crash
+        if (Math.random() < scenario.marketCrashProb && !activeEffects.find(e => e.type === 'marketCrash')) {
+            activeEffects.push({ type: 'marketCrash', remaining: 8 });
+            state.demandMultiplier *= 0.7;
+            history.events.push({
+                month, scenario: scenario.id, icon: '📉',
+                message: `Month ${month}: Market downturn! Demand -30%`
+            });
+        }
+        
+        // Circular economy incentive (more likely in transition/scarcity)
+        if (scenario.circularPremium > 0 && Math.random() < 0.008) {
+            activeEffects.push({ type: 'circularIncentive', remaining: 12 });
+            state.circularBonus += 5000;
+            history.events.push({
+                month, scenario: scenario.id, icon: '💰',
+                message: `Month ${month}: Circular economy subsidy awarded!`
+            });
+        }
+        
+        // === PROCESS ACTIVE EFFECTS ===
+        for (let i = activeEffects.length - 1; i >= 0; i--) {
+            const effect = activeEffects[i];
+            effect.remaining--;
+            
+            if (effect.remaining <= 0) {
+                // Remove effect
+                if (effect.type === 'supplyShock') {
+                    state.materialCostMultiplier /= 1.5;
+                } else if (effect.type === 'marketCrash') {
+                    state.demandMultiplier /= 0.7;
+                } else if (effect.type === 'circularIncentive') {
+                    state.circularBonus -= 5000;
+                }
+                activeEffects.splice(i, 1);
+            }
+        }
+        
+        // === CALCULATE FACTORY OUTPUT ===
+        const effectiveMaterialCost = state.materialCost * state.materialCostMultiplier;
+        const monthResults = factory.calculateMonth({
+            materialCost: effectiveMaterialCost,
+            energyCost: state.energyCost,
+            wasteTax: state.wasteTax,
+            demandMultiplier: state.demandMultiplier,
+            circularPremium: state.circularPremium,
+            circularBonus: state.circularBonus
+        });
+        
+        balance += monthResults.netProfit;
+        totalWaste += monthResults.wasteGenerated;
+        
+        // Check bankruptcy
         if (balance <= 0 && bankruptMonth === null) {
             bankruptMonth = month;
-            balance = 0;
+            history.events.push({
+                month, scenario: scenario.id, icon: '💀',
+                message: `Month ${month}: BANKRUPTCY! Factory cannot continue operations.`
+            });
         }
-
-        if (waste >= MAX_WASTE && wasteShutdownMonth === null) {
-            wasteShutdownMonth = month;
+        
+        history.months.push(month);
+        history.balance.push(Math.max(0, balance));
+        history.profit.push(monthResults.netProfit);
+        history.waste.push(totalWaste);
+        
+        // Report progress
+        if (eventCallback && month % 12 === 0) {
+            eventCallback(`Year ${year} complete...`);
         }
-
-        balanceHistory.push(balance);
     }
-
+    
     return {
-        finalBalance: balance,
-        totalWaste: waste,
-        balanceHistory,
-        bankruptMonth,
-        wasteShutdownMonth,
-        survived: bankruptMonth === null && wasteShutdownMonth === null,
-        profit: balance - STARTING_CAPITAL
+        scenario: scenario,
+        history: history,
+        finalBalance: Math.max(0, balance),
+        totalWaste: totalWaste,
+        bankruptMonth: bankruptMonth,
+        survived: bankruptMonth === null,
+        roi: ((balance - STARTING_CAPITAL) / STARTING_CAPITAL) * 100
     };
 }
 
-function runAllScenarios() {
+// ===== RUN ALL SCENARIOS =====
+async function runStressTest() {
     const investments = {
         traditional: (sliders.traditional.value / 100) * TOTAL_BUDGET,
         detection: (sliders.detection.value / 100) * TOTAL_BUDGET,
         robotics: (sliders.robotics.value / 100) * TOTAL_BUDGET,
         ecodesign: (sliders.ecodesign.value / 100) * TOTAL_BUDGET
     };
-
+    
     // Disable controls
     Object.values(sliders).forEach(s => s.disabled = true);
     startBtn.disabled = true;
-
+    
     // Show loading
     initialMessage.style.display = 'none';
     loadingSpinner.style.display = 'block';
-    scenarioResults.innerHTML = '';
+    survivalMatrix.style.display = 'none';
+    chartSection.style.display = 'none';
+    eventLogSection.style.display = 'none';
+    verdictSection.style.display = 'none';
+    
+    // Show factory profile
+    displayFactoryProfile(investments);
+    
+    const factory = new Factory(investments);
+    const results = {};
+    
+    // Run each scenario with visual feedback
+    for (const [key, scenario] of Object.entries(SCENARIOS)) {
+        loadingStatus.textContent = `Running ${scenario.name}...`;
+        await sleep(300);
+        results[key] = runScenario(factory, scenario, (status) => {
+            loadingStatus.textContent = `${scenario.name}: ${status}`;
+        });
+    }
+    
+    simulationResults = results;
+    
+    // Hide loading, show results
+    loadingSpinner.style.display = 'none';
+    displayResults(results, investments);
+}
 
-    // Run scenarios with slight delay for visual effect
-    setTimeout(() => {
-        const results = SCENARIOS.map(scenario => ({
-            scenario,
-            result: runScenario(investments, scenario)
-        }));
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-        displayResults(results, investments);
-        loadingSpinner.style.display = 'none';
-    }, 800);
+// ===== DISPLAY FACTORY PROFILE =====
+function displayFactoryProfile(investments) {
+    const total = Object.values(investments).reduce((a, b) => a + b, 0);
+    const traditionalPct = Math.round((investments.traditional / TOTAL_BUDGET) * 100);
+    const circularPct = Math.round(((investments.robotics + investments.ecodesign) / TOTAL_BUDGET) * 100);
+    
+    let profileType = 'Balanced';
+    let profileColor = '#64ffda';
+    
+    if (traditionalPct > 60 && circularPct < 20) {
+        profileType = 'Traditional-Heavy';
+        profileColor = '#ff6b6b';
+    } else if (circularPct > 50) {
+        profileType = 'Circular-Focused';
+        profileColor = '#00d084';
+    } else if (investments.detection > TOTAL_BUDGET * 0.3) {
+        profileType = 'Quality-Focused';
+        profileColor = '#ffd700';
+    }
+    
+    factoryProfile.innerHTML = `
+        <div style="color: ${profileColor}; font-weight: bold; margin-bottom: 8px;">${profileType}</div>
+        <div style="font-size: 0.85rem; color: #a0a0a0;">
+            Traditional: ${traditionalPct}% | Circular: ${circularPct}%
+        </div>
+    `;
+    investmentSummary.style.display = 'block';
 }
 
 // ===== DISPLAY RESULTS =====
 function displayResults(results, investments) {
-    scenarioResults.innerHTML = '';
+    // Show all sections
+    survivalMatrix.style.display = 'block';
+    chartSection.style.display = 'block';
+    eventLogSection.style.display = 'block';
+    verdictSection.style.display = 'block';
     
-    results.forEach(({ scenario, result }) => {
+    // === SURVIVAL MATRIX ===
+    scenarioCards.innerHTML = '';
+    
+    Object.values(results).forEach(result => {
+        const scenario = result.scenario;
+        const survived = result.survived;
         const card = document.createElement('div');
-        let cardClass = 'scenario-card';
+        card.className = `scenario-card ${survived ? 'success' : 'danger'}`;
+        card.dataset.scenario = scenario.id;
+        card.onclick = () => highlightScenario(scenario.id);
         
-        if (result.survived && result.profit > 100000) {
-            cardClass += ' success';
-        } else if (!result.survived) {
-            cardClass += ' danger';
-        } else if (result.profit < 0) {
-            cardClass += ' warning';
-        }
+        const statusIcon = survived ? '✅' : '❌';
+        const statusText = survived ? 'SURVIVED' : `BANKRUPT (Month ${result.bankruptMonth})`;
+        const balanceClass = result.finalBalance > STARTING_CAPITAL ? 'positive' : 'negative';
         
-        card.className = cardClass;
-
-        let verdictText = '';
-        let verdictIcon = '';
-        
-        if (!result.survived) {
-            if (result.bankruptMonth) {
-                verdictIcon = '💀';
-                verdictText = `Bankrupt at month ${result.bankruptMonth}`;
-            } else {
-                verdictIcon = '☠️';
-                verdictText = `Shut down for waste at month ${result.wasteShutdownMonth}`;
-            }
-        } else if (result.profit > 200000) {
-            verdictIcon = '🏆';
-            verdictText = 'Excellent! Thriving business';
-        } else if (result.profit > 50000) {
-            verdictIcon = '✅';
-            verdictText = 'Good! Profitable operation';
-        } else if (result.profit > 0) {
-            verdictIcon = '🔸';
-            verdictText = 'Marginal profit, could do better';
-        } else {
-            verdictIcon = '⚠️';
-            verdictText = 'Survived but lost money';
-        }
-
-        const profitClass = result.profit >= 0 ? 'positive' : 'negative';
-        const wastePercent = Math.round((result.totalWaste / MAX_WASTE) * 100);
-
         card.innerHTML = `
-            <div class="scenario-name">${scenario.name}</div>
-            <div class="scenario-desc">${scenario.description}</div>
+            <div class="scenario-name" style="color: ${scenario.color}">${scenario.name}</div>
+            <div class="scenario-subtitle">${scenario.subtitle}</div>
+            <div class="scenario-status">${statusIcon} ${statusText}</div>
             <div class="scenario-stat">
-                <span class="scenario-stat-label">Final Balance:</span>
-                <span class="scenario-stat-value ${profitClass}">€${Math.round(result.finalBalance).toLocaleString()}</span>
+                <span>Final Balance:</span>
+                <span class="${balanceClass}">€${Math.round(result.finalBalance).toLocaleString()}</span>
             </div>
             <div class="scenario-stat">
-                <span class="scenario-stat-label">10-Year Profit:</span>
-                <span class="scenario-stat-value ${profitClass}">${result.profit >= 0 ? '+' : ''}€${Math.round(result.profit).toLocaleString()}</span>
+                <span>ROI:</span>
+                <span class="${result.roi >= 0 ? 'positive' : 'negative'}">${result.roi >= 0 ? '+' : ''}${Math.round(result.roi)}%</span>
             </div>
             <div class="scenario-stat">
-                <span class="scenario-stat-label">Total Waste:</span>
-                <span class="scenario-stat-value ${wastePercent > 80 ? 'negative' : ''}">${Math.round(result.totalWaste)} tons (${wastePercent}%)</span>
-            </div>
-            <div class="scenario-verdict" style="border-left-color: ${result.survived ? (result.profit > 0 ? '#00d084' : '#ffd700') : '#ff6b6b'}">
-                ${verdictIcon} ${verdictText}
+                <span>Total Waste:</span>
+                <span>${Math.round(result.totalWaste).toLocaleString()} kg</span>
             </div>
         `;
-
-        scenarioResults.appendChild(card);
+        
+        scenarioCards.appendChild(card);
     });
+    
+    // === DRAW CHART ===
+    drawMultiLineChart(results);
+    
+    // === EVENT LOG ===
+    displayEventLog(results);
+    
+    // === VERDICT ===
+    displayVerdict(results, investments);
+}
 
-    // Add summary
-    const successCount = results.filter(r => r.result.survived).length;
-    const avgProfit = results.reduce((sum, r) => sum + r.result.profit, 0) / results.length;
+// ===== MULTI-LINE CHART =====
+function drawMultiLineChart(results) {
+    const canvas = profitCanvas;
+    const ctx = canvas.getContext('2d');
     
-    const summary = document.createElement('div');
-    summary.style.cssText = 'margin-top: 20px; padding: 20px; background: rgba(100, 255, 218, 0.1); border-radius: 10px; border: 1px solid #64ffda;';
+    // Set canvas size
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
     
-    let summaryText = '';
-    if (successCount === 4 && avgProfit > 100000) {
-        summaryText = '🌟 <strong>Outstanding!</strong> Your strategy is resilient across all scenarios with excellent returns.';
-    } else if (successCount === 4) {
-        summaryText = '✅ <strong>Robust strategy!</strong> Your business survives all scenarios. Consider optimizing for higher profits.';
-    } else if (successCount >= 2) {
-        summaryText = '⚠️ <strong>Vulnerable strategy.</strong> Your business fails in ' + (4 - successCount) + ' scenario(s). Consider more circular investments.';
-    } else {
-        summaryText = '❌ <strong>High-risk strategy!</strong> Traditional manufacturing alone is not resilient. Try investing in robotics and eco-design.';
+    const width = rect.width;
+    const height = rect.height;
+    const padding = { top: 20, right: 20, bottom: 40, left: 70 };
+    const chartWidth = width - padding.left - padding.right;
+    const chartHeight = height - padding.top - padding.bottom;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Find min/max across all scenarios
+    let allBalances = [];
+    Object.values(results).forEach(r => {
+        allBalances = allBalances.concat(r.history.balance);
+    });
+    const maxBalance = Math.max(...allBalances, STARTING_CAPITAL * 2);
+    const minBalance = Math.min(...allBalances, 0);
+    const range = maxBalance - minBalance;
+    
+    // Draw grid
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    
+    for (let i = 0; i <= 5; i++) {
+        const y = padding.top + (chartHeight * i / 5);
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
     }
     
-    summary.innerHTML = `
-        <div style="margin-bottom: 10px; font-size: 1.1rem;">${summaryText}</div>
-        <div style="color: #a0a0a0; font-size: 0.9rem;">
-            Survived: ${successCount}/4 scenarios | Average Profit: €${Math.round(avgProfit).toLocaleString()}
+    // Draw axes
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(padding.left, padding.top);
+    ctx.lineTo(padding.left, height - padding.bottom);
+    ctx.lineTo(width - padding.right, height - padding.bottom);
+    ctx.stroke();
+    
+    // Draw zero line if visible
+    if (minBalance < 0) {
+        const zeroY = padding.top + chartHeight * (1 - (0 - minBalance) / range);
+        ctx.strokeStyle = 'rgba(255, 107, 107, 0.5)';
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(padding.left, zeroY);
+        ctx.lineTo(width - padding.right, zeroY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+    
+    // Draw scenario lines
+    Object.values(results).forEach(result => {
+        const scenario = result.scenario;
+        const balances = result.history.balance;
+        const stepX = chartWidth / (balances.length - 1);
+        
+        ctx.strokeStyle = scenario.color;
+        ctx.lineWidth = selectedScenario === scenario.id ? 4 : 2;
+        
+        if (scenario.lineStyle === 'dashed') {
+            ctx.setLineDash([10, 5]);
+        } else {
+            ctx.setLineDash([]);
+        }
+        
+        ctx.beginPath();
+        balances.forEach((balance, i) => {
+            const x = padding.left + stepX * i;
+            const y = padding.top + chartHeight * (1 - (balance - minBalance) / range);
+            
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+    });
+    
+    // Y-axis labels
+    ctx.fillStyle = '#a0a0a0';
+    ctx.font = '11px system-ui';
+    ctx.textAlign = 'right';
+    
+    for (let i = 0; i <= 5; i++) {
+        const value = maxBalance - (range * i / 5);
+        const y = padding.top + (chartHeight * i / 5);
+        ctx.fillText('€' + Math.round(value / 1000) + 'K', padding.left - 8, y + 4);
+    }
+    
+    // X-axis labels
+    ctx.textAlign = 'center';
+    for (let year = 0; year <= 10; year += 2) {
+        const x = padding.left + (chartWidth * year / 10);
+        ctx.fillText('Y' + year, x, height - padding.bottom + 20);
+    }
+}
+
+function highlightScenario(scenarioId) {
+    selectedScenario = selectedScenario === scenarioId ? null : scenarioId;
+    
+    // Update card selection
+    document.querySelectorAll('.scenario-card').forEach(card => {
+        card.classList.toggle('selected', card.dataset.scenario === selectedScenario);
+    });
+    
+    // Redraw chart
+    if (simulationResults) {
+        drawMultiLineChart(simulationResults);
+    }
+}
+
+// ===== EVENT LOG =====
+function displayEventLog(results) {
+    eventLog.innerHTML = '';
+    
+    // Collect and sort all events
+    let allEvents = [];
+    Object.values(results).forEach(result => {
+        allEvents = allEvents.concat(result.history.events);
+    });
+    
+    allEvents.sort((a, b) => a.month - b.month);
+    
+    // Show up to 20 most significant events
+    const displayEvents = allEvents.slice(0, 20);
+    
+    if (displayEvents.length === 0) {
+        eventLog.innerHTML = '<div class="log-entry">No major events during simulation.</div>';
+        return;
+    }
+    
+    displayEvents.forEach(event => {
+        const scenario = SCENARIOS[event.scenario];
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.style.borderLeftColor = scenario.color;
+        entry.innerHTML = `<span style="color: ${scenario.color}">${event.icon}</span> ${event.message}`;
+        eventLog.appendChild(entry);
+    });
+}
+
+// ===== VERDICT =====
+function displayVerdict(results, investments) {
+    const cornucopia = results.cornucopia;
+    const transition = results.transition;
+    const scarcity = results.scarcity;
+    
+    const survivedCount = [cornucopia, transition, scarcity].filter(r => r.survived).length;
+    const avgROI = (cornucopia.roi + transition.roi + scarcity.roi) / 3;
+    
+    let verdictIcon, verdictTitle, verdictText, verdictClass;
+    
+    if (survivedCount === 3 && avgROI > 50) {
+        verdictIcon = '🏆';
+        verdictTitle = 'RESILIENT & PROFITABLE';
+        verdictText = 'Your factory thrives across all futures. This is a truly sustainable business model.';
+        verdictClass = 'verdict-success';
+    } else if (survivedCount === 3) {
+        verdictIcon = '✅';
+        verdictTitle = 'RESILIENT';
+        verdictText = 'Your factory survives all scenarios. Consider optimizing investments for higher returns.';
+        verdictClass = 'verdict-success';
+    } else if (survivedCount === 2 && cornucopia.survived && transition.survived) {
+        verdictIcon = '⚠️';
+        verdictTitle = 'FRAGILE';
+        verdictText = 'Your factory only fails under extreme scarcity. Adequate for current conditions, but vulnerable to disruption.';
+        verdictClass = 'verdict-warning';
+    } else if (survivedCount === 1 && cornucopia.survived) {
+        verdictIcon = '❌';
+        verdictTitle = 'BRITTLE';
+        verdictText = 'Your factory only profits if the world never changes. This strategy is a high-risk bet on infinite resources.';
+        verdictClass = 'verdict-danger';
+    } else {
+        verdictIcon = '💀';
+        verdictTitle = 'UNSUSTAINABLE';
+        verdictText = 'Your factory fails even under ideal conditions. Fundamentally unviable business model.';
+        verdictClass = 'verdict-danger';
+    }
+    
+    // Calculate circular investment ratio
+    const circularRatio = (investments.robotics + investments.ecodesign) / TOTAL_BUDGET;
+    const traditionalRatio = investments.traditional / TOTAL_BUDGET;
+    
+    let adviceText = '';
+    if (verdictClass !== 'verdict-success') {
+        if (traditionalRatio > 0.5 && circularRatio < 0.2) {
+            adviceText = '💡 <strong>Recommendation:</strong> Your factory is over-reliant on traditional manufacturing. Invest in Robotic Disassembly and Eco-Design to reduce material dependency and waste costs.';
+        } else if (circularRatio > 0.3 && investments.detection < TOTAL_BUDGET * 0.15) {
+            adviceText = '💡 <strong>Recommendation:</strong> Your circular investments need quality control support. Increase Smart Detection to reduce defects.';
+        } else {
+            adviceText = '💡 <strong>Recommendation:</strong> Balance your investments across all categories for maximum resilience.';
+        }
+    }
+    
+    verdictSection.innerHTML = `
+        <div class="verdict-box ${verdictClass}">
+            <div class="verdict-icon">${verdictIcon}</div>
+            <div class="verdict-title">${verdictTitle}</div>
+            <div class="verdict-text">${verdictText}</div>
+            ${adviceText ? `<div class="verdict-advice">${adviceText}</div>` : ''}
+            <div class="verdict-stats">
+                <span>Scenarios Survived: <strong>${survivedCount}/3</strong></span>
+                <span>Avg ROI: <strong class="${avgROI >= 0 ? 'positive' : 'negative'}">${avgROI >= 0 ? '+' : ''}${Math.round(avgROI)}%</strong></span>
+            </div>
         </div>
     `;
-    
-    scenarioResults.appendChild(summary);
 }
 
 // ===== RESET =====
@@ -322,12 +785,26 @@ function reset() {
     
     initialMessage.style.display = 'block';
     loadingSpinner.style.display = 'none';
-    scenarioResults.innerHTML = '';
+    survivalMatrix.style.display = 'none';
+    chartSection.style.display = 'none';
+    eventLogSection.style.display = 'none';
+    verdictSection.style.display = 'none';
+    investmentSummary.style.display = 'none';
+    
+    simulationResults = null;
+    selectedScenario = null;
 }
 
 // ===== EVENT LISTENERS =====
-startBtn.addEventListener('click', runAllScenarios);
+startBtn.addEventListener('click', runStressTest);
 resetBtn.addEventListener('click', reset);
+
+// Handle window resize
+window.addEventListener('resize', () => {
+    if (simulationResults) {
+        drawMultiLineChart(simulationResults);
+    }
+});
 
 // ===== INITIALIZE =====
 updateBudget();

@@ -24,12 +24,6 @@ body {
     margin-bottom: 20px;
 }
 
-@media (max-width: 968px) {
-    .main-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
 .panel {
     background: #0f3460;
     border: 1px solid rgba(100, 255, 218, 0.3);
@@ -492,4 +486,204 @@ canvas {
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+/* ===== SCENARIO CARDS (Survival Matrix) ===== */
+.scenario-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.scenario-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(100, 255, 218, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.scenario-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.scenario-card.selected {
+    border-width: 3px;
+    box-shadow: 0 0 20px rgba(100, 255, 218, 0.3);
+}
+
+.scenario-card.success {
+    border-color: #00d084;
+    background: rgba(0, 208, 132, 0.1);
+}
+
+.scenario-card.danger {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+}
+
+.scenario-name {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.scenario-subtitle {
+    font-size: 0.75rem;
+    color: #a0a0a0;
+    margin-bottom: 10px;
+}
+
+.scenario-status {
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    text-align: center;
+}
+
+.scenario-stat {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+    color: #a0a0a0;
+}
+
+.scenario-stat span:last-child {
+    font-weight: bold;
+    color: #e0e0e0;
+}
+
+.scenario-stat .positive { color: #00d084; }
+.scenario-stat .negative { color: #ff6b6b; }
+
+/* ===== CHART LEGEND ===== */
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: #a0a0a0;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.legend-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.legend-color {
+    width: 20px;
+    height: 3px;
+    border-radius: 2px;
+}
+
+/* ===== VERDICT BOX ===== */
+.verdict-box {
+    margin-top: 20px;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px solid;
+}
+
+.verdict-box.verdict-success {
+    background: rgba(0, 208, 132, 0.1);
+    border-color: #00d084;
+}
+
+.verdict-box.verdict-warning {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: #ffd700;
+}
+
+.verdict-box.verdict-danger {
+    background: rgba(255, 107, 107, 0.1);
+    border-color: #ff6b6b;
+}
+
+.verdict-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.verdict-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #e0e0e0;
+}
+
+.verdict-success .verdict-title { color: #00d084; }
+.verdict-warning .verdict-title { color: #ffd700; }
+.verdict-danger .verdict-title { color: #ff6b6b; }
+
+.verdict-text {
+    font-size: 1rem;
+    color: #a0a0a0;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.verdict-advice {
+    font-size: 0.9rem;
+    color: #e0e0e0;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.verdict-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    font-size: 0.9rem;
+    color: #a0a0a0;
+}
+
+.verdict-stats .positive { color: #00d084; }
+.verdict-stats .negative { color: #ff6b6b; }
+
+/* ===== INVESTMENT SUMMARY ===== */
+.investment-summary {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(100, 255, 218, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(100, 255, 218, 0.3);
+}
+
+/* ===== VIZ TITLE ===== */
+.viz-title {
+    color: #64ffda;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+/* ===== CANVAS ===== */
+canvas {
+    width: 100%;
+    height: 220px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
