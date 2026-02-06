@@ -1,0 +1,31 @@
+# Site settings
+title: "Ignacio Cuiral-Zueco | Robotics & Shape Control Researcher"
+description: "Personal website of Ignacio Cuiral-Zueco, Postdoctoral researcher in deformable object manipulation and shape control at Institut Pascal / University of Zaragoza."
+url: "https://nachocz.github.io"
+baseurl: "" # Leave empty for user pages
+
+# Author information
+author:
+  name: "Ignacio Cuiral-Zueco"
+  email: "ignaciocuiral@unizar.es"
+
+# Social profiles
+social:
+  name: "Ignacio Cuiral-Zueco"
+  links:
+    - "https://scholar.google.es/citations?user=hj9OZJEAAAAJ&hl=es"
+    - "https://github.com/nachocz"
+
+# SEO settings
+lang: en_US
+locale: en_US
+
+# Jekyll plugins
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - .gitignore
