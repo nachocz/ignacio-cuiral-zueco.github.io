@@ -1,37 +1,62 @@
-// Constants
+// ===== CONSTANTS =====
 const TOTAL_BUDGET = 1000000;
 const STARTING_CAPITAL = 200000;
-const MAX_WASTE = 1000;
-const SIMULATION_MONTHS = 120;
-const MONTHS_PER_ADVANCE = 4;
+const SIMULATION_MONTHS = 120; // 10 years
+const MAX_WASTE = 1000; // tons
 
-// State
-let gameState = {
-    month: 0,
-    bankBalance: STARTING_CAPITAL,
-    wasteAccumulated: 0,
-    investments: {
-        traditional: 0,
-        detection: 0,
-        robotics: 0,
-        ecodesign: 0
+// ===== SCENARIO DEFINITIONS =====
+const SCENARIOS = [
+    {
+        id: 'optimistic',
+        name: '🌈 Optimistic (Utopia)',
+        description: 'Infinite cheap resources, no waste regulations, stable high demand. The traditional manufacturing dream.',
+        materialCostMultiplier: 0.8,
+        materialCostGrowth: 0.001, // 0.1% monthly growth
+        wasteTaxPerTon: 0,
+        wasteTaxGrowth: 0,
+        demandBase: 120,
+        demandVolatility: 0.02,
+        circularDemandBonus: 0
     },
-    history: {
-        balance: [],
-        waste: []
+    {
+        id: 'moderate',
+        name: '📊 Business as Usual',
+        description: 'Gradual resource inflation, emerging sustainability awareness, steady market growth.',
+        materialCostMultiplier: 1.0,
+        materialCostGrowth: 0.005, // 0.5% monthly
+        wasteTaxPerTon: 500,
+        wasteTaxGrowth: 0.01, // grows over time
+        demandBase: 100,
+        demandVolatility: 0.05,
+        circularDemandBonus: 0.1
     },
-    isRunning: false,
-    simulationTimer: null
-};
+    {
+        id: 'transition',
+        name: '🔄 Green Transition',
+        description: 'Resource prices spike mid-simulation, moderate waste taxes, growing demand for sustainable products.',
+        materialCostMultiplier: 1.0,
+        materialCostGrowth: 0.01, // 1% monthly
+        wasteTaxPerTon: 2000,
+        wasteTaxGrowth: 0.02,
+        demandBase: 100,
+        demandVolatility: 0.08,
+        circularDemandBonus: 0.25
+    },
+    {
+        id: 'critical',
+        name: '⚠️ Resource Crisis',
+        description: 'Materials become scarce and expensive, strict waste laws enforced, supply chains disrupted. Circular strategies thrive.',
+        materialCostMultiplier: 1.5,
+        materialCostGrowth: 0.02, // 2% monthly
+        wasteTaxPerTon: 5000,
+        wasteTaxGrowth: 0.03,
+        demandBase: 80,
+        demandVolatility: 0.15,
+        circularDemandBonus: 0.5
+    }
+];
 
-// Market conditions
-let marketConditions = {
-    rawMaterialCost: 1.0,
-    wasteTax: 0,
-    demand: 100
-};
-
-// DOM Elements
+// ===== DOM ELEMENTS =====
 const sliders = {
     traditional: document.getElementById('traditionalSlider'),
     detection: document.getElementById('detectionSlider'),
@@ -49,36 +74,11 @@ const valueDisplays = {
 const fundsRemaining = document.getElementById('fundsRemaining');
 const startBtn = document.getElementById('startBtn');
 const resetBtn = document.getElementById('resetBtn');
-const advanceBtn = document.getElementById('advanceBtn');
-const eventLog = document.getElementById('eventLog');
-const currentMonthDisplay = document.getElementById('currentMonth');
-const bankBalanceDisplay = document.getElementById('bankBalance');
-const totalWasteDisplay = document.getElementById('totalWaste');
-const wasteMeterFill = document.getElementById('wasteMeterFill');
-const wasteMeterLabel = document.getElementById('wasteMeterLabel');
-const profitCanvas = document.getElementById('profitChart');
-const profitCtx = profitCanvas.getContext('2d');
-const gameOverOverlay = document.getElementById('gameOverOverlay');
-const gameOverPanel = document.getElementById('gameOverPanel');
-const gameOverTitle = document.getElementById('gameOverTitle');
-const gameOverMessage = document.getElementById('gameOverMessage');
-const gameOverStats = document.getElementById('gameOverStats');
-const tryAgainBtn = document.getElementById('tryAgainBtn');
+const initialMessage = document.getElementById('initialMessage');
+const loadingSpinner = document.getElementById('loadingSpinner');
+const scenarioResults = document.getElementById('scenarioResults');
 
-// Initialize canvas size
-function resizeCanvas() {
-    const rect = profitCanvas.getBoundingClientRect();
-    profitCanvas.width = rect.width;
-    profitCanvas.height = rect.height;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-// Slider event listeners
-Object.keys(sliders).forEach(key => {
-    sliders[key].addEventListener('input', updateBudget);
-});
-
+// ===== BUDGET MANAGEMENT =====
 function updateBudget() {
     const total = Object.keys(sliders).reduce((sum, key) => {
         return sum + (sliders[key].value / 100) * TOTAL_BUDGET;
@@ -102,337 +102,232 @@ function updateBudget() {
     }
 }
 
-startBtn.addEventListener('click', startSimulation);
-
-function startSimulation() {
-    if (gameState.isRunning) return;
-
-    Object.values(sliders).forEach(slider => slider.disabled = true);
-    startBtn.disabled = true;
-
-    Object.keys(sliders).forEach(key => {
-        gameState.investments[key] = (sliders[key].value / 100) * TOTAL_BUDGET;
-    });
-
-    const totalInvested = Object.values(gameState.investments).reduce((a, b) => a + b, 0);
-    const unusedBudget = TOTAL_BUDGET - totalInvested;
-    gameState.bankBalance = STARTING_CAPITAL + unusedBudget;
-    
-    gameState.month = 0;
-    gameState.wasteAccumulated = 0;
-    gameState.history.balance = [gameState.bankBalance];
-    gameState.history.waste = [0];
-    gameState.isRunning = true;
-
-    marketConditions = {
-        rawMaterialCost: 1.0,
-        wasteTax: 0,
-        demand: 100
-    };
-
-    logEvent('Simulation started! Click "Advance +4 Months" to progress...', 'success');
-    updateDisplay();
-    drawChart();
-
-    advanceBtn.disabled = false;
-    advanceBtn.style.opacity = '1';
-    advanceBtn.style.cursor = 'pointer';
-}
-
-advanceBtn.addEventListener('click', advanceTime);
-
-function advanceTime() {
-    if (!gameState.isRunning || gameState.month >= SIMULATION_MONTHS) return;
-
-    for (let i = 0; i < MONTHS_PER_ADVANCE; i++) {
-        if (gameState.month >= SIMULATION_MONTHS) break;
-        
-        gameState.month++;
-        handleMonthEvents();
-
-        const monthResults = calculateMonthEconomics();
-        gameState.bankBalance += monthResults.netProfit;
-        gameState.wasteAccumulated += monthResults.wasteGenerated;
-        
-        if (gameState.bankBalance <= 0) {
-            endSimulation('bankrupt');
-            return;
-        }
-
-        if (gameState.wasteAccumulated >= MAX_WASTE) {
-            endSimulation('waste');
-            return;
-        }
-    }
-
-    gameState.history.balance.push(gameState.bankBalance);
-    gameState.history.waste.push(gameState.wasteAccumulated);
-
-    const year = Math.floor(gameState.month / 12);
-    const month = gameState.month % 12;
-    logEvent(`Month ${gameState.month} (Year ${year}, Month ${month}): Balance €${Math.round(gameState.bankBalance).toLocaleString()}`);
-
-    updateDisplay();
-    drawChart();
-
-    if (gameState.month >= SIMULATION_MONTHS) {
-        endSimulation('win');
-    }
-}
-
-function handleMonthEvents() {
-    if (gameState.month === 36) {
-        marketConditions.rawMaterialCost = 2.0;
-        logEvent('⚠ CRISIS: Raw material prices have DOUBLED!', 'warning');
-    }
-
-    if (gameState.month === 72) {
-        marketConditions.wasteTax = 5000;
-        logEvent('⚠ NEW REGULATIONS: Waste tax of €5,000/ton introduced!', 'danger');
-    }
-
-    if (gameState.month === 108) {
-        marketConditions.rawMaterialCost = 3.0;
-        logEvent('⚠ SUPPLY CHAIN COLLAPSE: Raw materials now 3x cost! Circular strategies thrive.', 'danger');
-    }
-}
-
-function calculateMonthEconomics() {
-    const inv = gameState.investments;
-    const monthlyFactor = 1 / 12;
-    
-    const traditionalCapacity = (inv.traditional / 10000) * monthlyFactor;
-    const traditionalMaterialCost = traditionalCapacity * 100 * marketConditions.rawMaterialCost;
-    const traditionalWaste = traditionalCapacity * 0.5;
-    
-    const detectionLevel = inv.detection / TOTAL_BUDGET;
-    const qualityMultiplier = 0.7 + (detectionLevel * 0.3);
-    
-    const roboticsCapacity = (inv.robotics / 10000) * monthlyFactor;
-    const ecodesignYield = 0.3 + (inv.ecodesign / TOTAL_BUDGET) * 0.6;
-    
-    const circularMaterialCost = roboticsCapacity * 50 * (1 - ecodesignYield);
-    const circularWaste = roboticsCapacity * 0.1 * (1 - ecodesignYield);
-    
-    const totalProduction = (traditionalCapacity + roboticsCapacity) * qualityMultiplier;
-    const revenue = totalProduction * 1000 * (marketConditions.demand / 100);
-    
-    const materialCosts = traditionalMaterialCost + circularMaterialCost;
-    const operatingCosts = ((inv.traditional + inv.robotics) * 0.05) * monthlyFactor;
-    const wasteTax = (traditionalWaste + circularWaste) * marketConditions.wasteTax;
-    const totalCosts = materialCosts + operatingCosts + wasteTax;
-    
-    const netProfit = revenue - totalCosts;
-    const wasteGenerated = traditionalWaste + circularWaste;
-
-    return {
-        revenue,
-        costs: totalCosts,
-        netProfit,
-        wasteGenerated,
-        materialCosts,
-        wasteTax
-    };
-}
-
-function updateDisplay() {
-    currentMonthDisplay.textContent = gameState.month;
-    
-    bankBalanceDisplay.textContent = '€' + Math.round(gameState.bankBalance).toLocaleString();
-    bankBalanceDisplay.className = 'status-value';
-    if (gameState.bankBalance > STARTING_CAPITAL) {
-        bankBalanceDisplay.classList.add('positive');
-    } else if (gameState.bankBalance < 0) {
-        bankBalanceDisplay.classList.add('negative');
-    }
-    
-    totalWasteDisplay.textContent = Math.round(gameState.wasteAccumulated) + ' tons';
-    
-    const wastePercent = (gameState.wasteAccumulated / MAX_WASTE) * 100;
-    wasteMeterFill.style.height = Math.min(wastePercent, 100) + '%';
-    wasteMeterLabel.textContent = Math.round(wastePercent) + '%';
-}
-
-function drawChart() {
-    const ctx = profitCtx;
-    const width = profitCanvas.width;
-    const height = profitCanvas.height;
-    const padding = 40;
-
-    ctx.clearRect(0, 0, width, height);
-
-    if (gameState.history.balance.length === 0) return;
-
-    const maxBalance = Math.max(...gameState.history.balance, STARTING_CAPITAL * 1.5);
-    const minBalance = Math.min(...gameState.history.balance, 0);
-    const range = maxBalance - minBalance;
-
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 5; i++) {
-        const y = padding + (height - 2 * padding) * (i / 5);
-        ctx.beginPath();
-        ctx.moveTo(padding, y);
-        ctx.lineTo(width - padding, y);
-        ctx.stroke();
-    }
-
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(padding, padding);
-    ctx.lineTo(padding, height - padding);
-    ctx.lineTo(width - padding, height - padding);
-    ctx.stroke();
-
-    if (gameState.history.balance.length > 1) {
-        ctx.strokeStyle = '#64ffda';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-
-        const stepX = (width - 2 * padding) / (gameState.history.balance.length - 1);
-        
-        gameState.history.balance.forEach((balance, index) => {
-            const x = padding + stepX * index;
-            const normalizedValue = (balance - minBalance) / range;
-            const y = height - padding - normalizedValue * (height - 2 * padding);
-
-            if (index === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-        });
-
-        ctx.stroke();
-
-        ctx.fillStyle = '#64ffda';
-        gameState.history.balance.forEach((balance, index) => {
-            const x = padding + stepX * index;
-            const normalizedValue = (balance - minBalance) / range;
-            const y = height - padding - normalizedValue * (height - 2 * padding);
-            
-            ctx.beginPath();
-            ctx.arc(x, y, 4, 0, Math.PI * 2);
-            ctx.fill();
-        });
-    }
-
-    ctx.fillStyle = '#a0a0a0';
-    ctx.font = '12px system-ui';
-    ctx.textAlign = 'right';
-    
-    for (let i = 0; i <= 5; i++) {
-        const value = minBalance + (range * (5 - i) / 5);
-        const y = padding + (height - 2 * padding) * (i / 5);
-        ctx.fillText('€' + Math.round(value / 1000) + 'K', padding - 5, y + 4);
-    }
-
-    ctx.textAlign = 'center';
-    const years = Math.floor(gameState.month / 12);
-    ctx.fillText(`Month ${gameState.month} (Year ${years})`, width / 2, height - 10);
-}
-
-function logEvent(message, type = '') {
-    const entry = document.createElement('div');
-    entry.className = 'log-entry ' + type;
-    entry.textContent = message;
-    eventLog.appendChild(entry);
-    eventLog.scrollTop = eventLog.scrollHeight;
-}
-
-function endSimulation(reason) {
-    gameState.isRunning = false;
-    clearTimeout(gameState.simulationTimer);
-
-    const finalBalance = gameState.bankBalance;
-    const finalWaste = gameState.wasteAccumulated;
-
-    gameOverPanel.className = 'game-over-panel';
-    
-    if (reason === 'win') {
-        gameOverPanel.classList.add('win');
-        gameOverTitle.textContent = '🎉 SUCCESS!';
-        gameOverMessage.textContent = 'Your factory survived 10 years! Smart circular investments paid off.';
-        logEvent('✓ SIMULATION COMPLETE: Factory thrived!', 'success');
-    } else if (reason === 'bankrupt') {
-        gameOverPanel.classList.add('lose');
-        gameOverTitle.textContent = '💀 BANKRUPT!';
-        gameOverMessage.textContent = 'Your factory ran out of money. Better investment strategy needed.';
-        logEvent('✗ BANKRUPTCY: Game Over', 'danger');
-    } else if (reason === 'waste') {
-        gameOverPanel.classList.add('lose');
-        gameOverTitle.textContent = '☠️ SHUT DOWN!';
-        gameOverMessage.textContent = 'Excessive waste violations! Factory closed by regulators.';
-        logEvent('✗ ENVIRONMENTAL SHUTDOWN: Game Over', 'danger');
-    }
-
-    const finalYears = Math.floor(gameState.month / 12);
-    const finalMonths = gameState.month % 12;
-    gameOverStats.innerHTML = `
-        <div><span>Duration:</span> <span>${gameState.month} months (${finalYears} years, ${finalMonths} months)</span></div>
-        <div><span>Final Balance:</span> <span style="color: ${finalBalance > 0 ? '#00d084' : '#ff6b6b'}">€${Math.round(finalBalance).toLocaleString()}</span></div>
-        <div><span>Total Waste:</span> <span style="color: ${finalWaste > MAX_WASTE * 0.8 ? '#ff6b6b' : '#00d084'}">${Math.round(finalWaste)} tons</span></div>
-        <div><span>Traditional:</span> <span>€${Math.round(gameState.investments.traditional).toLocaleString()}</span></div>
-        <div><span>Detection:</span> <span>€${Math.round(gameState.investments.detection).toLocaleString()}</span></div>
-        <div><span>Robotics:</span> <span>€${Math.round(gameState.investments.robotics).toLocaleString()}</span></div>
-        <div><span>Eco-Design:</span> <span>€${Math.round(gameState.investments.ecodesign).toLocaleString()}</span></div>
-    `;
-
-    gameOverOverlay.classList.add('active');
-}
-
-resetBtn.addEventListener('click', resetSimulation);
-tryAgainBtn.addEventListener('click', () => {
-    gameOverOverlay.classList.remove('active');
-    resetSimulation();
+Object.keys(sliders).forEach(key => {
+    sliders[key].addEventListener('input', updateBudget);
 });
 
-function resetSimulation() {
-    if (gameState.simulationTimer) {
-        clearTimeout(gameState.simulationTimer);
+// ===== SIMULATION ENGINE =====
+function runScenario(investments, scenario) {
+    let balance = STARTING_CAPITAL + (TOTAL_BUDGET - Object.values(investments).reduce((a, b) => a + b, 0));
+    let waste = 0;
+    let materialCost = scenario.materialCostMultiplier;
+    let wasteTax = scenario.wasteTaxPerTon;
+    let demand = scenario.demandBase;
+    const balanceHistory = [balance];
+    let bankruptMonth = null;
+    let wasteShutdownMonth = null;
+
+    for (let month = 1; month <= SIMULATION_MONTHS; month++) {
+        // Update market conditions with randomness
+        materialCost *= (1 + scenario.materialCostGrowth + (Math.random() - 0.5) * 0.01);
+        wasteTax *= (1 + scenario.wasteTaxGrowth);
+        demand = scenario.demandBase + (Math.random() - 0.5) * scenario.demandVolatility * 100;
+        demand = Math.max(50, Math.min(150, demand)); // Clamp demand
+
+        // Calculate monthly economics
+        const monthlyFactor = 1 / 12;
+        
+        // Traditional manufacturing
+        const traditionalCapacity = (investments.traditional / 10000) * monthlyFactor;
+        const traditionalMaterialCost = traditionalCapacity * 150 * materialCost;
+        const traditionalWaste = traditionalCapacity * 0.8; // High waste
+        const traditionalRevenue = traditionalCapacity * 800 * (demand / 100);
+
+        // Detection systems improve quality (reduce defects)
+        const detectionLevel = investments.detection / TOTAL_BUDGET;
+        const qualityMultiplier = 0.6 + (detectionLevel * 0.4); // 60% to 100% quality
+
+        // Circular manufacturing (robotics + eco-design)
+        const roboticsCapacity = (investments.robotics / 10000) * monthlyFactor;
+        const ecodesignEfficiency = 0.3 + (investments.ecodesign / TOTAL_BUDGET) * 0.6; // 30% to 90% material recovery
+        
+        const circularMaterialCost = roboticsCapacity * 50 * materialCost * (1 - ecodesignEfficiency);
+        const circularWaste = roboticsCapacity * 0.2 * (1 - ecodesignEfficiency); // Much lower waste
+        const circularDemandMultiplier = 1 + scenario.circularDemandBonus; // Premium for sustainable products
+        const circularRevenue = roboticsCapacity * 700 * (demand / 100) * circularDemandMultiplier;
+
+        // Operating costs
+        const operatingCosts = ((investments.traditional * 0.04) + (investments.robotics * 0.06)) * monthlyFactor;
+
+        // Total calculations
+        const totalRevenue = (traditionalRevenue + circularRevenue) * qualityMultiplier;
+        const totalMaterialCost = traditionalMaterialCost + circularMaterialCost;
+        const monthWaste = traditionalWaste + circularWaste;
+        const wasteDisposalCost = monthWaste * wasteTax;
+        const totalCosts = totalMaterialCost + operatingCosts + wasteDisposalCost;
+
+        const netProfit = totalRevenue - totalCosts;
+        balance += netProfit;
+        waste += monthWaste;
+
+        // Check failure conditions
+        if (balance <= 0 && bankruptMonth === null) {
+            bankruptMonth = month;
+            balance = 0;
+        }
+
+        if (waste >= MAX_WASTE && wasteShutdownMonth === null) {
+            wasteShutdownMonth = month;
+        }
+
+        balanceHistory.push(balance);
     }
 
-    gameState = {
-        month: 0,
-        bankBalance: STARTING_CAPITAL,
-        wasteAccumulated: 0,
-        investments: {
-            traditional: 0,
-            detection: 0,
-            robotics: 0,
-            ecodesign: 0
-        },
-        history: {
-            balance: [],
-            waste: []
-        },
-        isRunning: false,
-        simulationTimer: null
+    return {
+        finalBalance: balance,
+        totalWaste: waste,
+        balanceHistory,
+        bankruptMonth,
+        wasteShutdownMonth,
+        survived: bankruptMonth === null && wasteShutdownMonth === null,
+        profit: balance - STARTING_CAPITAL
     };
-
-    Object.values(sliders).forEach(slider => {
-        slider.value = 0;
-        slider.disabled = false;
-    });
-
-    updateBudget();
-    updateDisplay();
-    
-    eventLog.innerHTML = '<div class="log-entry">Configure your investments and click START SIMULATION to begin.</div>';
-
-    profitCtx.clearRect(0, 0, profitCanvas.width, profitCanvas.height);
-    
-    wasteMeterFill.style.height = '0%';
-    wasteMeterLabel.textContent = '0%';
-
-    advanceBtn.disabled = true;
-    advanceBtn.style.opacity = '0.5';
-    advanceBtn.style.cursor = 'not-allowed';
-
-    startBtn.disabled = false;
 }
 
-// Initialize
+function runAllScenarios() {
+    const investments = {
+        traditional: (sliders.traditional.value / 100) * TOTAL_BUDGET,
+        detection: (sliders.detection.value / 100) * TOTAL_BUDGET,
+        robotics: (sliders.robotics.value / 100) * TOTAL_BUDGET,
+        ecodesign: (sliders.ecodesign.value / 100) * TOTAL_BUDGET
+    };
+
+    // Disable controls
+    Object.values(sliders).forEach(s => s.disabled = true);
+    startBtn.disabled = true;
+
+    // Show loading
+    initialMessage.style.display = 'none';
+    loadingSpinner.style.display = 'block';
+    scenarioResults.innerHTML = '';
+
+    // Run scenarios with slight delay for visual effect
+    setTimeout(() => {
+        const results = SCENARIOS.map(scenario => ({
+            scenario,
+            result: runScenario(investments, scenario)
+        }));
+
+        displayResults(results, investments);
+        loadingSpinner.style.display = 'none';
+    }, 800);
+}
+
+// ===== DISPLAY RESULTS =====
+function displayResults(results, investments) {
+    scenarioResults.innerHTML = '';
+    
+    results.forEach(({ scenario, result }) => {
+        const card = document.createElement('div');
+        let cardClass = 'scenario-card';
+        
+        if (result.survived && result.profit > 100000) {
+            cardClass += ' success';
+        } else if (!result.survived) {
+            cardClass += ' danger';
+        } else if (result.profit < 0) {
+            cardClass += ' warning';
+        }
+        
+        card.className = cardClass;
+
+        let verdictText = '';
+        let verdictIcon = '';
+        
+        if (!result.survived) {
+            if (result.bankruptMonth) {
+                verdictIcon = '💀';
+                verdictText = `Bankrupt at month ${result.bankruptMonth}`;
+            } else {
+                verdictIcon = '☠️';
+                verdictText = `Shut down for waste at month ${result.wasteShutdownMonth}`;
+            }
+        } else if (result.profit > 200000) {
+            verdictIcon = '🏆';
+            verdictText = 'Excellent! Thriving business';
+        } else if (result.profit > 50000) {
+            verdictIcon = '✅';
+            verdictText = 'Good! Profitable operation';
+        } else if (result.profit > 0) {
+            verdictIcon = '🔸';
+            verdictText = 'Marginal profit, could do better';
+        } else {
+            verdictIcon = '⚠️';
+            verdictText = 'Survived but lost money';
+        }
+
+        const profitClass = result.profit >= 0 ? 'positive' : 'negative';
+        const wastePercent = Math.round((result.totalWaste / MAX_WASTE) * 100);
+
+        card.innerHTML = `
+            <div class="scenario-name">${scenario.name}</div>
+            <div class="scenario-desc">${scenario.description}</div>
+            <div class="scenario-stat">
+                <span class="scenario-stat-label">Final Balance:</span>
+                <span class="scenario-stat-value ${profitClass}">€${Math.round(result.finalBalance).toLocaleString()}</span>
+            </div>
+            <div class="scenario-stat">
+                <span class="scenario-stat-label">10-Year Profit:</span>
+                <span class="scenario-stat-value ${profitClass}">${result.profit >= 0 ? '+' : ''}€${Math.round(result.profit).toLocaleString()}</span>
+            </div>
+            <div class="scenario-stat">
+                <span class="scenario-stat-label">Total Waste:</span>
+                <span class="scenario-stat-value ${wastePercent > 80 ? 'negative' : ''}">${Math.round(result.totalWaste)} tons (${wastePercent}%)</span>
+            </div>
+            <div class="scenario-verdict" style="border-left-color: ${result.survived ? (result.profit > 0 ? '#00d084' : '#ffd700') : '#ff6b6b'}">
+                ${verdictIcon} ${verdictText}
+            </div>
+        `;
+
+        scenarioResults.appendChild(card);
+    });
+
+    // Add summary
+    const successCount = results.filter(r => r.result.survived).length;
+    const avgProfit = results.reduce((sum, r) => sum + r.result.profit, 0) / results.length;
+    
+    const summary = document.createElement('div');
+    summary.style.cssText = 'margin-top: 20px; padding: 20px; background: rgba(100, 255, 218, 0.1); border-radius: 10px; border: 1px solid #64ffda;';
+    
+    let summaryText = '';
+    if (successCount === 4 && avgProfit > 100000) {
+        summaryText = '🌟 <strong>Outstanding!</strong> Your strategy is resilient across all scenarios with excellent returns.';
+    } else if (successCount === 4) {
+        summaryText = '✅ <strong>Robust strategy!</strong> Your business survives all scenarios. Consider optimizing for higher profits.';
+    } else if (successCount >= 2) {
+        summaryText = '⚠️ <strong>Vulnerable strategy.</strong> Your business fails in ' + (4 - successCount) + ' scenario(s). Consider more circular investments.';
+    } else {
+        summaryText = '❌ <strong>High-risk strategy!</strong> Traditional manufacturing alone is not resilient. Try investing in robotics and eco-design.';
+    }
+    
+    summary.innerHTML = `
+        <div style="margin-bottom: 10px; font-size: 1.1rem;">${summaryText}</div>
+        <div style="color: #a0a0a0; font-size: 0.9rem;">
+            Survived: ${successCount}/4 scenarios | Average Profit: €${Math.round(avgProfit).toLocaleString()}
+        </div>
+    `;
+    
+    scenarioResults.appendChild(summary);
+}
+
+// ===== RESET =====
+function reset() {
+    Object.values(sliders).forEach(s => {
+        s.value = 0;
+        s.disabled = false;
+    });
+    
+    startBtn.disabled = false;
+    updateBudget();
+    
+    initialMessage.style.display = 'block';
+    loadingSpinner.style.display = 'none';
+    scenarioResults.innerHTML = '';
+}
+
+// ===== EVENT LISTENERS =====
+startBtn.addEventListener('click', runAllScenarios);
+resetBtn.addEventListener('click', reset);
+
+// ===== INITIALIZE =====
 updateBudget();
-updateDisplay();

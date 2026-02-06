@@ -3,44 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Primary Meta Tags -->
     <title>SUDOE Factory Resilience Simulator | Ignacio Cuiral-Zueco</title>
-    <meta name="title" content="SUDOE Factory Resilience Simulator | Ignacio Cuiral-Zueco">
     <meta name="description" content="Interactive simulator demonstrating circular economy and factory resilience through robotics, detection, and eco-design. Part of the SUDOE REMAIN project research.">
-    <meta name="author" content="Ignacio Cuiral-Zueco">
-    <meta name="keywords" content="circular economy, factory simulation, robotics, eco-design, SUDOE project, industrial resilience">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://nachocz.github.io/REMAIN_demo.html">
-    <meta property="og:title" content="SUDOE Factory Resilience Simulator | Ignacio Cuiral-Zueco">
-    <meta property="og:description" content="Interactive simulator demonstrating circular economy and factory resilience through robotics, detection, and eco-design.">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary">
-    <meta property="twitter:url" content="https://nachocz.github.io/REMAIN_demo.html">
-    <meta property="twitter:title" content="SUDOE Factory Resilience Simulator | Ignacio Cuiral-Zueco">
-    <meta property="twitter:description" content="Interactive simulator demonstrating circular economy and factory resilience through robotics, detection, and eco-design.">
-    
-    <!-- Canonical URL -->
     <link rel="canonical" content="https://nachocz.github.io/REMAIN_demo.html">
-    
     <link rel="stylesheet" href="REMAIN_demo.css">
-</head>
 </head>
 <body>
     <div class="container">
         <div class="main-grid">
-            <!-- Left Column: Budget Allocation & Controls -->
+            <!-- Left Column: Budget Allocation -->
             <div class="panel">
                 <h2>💰 Budget Allocation</h2>
-                
                 <div class="budget-display">
                     <div class="budget-total">Investment Budget: €1,000,000</div>
                     <div class="funds-remaining" id="fundsRemaining">Funds Remaining: €1,000,000</div>
                 </div>
-
                 <p class="instruction">Allocate your funds wisely. You cannot exceed the budget.</p>
 
                 <div class="slider-group">
@@ -80,47 +57,29 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button class="start-btn" id="startBtn">START SIMULATION</button>
+                    <button class="start-btn" id="startBtn">RUN 4 SCENARIOS</button>
                     <button class="reset-btn" id="resetBtn">RESET</button>
                 </div>
             </div>
 
-            <!-- Right Column: Scenario Results Dashboard -->
+            <!-- Right Column: Scenario Results -->
             <div class="panel">
                 <h2>📊 Scenario Analysis (10 Years)</h2>
-                
                 <p style="color: #a0a0a0; font-size: 0.95rem; margin-bottom: 20px;">Your strategy will be tested across 4 realistic scenarios, from optimistic to critical.</p>
-
-                <div id="scenarioResults" style="display: none;">
-                    <!-- Scenario cards will be inserted here -->
+                
+                <div id="initialMessage" style="padding: 20px; text-align: center;">
+                    <p style="color: #a0a0a0; font-style: italic;">Configure your budget allocation and click RUN to see how your strategy performs across different economic scenarios.</p>
                 </div>
 
                 <div id="loadingSpinner" style="text-align: center; padding: 40px; display: none;">
                     <p style="color: #64ffda; font-size: 1.2rem; margin-bottom: 20px;">Running Scenarios...</p>
-                    <div style="display: inline-block; width: 40px; height: 40px; border: 3px solid rgba(100, 255, 218, 0.3); border-top-color: #64ffda; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <div class="spinner"></div>
                 </div>
 
-                <div id="initialMessage" style="padding: 20px; text-align: center;">
-                    <p style="color: #a0a0a0; font-style: italic;">Configure your budget allocation and click START to see how your strategy performs across different economic scenarios.</p>
-                </div>
-
-                <div class="action-buttons" style="margin-top: 20px;">
-                    <button class="reset-btn" id="resetBtn">RESET</button>
-                </div>
+                <div id="scenarioResults"></div>
             </div>
         </div>
     </div>
-
-    <!-- Game Over Overlay -->
-    <div class="game-over-overlay" id="gameOverOverlay">
-        <div class="game-over-panel" id="gameOverPanel">
-            <h2 id="gameOverTitle">GAME OVER</h2>
-            <p id="gameOverMessage"></p>
-            <div class="game-over-stats" id="gameOverStats"></div>
-            <button class="try-again-btn" id="tryAgainBtn">Try Again</button>
-        </div>
-    </div>
-
     <script src="REMAIN_demo.js"></script>
 </body>
 </html>
