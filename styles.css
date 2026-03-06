@@ -370,30 +370,62 @@ body.dark-theme .lang-btn.active {
     margin-top: 5px;
 }
 
+.pub-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
 .icon-link {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-top: 8px;
-    padding: 6px 12px;
-    background: #ecf0f1;
-    border-radius: 4px;
-    transition: all 0.3s ease;
+    padding: 6px 14px;
+    background: #2c3e50;
+    color: #ffffff !important;
+    border-radius: 20px;
+    font-size: 0.88em;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    border-bottom: none !important;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .icon-link:hover {
     background: #3498db;
-    color: white;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.35);
 }
 
 .icon-link:hover a {
     color: white;
-    border-bottom-color: white;
+    border-bottom-color: transparent;
+}
+
+.icon-link.page-link {
+    background: #3498db;
+}
+
+.icon-link.page-link:hover {
+    background: #2980b9;
+    box-shadow: 0 4px 12px rgba(41, 128, 185, 0.4);
+}
+
+.icon-link svg.link-icon {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+    flex-shrink: 0;
 }
 
 .github-icon {
     width: 16px;
     height: 16px;
+    filter: brightness(0) invert(1);
 }
 
 .video-container {
@@ -821,13 +853,23 @@ body.dark-theme .header-btn:hover {
 }
 
 body.dark-theme .icon-link {
-    background: #1f2633;
-    color: #cfe9ff;
+    background: #2a3548;
+    color: #cfe9ff !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 body.dark-theme .icon-link:hover {
+    background: #3b82c4;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 196, 0.4);
+}
+
+body.dark-theme .icon-link.page-link {
     background: #2c6fb3;
-    color: #ffffff;
+}
+
+body.dark-theme .icon-link.page-link:hover {
+    background: #3b82c4;
 }
 
 body.dark-theme .demo-tab-btn {
