@@ -49,6 +49,15 @@ const translations = {
         highlightedPublications: 'Highlighted Publications',
         codeAvailable: 'Code Available',
 
+        // ERF 2026
+        erf2026Title: 'Paper presented at ERF 2026',
+        erf2026Desc: 'I presented our paper "The Language of Deformation: Semantic Failure Analysis as a Prerequisite for Dexterous Manipulation of Deformable Objects" at ERF 2026 in Stavanger, Norway, coauthored with David Hardman, Michele Pierallini and Erfan Shahriari. We met last year as finalists for the Georges Giralt PhD Award, each from a different institution in Europe, and ended up writing a paper together. A great example of what conferences like ERF are for :)',
+        erf2026Funding: 'This work was partly funded by the EU through the REMAIN SUDOE project.',
+        erf2026Caption1: 'Paper presentation at ERF 2026',
+        erf2026Caption2: 'Stavanger, Norway',
+        mar2026: 'Mar 2026:',
+        erf2026StayDesc: 'Stavanger, paper presentation.',
+
         // CV Section
         educationTitle: 'Education',
         phd: 'PhD (2019–2024):',
@@ -189,6 +198,15 @@ const translations = {
         eventPage: 'Ellit Focus Period 2025 on robot Learning',
         highlightedPublications: 'Publicaciones Destacadas',
         codeAvailable: 'Código Disponible',
+
+        // ERF 2026
+        erf2026Title: 'Artículo presentado en ERF 2026',
+        erf2026Desc: 'Presenté nuestro artículo "The Language of Deformation: Semantic Failure Analysis as a Prerequisite for Dexterous Manipulation of Deformable Objects" en ERF 2026 en Stavanger, Noruega, junto con David Hardman, Michele Pierallini y Erfan Shahriari. Nos conocimos el año pasado como finalistas del premio Georges Giralt PhD Award, cada uno de una institución diferente en Europa, y acabamos escribiendo un artículo juntos. Un buen ejemplo de para qué sirven conferencias como ERF :)',
+        erf2026Funding: 'Este trabajo fue parcialmente financiado por la UE a través del proyecto REMAIN SUDOE.',
+        erf2026Caption1: 'Presentación del artículo en ERF 2026',
+        erf2026Caption2: 'Stavanger, Noruega',
+        mar2026: 'Mar 2026:',
+        erf2026StayDesc: 'Stavanger, presentación de artículo.',
 
         // CV Section
         educationTitle: 'Educación',
