@@ -25,6 +25,8 @@ const translations = {
         focusText: 'Perception-to-manipulation pipelines, shape analysis, continuum mechanics, non-linear control, data-driven estimation and control.',
 
         // Awards & News
+        award4Title: '🏆 Engineering and Architecture PhD Thesis Excellence Award (2026)',
+        award4Org: 'University of Zaragoza',
         award1Title: '🏆 Best Robotics PhD Thesis Award (2025)',
         award1Org: 'Spanish Committee of Automatic Control (CEA)',
         award1Caption: 'CEA Best Robotics PhD Thesis Award',
@@ -175,6 +177,8 @@ const translations = {
         focusText: 'Percepción y manipulación, análisis de forma, mecánica, control no lineal, métodos basados en datos.',
 
         // Awards & News
+        award4Title: '🏆 Engineering and Architecture PhD Thesis Excellence Award (2026)',
+        award4Org: 'Universidad de Zaragoza',
         award1Title: '🏆 Premio a la Mejor Tesis Doctoral en Robótica (2025)',
         award1Org: 'Comité Español de Control Automático (CEA)',
         award1Caption: 'Premio CEA a la Mejor Tesis Doctoral en Robótica',
