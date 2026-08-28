@@ -1,6 +1,20 @@
 // i18n Translations Object
 const translations = {
     en: {
+        // Interface
+        skipToContent: 'Skip to main content',
+        heroEyebrow: 'Robotics · Perception · Control',
+        heroStatus: 'Postdoctoral researcher',
+        newsKicker: 'Field notes',
+        cvKicker: 'Experience & education',
+        researchKicker: 'Research agenda',
+        publicationsKicker: 'Selected record',
+        disseminationKicker: 'Demos & outreach',
+        themeToDark: 'Switch to dark theme',
+        themeToLight: 'Switch to light theme',
+        footerNote: 'Robotics, shape, and the intelligence in between.',
+        backToTop: 'Back to top ↑',
+
         // Navigation & Sections
         navNews: 'News',
         navCv: 'CV',
@@ -139,6 +153,7 @@ const translations = {
         locoCorpTitle: 'Educational Robotics: LoCo CORP',
         locoCorpIntroPrefix: 'I was one of the founders and participants of the LoCo CORP initiative, a project dedicated to transforming the teaching of robotics in classrooms. Although we developed the',
         locoCorpNoctisLink: 'Noctis and Aurel',
+        locoProgrammingLabel: 'Programming in a learning-friendly way:',
         locoCorpIntroSuffix: ' educational robotics platforms as part of this project, these were not the end goal, but rather one of the many tools we created (workshops, courses, etc.) to update technology education in schools and high schools. In our workshops, we left behind the idea of the robot as a simple toy to immerse students in more technical content. We guided them through electronics, programming, and hardware design, encouraging them to stop being passive consumers and understand the technological reality around them.',
         locoVerseIntro: 'Programming with a pedagogical approach: My role focused on creating the LoCoVerso, a fictional ecosystem where these robotic platforms existed as newly discovered “species” on a remote planet. We used this narrative to combine technical lessons with an engaging story in which students could feel like real researchers and scientific discoverers, as well as give free rein to their creativity and artistic abilities with the design and customisation of new species (robots).',
         // PhD Thesis Triptic
@@ -153,6 +168,20 @@ const translations = {
         code: 'Code'
     },
     es: {
+        // Interfaz
+        skipToContent: 'Saltar al contenido principal',
+        heroEyebrow: 'Robótica · Percepción · Control',
+        heroStatus: 'Investigador postdoctoral',
+        newsKicker: 'Notas de campo',
+        cvKicker: 'Experiencia y formación',
+        researchKicker: 'Agenda de investigación',
+        publicationsKicker: 'Trayectoria seleccionada',
+        disseminationKicker: 'Demos y divulgación',
+        themeToDark: 'Cambiar al tema oscuro',
+        themeToLight: 'Cambiar al tema claro',
+        footerNote: 'Robótica, forma y la inteligencia que las conecta.',
+        backToTop: 'Volver arriba ↑',
+
         // Navigation & Sections
         navNews: 'Noticias',
         navCv: 'CV',
@@ -291,6 +320,7 @@ const translations = {
         locoCorpTitle: 'Robótica Educativa: LoCo CORP',
         locoCorpIntroPrefix: 'Fui uno de los fundadores y participantes de la iniciativa empresarial LoCo CORP, un proyecto dedicado a transformar la enseñanza de la robótica en las aulas. Si bien en el contexto de este proyecto desarrollamos las plataformas robóticas educativas',
         locoCorpNoctisLink: 'Noctis y Aurel',
+        locoProgrammingLabel: 'Programación con un enfoque didáctico:',
         locoCorpIntroSuffix: ', estas no eran el fin, sino uno de los múltiples medios que creamos (talleres, cursos, etc.) para actualizar la educación en tecnología en colegios e institutos. En nuestros talleres, dejamos atrás la idea del robot como simple juguete para sumergir al alumnado en contenidos más técnicos. Los guiamos a través de la electrónica, la programación y el diseño de hardware, animándolos a dejar de ser consumidores pasivos y a comprender la realidad tecnológica que les rodea.',
         locoVerseIntro: 'Mi papel se centró en crear el LoCoVerso, un ecosistema ficticio donde estas plataformas robóticas existían como "especies" recién descubiertas en un planeta remoto. Utilizamos esta narrativa para combinar las lecciones técnicas con una historia atractiva en la que el alumnado podía sentirse como auténticos investigadores y descubridores científicos, así como dar rienda suelta a su creatividad y a sus capacidades artísticas con el diseño y la personalización de nuevas especies (robots).',
 

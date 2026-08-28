@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f3f7f4">
     
     <!-- Primary Meta Tags -->
     <title>Ignacio Cuiral-Zueco | Robotics & Shape Control Researcher</title>
@@ -75,58 +76,94 @@
     }
     </script>
     
+    <script>
+        (() => {
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                document.documentElement.dataset.theme = savedTheme || preferredTheme;
+            } catch (error) {
+                document.documentElement.dataset.theme = 'light';
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="dark-theme">
+<body>
+    <a class="skip-link" href="#content" data-i18n="skipToContent">Skip to main content</a>
     <div class="container">
-        <div class="header">
-            <img src="assets/images/icz_photo.jpg" alt="Ignacio Cuiral-Zueco" class="header-photo">
+        <header class="header">
+            <div class="header-tools">
+                <div id="language-switcher" class="language-switcher" aria-label="Language">
+                    <button id="lang-en" class="lang-btn active" type="button" data-lang="en" aria-pressed="true"><img src="assets/images/united-kingdom-flag-png-large.png" alt="" class="flag-icon"> EN</button>
+                    <button id="lang-es" class="lang-btn" type="button" data-lang="es" aria-pressed="false"><img src="assets/images/spain-flag-png-large.png" alt="" class="flag-icon"> ES</button>
+                </div>
+                <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark theme">
+                    <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
+                    <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.1A8.5 8.5 0 0 1 9.9 3.5 8.5 8.5 0 1 0 20.5 14.1Z"></path></svg>
+                </button>
+            </div>
+
             <div class="header-content">
-                <h1>Ignacio Cuiral-Zueco</h1>
-                <p data-i18n="location">Zaragoza, Spain</p>
-                <p><a href="mailto:ignaciocuiral@unizar.es">ignaciocuiral@unizar.es</a></p>
-                <div style="margin-top: 15px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center;">
-                    <a href="https://scholar.google.es/citations?user=hj9OZJEAAAAJ&hl=es" target="_blank" class="header-btn" data-i18n="googleScholar">
+                <p class="eyebrow" data-i18n="heroEyebrow">Robotics · Perception · Control</p>
+                <h1>Ignacio<br><span>Cuiral-Zueco</span></h1>
+                <p class="hero-lead" data-i18n="profileText">Postdoctoral researcher in robotics for deformable object manipulation and shape control.</p>
+                <div class="hero-meta">
+                    <span class="meta-item">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+                        <span data-i18n="location">Zaragoza, Spain</span>
+                    </span>
+                    <a class="meta-item" href="mailto:ignaciocuiral@unizar.es">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
+                        ignaciocuiral@unizar.es
+                    </a>
+                </div>
+                <div class="header-actions">
+                    <a href="https://scholar.google.es/citations?user=hj9OZJEAAAAJ&hl=es" target="_blank" rel="noopener noreferrer" class="header-btn header-btn-primary">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                             <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 14.5c-3.6 0-6.5-2.9-6.5-6.5S4.4 1.5 8 1.5s6.5 2.9 6.5 6.5-2.9 6.5-6.5 6.5z"/>
                             <path d="M8 3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm3 8H5v-1.5c0-1.4 1.6-2 3-2s3 .6 3 2V11z"/>
                         </svg>
-                        Google Scholar
+                        <span data-i18n="googleScholar">Google Scholar</span>
                     </a>
-                    <a href="bibliography.bib" download class="header-btn" data-i18n="downloadBibtex">
+                    <a href="https://github.com/nachocz" target="_blank" rel="noopener noreferrer" class="header-btn">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+                        GitHub
+                    </a>
+                    <a href="bibliography.bib" download class="header-btn">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                             <path d="M8 12L3 7h3V1h4v6h3l-5 5z"/>
                             <path d="M2 14h12v1H2z"/>
                         </svg>
-                        Download BibTeX
+                        <span data-i18n="downloadBibtex">Download BibTeX</span>
                     </a>
-                    <div style="border-left: 2px solid rgba(255, 255, 255, 0.2); padding-left: 12px; margin-left: 0;"></div>
-                    <div id="language-switcher" style="display: flex; gap: 6px;">
-                        <button id="lang-en" class="lang-btn active" data-lang="en"><img src="assets/images/united-kingdom-flag-png-large.png" alt="" class="flag-icon"> EN</button>
-                        <button id="lang-es" class="lang-btn" data-lang="es"><img src="assets/images/spain-flag-png-large.png" alt="" class="flag-icon"> ES</button>
-                    </div>
                 </div>
             </div>
-        </div>
+            <div class="portrait-column">
+                <div class="portrait-frame">
+                    <img src="assets/images/icz_photo.jpg" alt="Ignacio Cuiral-Zueco" class="header-photo" width="640" height="640" fetchpriority="high">
+                </div>
+            </div>
+        </header>
 
-        <nav class="section-tabs" role="tablist">
-            <button class="section-tab-btn active" type="button" data-target="panel-news" data-i18n="navNews">News</button>
-            <button class="section-tab-btn" type="button" data-target="panel-cv" data-i18n="navCv">CV</button>
-            <button class="section-tab-btn" type="button" data-target="panel-research" data-i18n="navResearch">Research</button>
-            <button class="section-tab-btn" type="button" data-target="panel-publications" data-i18n="navPublications">Publications</button>
-            <button class="section-tab-btn" type="button" data-target="panel-dissemination" data-i18n="navDissemination">Dissemination</button>
+        <nav class="section-tabs" role="tablist" aria-label="Portfolio sections">
+            <button id="tab-news" class="section-tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="panel-news" data-target="panel-news"><span class="tab-index">01</span><span data-i18n="navNews">News</span></button>
+            <button id="tab-cv" class="section-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="panel-cv" data-target="panel-cv" tabindex="-1"><span class="tab-index">02</span><span data-i18n="navCv">CV</span></button>
+            <button id="tab-research" class="section-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="panel-research" data-target="panel-research" tabindex="-1"><span class="tab-index">03</span><span data-i18n="navResearch">Research</span></button>
+            <button id="tab-publications" class="section-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="panel-publications" data-target="panel-publications" tabindex="-1"><span class="tab-index">04</span><span data-i18n="navPublications">Publications</span></button>
+            <button id="tab-dissemination" class="section-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="panel-dissemination" data-target="panel-dissemination" tabindex="-1"><span class="tab-index">05</span><span data-i18n="navDissemination">Dissemination</span></button>
         </nav>
 
-        <div id="panel-news" class="section-panel active">
+        <main id="content" class="site-content">
+        <section id="panel-news" class="section-panel active" role="tabpanel" aria-labelledby="tab-news" tabindex="0">
             <ul class="summary-list">
-                <li><strong data-i18n="profileLabel">Profile:</strong> <span data-i18n="profileText">Postdoctoral researcher in deformable object manipulation and shape control.</span></li>
                 <li><strong data-i18n="focusLabel">Focus:</strong> <span data-i18n="focusText">Perception-to-manipulation pipelines, shape analysis, continuum mechanics, non-linear control, data-driven estimation and control.</span></li>
             </ul>
 
-            <h2 id="news"><span data-i18n="sectionNews">News</span> <span class="toggle-icon">▼</span></h2>
+            <div class="section-heading"><span class="section-index">01</span><div><p class="section-kicker" data-i18n="newsKicker">Field notes</p><h2 id="news" data-i18n="sectionNews">News</h2></div></div>
             <div class="section-content">
 
-            <div class="award" style="margin-top: 10px;">
+            <div class="award">
                 <strong data-i18n="award4Title">🏆 Engineering and Architecture PhD Thesis Excellence Award (2026)</strong>, <span data-i18n="award4Org"> University of Zaragoza </span>.
             </div>
 
@@ -136,31 +173,31 @@
                     <div data-i18n="erf2026Desc">I presented our paper "The Language of Deformation: Semantic Failure Analysis as a Prerequisite for Dexterous Manipulation of Deformable Objects" at ERF 2026 in Stavanger, Norway, coauthored with David Hardman, Michele Pierallini and Erfan Shahriari. We met last year as finalists for the Georges Giralt PhD Award, each from a different institution in Europe, and ended up writing a paper together. A great example of what conferences like ERF are for :)</div>
                     <div class="news-meta" data-i18n="erf2026Funding">This work was partly funded by the EU through the REMAIN SUDOE project.</div>
                 </div>
-                <div style="display: flex; gap: 8px;">
+                <div class="news-gallery">
                     <div>
-                        <img src="assets/ERF_2026/photo1.jpeg" alt="ERF 2026 paper presentation" class="award-photo" style="width: 150px;">
+                        <img src="assets/ERF_2026/photo1.jpeg" alt="ERF 2026 paper presentation" class="award-photo news-photo" width="1439" height="1600" loading="lazy">
                         <div class="award-caption" data-i18n="erf2026Caption1">Paper presentation at ERF 2026</div>
                     </div>
                     <div>
-                        <img src="assets/ERF_2026/photo2.jpeg" alt="Stavanger street" class="award-photo" style="width: 150px;">
+                        <img src="assets/ERF_2026/photo2.jpeg" alt="Stavanger street" class="award-photo news-photo" width="1200" height="1600" loading="lazy">
                         <div class="award-caption" data-i18n="erf2026Caption2">Stavanger, Norway</div>
                     </div>
                 </div>
             </div>
 
-            <div class="award" style="margin-top: 10px;">
+            <div class="award">
                 <strong data-i18n="award1Title">🏆 Best Robotics PhD Thesis Award (2025)</strong>, <span data-i18n="award1Org">Spanish Committee of Automatic Control (CEA)</span>.
                 <div>
-                    <img src="assets/images/price_CEA.jpg" alt="CEA Award" class="award-photo">
+                    <img src="assets/images/price_CEA.jpg" alt="CEA Award" class="award-photo" width="1280" height="960" loading="lazy">
                     <div class="award-caption" data-i18n="award1Caption">CEA Best Robotics PhD Thesis Award</div>
                 </div>
             </div>
 
-            <div class="award" style="margin-top: 10px;">
+            <div class="award">
                 <strong data-i18n="award2Title">🏆 Best Iberian Robotics PhD Thesis Award (2025)</strong>, <span data-i18n="award2Desc">conferred by the Spanish Society for Research and Development in Robotics (SEIDROB) and the Portuguese Robotics Society (SPR)</span>.
             </div>
 
-            <div class="award" style="margin-top: 10px;">
+            <div class="award">
                 <strong><span data-i18n="award3Title">🏆</span> <a href="https://eu-robotics.net/georges-giralt-phd-award/" data-i18n="award3Link">Georges Giralt PhD Award Finalist</a> <span data-i18n="award3Year">(2025)</span>:</strong> <span data-i18n="award3Desc">finalist for Europe's most prestigious recognition for PhD excellence in robotics, selected among over 50 candidates and presented at the European Robotics Forum 2025</span>.
             </div>
 
@@ -173,37 +210,37 @@
                     <div class="news-meta" data-i18n="visitingScholarDate">Seminar on data-driven deformable object manipulation · Nov 2025</div>
                 </div>
                 <div>
-                    <img src="assets/images/elliit_focus_period.jpg" alt="ELLIIT Focus Period Lund 2025" class="award-photo" style="width: 150px;">
+                    <img src="assets/images/elliit_focus_period.jpg" alt="ELLIIT Focus Period Lund 2025" class="award-photo news-photo news-photo-wide" width="690" height="382" loading="lazy">
                     <div class="award-caption" data-i18n="visitingScholarCaption">ELLIIT Focus Period · Lund University 2025</div>
                 </div>
             </div>
 
-            <h3 data-i18n="highlightedPublications" style="margin-top: 20px;">Highlighted Publications</h3>
+            <h3 class="subsection-title" data-i18n="highlightedPublications">Highlighted Publications</h3>
             <div class="publication-item">
                 <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Time Consistent Surface Mapping for Deformable Object Shape Control," <em>IEEE Transactions on Automation Science and Engineering</em>, vol. 22, pp. 11099–11111, 2025, doi: <a href="https://doi.org/10.1109/TASE.2025.3529180">10.1109/TASE.2025.3529180</a>.
                 <div class="pub-links">
-                    <a href="https://nachocz.github.io/time-consistent-surface-mapping/" target="_blank" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
-                    <a href="https://github.com/nachocz/time-consistent-surface-mapping" target="_blank" class="icon-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
+                    <a href="https://nachocz.github.io/time-consistent-surface-mapping/" target="_blank" rel="noopener noreferrer" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
+                    <a href="https://github.com/nachocz/time-consistent-surface-mapping" target="_blank" rel="noopener noreferrer" class="icon-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
                 </div>
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/tWMJCbUwZOM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/tWMJCbUwZOM" title="Time Consistent Surface Mapping video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
             </div>
             <div class="publication-item">
                 <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Multiscale Procrustes-Based 3-D Shape Control," <em>IEEE/ASME Transactions on Mechatronics</em>, vol. 29, no. 3, pp. 1738-1748, June 2024, doi: <a href="https://doi.org/10.1109/TMECH.2023.3325934">10.1109/TMECH.2023.3325934</a>.
                 <div class="pub-links">
-                    <a href="https://nachocz.github.io/Multi-scale-Procrustes-based-3D-shape-control/" target="_blank" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
-                    <a href="https://github.com/nachocz/Multi-scale-Procrustes-based-3D-shape-control" target="_blank" class="icon-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
+                    <a href="https://nachocz.github.io/Multi-scale-Procrustes-based-3D-shape-control/" target="_blank" rel="noopener noreferrer" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
+                    <a href="https://github.com/nachocz/Multi-scale-Procrustes-based-3D-shape-control" target="_blank" rel="noopener noreferrer" class="icon-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
                 </div>
                 <div class="video-container">
-                    <iframe src="https://www.youtube.com/embed/a2cZTjaVBmM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/a2cZTjaVBmM" title="Multiscale Procrustes-Based Shape Control video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
             </div>
             </div>
-        </div>
+        </section>
 
-        <div id="panel-cv" class="section-panel">
-            <h2 id="cv"><span data-i18n="sectionCv">CV</span> <span class="toggle-icon">▼</span></h2>
+        <section id="panel-cv" class="section-panel" role="tabpanel" aria-labelledby="tab-cv" tabindex="0" hidden>
+            <div class="section-heading"><span class="section-index">02</span><div><p class="section-kicker" data-i18n="cvKicker">Experience & education</p><h2 id="cv" data-i18n="sectionCv">CV</h2></div></div>
             <div class="section-content">
             <div class="cv-section">
                 <h3 data-i18n="educationTitle">Education</h3>
@@ -259,44 +296,44 @@
                 </ul>
             </div>
             </div>
-        </div>
+        </section>
 
-        <div id="panel-research" class="section-panel">
-            <h2 id="research"><span data-i18n="sectionResearch">Research</span> <span class="toggle-icon">▼</span></h2>
+        <section id="panel-research" class="section-panel" role="tabpanel" aria-labelledby="tab-research" tabindex="0" hidden>
+            <div class="section-heading"><span class="section-index">03</span><div><p class="section-kicker" data-i18n="researchKicker">Research agenda</p><h2 id="research" data-i18n="sectionResearch">Research</h2></div></div>
             <div class="section-content">
             <div class="research-intro">
                 <p data-i18n="researchIntro">I study how robots perceive, model, and control deformable objects. My work connects shape perception, mapping, and manipulation with a focus on robust, data-efficient methods and multi-robot coordination.</p>
-                <ul style="margin: 0;">
+                <ul class="research-points">
                     <li><strong data-i18n="mainResearch">Main research line:</strong> <span data-i18n="mainResearchDesc">Shape control.</span></li>
                     <li><strong data-i18n="coreTopics">Core topics:</strong> <span data-i18n="coreTopicsDesc">Shape control, deformable object manipulation, robot perception, and visual servoing.</span></li>
                     <li><strong data-i18n="applications">Applications:</strong> <span data-i18n="applicationsDesc">Robotic manipulation, cooperative robotics, and manufacturing.</span></li>
                 </ul>
             </div>
 
-            <div style="margin: 20px 0;">
-                <img src="assets/images/experimento_gif.gif" alt="Shape control experiment" style="max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto;">
-                <div class="award-caption" style="text-align: center; margin-top: 8px;"><span data-i18n="experimentCaption">Example of the shape control of a foam piece with two ABB IRB120 robots</span> (<a href="https://doi.org/10.1109/TASE.2025.3529180" data-i18n="experimentPaperLink">IEEE T-ASE 2025</a>).</div>
-            </div>
+            <figure class="research-media">
+                <img src="assets/images/experimento_gif.gif" alt="Shape control experiment with two ABB IRB120 robots" class="research-image" width="800" height="450" loading="lazy">
+                <figcaption class="award-caption"><span data-i18n="experimentCaption">Example of the shape control of a foam piece with two ABB IRB120 robots</span> (<a href="https://doi.org/10.1109/TASE.2025.3529180" data-i18n="experimentPaperLink">IEEE T-ASE 2025</a>).</figcaption>
+            </figure>
 
-            <div class="research-intro" style="border-left-color: #3498db; margin-top: 20px;">
-                <p><strong data-i18n="demoIntro">Interactive Demos:</strong> <span data-i18n="demoIntroDesc">For a more accessible introduction to my research, check out the</span> <button class="section-tab-btn" type="button" data-target="panel-dissemination" style="display: inline-block; padding: 4px 10px; font-size: 0.95em; margin-left: 6px; vertical-align: middle; cursor: pointer;" onclick="openDisseminationFromResearch();" data-i18n="disseminationButton">Dissemination</button> <span data-i18n="demoIntroEnd">section with interactive visualizations designed for a general audience.</span></p>
+            <div class="research-intro research-cta">
+                <p><strong data-i18n="demoIntro">Interactive Demos:</strong> <span data-i18n="demoIntroDesc">For a more accessible introduction to my research, check out the</span> <button class="inline-tab-link" type="button" data-target="panel-dissemination" data-i18n="disseminationButton">Dissemination</button> <span data-i18n="demoIntroEnd">section with interactive visualizations designed for a general audience.</span></p>
             </div>
             </div>
-        </div>
+        </section>
 
-        <div id="panel-dissemination" class="section-panel">
-            <h2 id="dissemination"><span data-i18n="sectionDissemination">Dissemination</span> <span class="toggle-icon">▼</span></h2>
+        <section id="panel-dissemination" class="section-panel" role="tabpanel" aria-labelledby="tab-dissemination" tabindex="0" hidden>
+            <div class="section-heading"><span class="section-index">05</span><div><p class="section-kicker" data-i18n="disseminationKicker">Demos & outreach</p><h2 id="dissemination" data-i18n="sectionDissemination">Dissemination</h2></div></div>
             <div class="section-content">
             <p class="dissemination-intro" data-i18n="disseminationIntro">A quick overview of my outreach work, including interactive research demos and educational robotics initiatives.</p>
             
             <!-- Interactive Demos Collapsible Section -->
             <div class="dissemination-item">
-                <button class="dissemination-header" onclick="toggleDisseminationItem(this)">
-                    <span class="dissemination-toggle">▶</span>
-                    <h3 data-i18n="interactiveDerosTitle" style="display: inline; margin: 0; color: #2c3e50;">Interactive Demos</h3>
+                <button class="dissemination-header" type="button" aria-expanded="false">
+                    <span class="dissemination-toggle" aria-hidden="true">↗</span>
+                    <h3 data-i18n="interactiveDerosTitle">Interactive Demos</h3>
                 </button>
                 <div class="dissemination-content">
-                    <p data-i18n="interactiveDemosDesc" style="margin-top: 15px; margin-bottom: 20px; color: #555;">These interactive demos showcase my main research interests in shape perception, mapping, and control of deformable objects.</p>
+                    <p class="dissemination-description" data-i18n="interactiveDemosDesc">These interactive demos showcase my main research interests in shape perception, mapping, and control of deformable objects.</p>
 
                     <div class="demo-tabs" role="tablist">
                         <button class="demo-tab-btn active" type="button" data-target="demo-shape-control" data-i18n="demoShapeControl">Shape Control of Deformable Objects</button>
@@ -304,27 +341,27 @@
                     </div>
 
                     <div id="demo-shape-control" class="demo-panel active">
-                        <div class="demo-callout" style="background: linear-gradient(135deg, #3498db15 0%, #3498db08 100%); border-left: 4px solid #3498db; padding: 15px; border-radius: 6px; margin: 18px 0;">
-                            <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;" data-i18n="demoShapeTitle">Shape Control of Deformable Objects</h4>
-                            <p style="font-size: 0.95em; color: #7f8c8d; margin: 0;">
+                        <div class="demo-callout demo-callout-blue">
+                            <h4 data-i18n="demoShapeTitle">Shape Control of Deformable Objects</h4>
+                            <p>
                                 <span data-i18n="demoShapeRelated">Related papers:</span>
                                 <a href="https://doi.org/10.1109/LRA.2023.3292617">RA-L 2023</a> ·
                                 <a href="https://doi.org/10.1109/TMECH.2023.3325934">TMECH 2024</a>
                             </p>
                         </div>
-                        <iframe src="robotics-demo.html" class="demo-iframe" title="Interactive 2-Robot Cable Manipulation Demo" id="robotics-iframe"></iframe>
+                        <iframe src="robotics-demo.html" class="demo-iframe" title="Interactive 2-Robot Cable Manipulation Demo" id="robotics-iframe" loading="lazy"></iframe>
                     </div>
 
                     <div id="demo-shape-compare" class="demo-panel">
-                        <div class="demo-callout" style="background: linear-gradient(135deg, #27ae6015 0%, #27ae6008 100%); border-left: 4px solid #27ae60; padding: 15px; border-radius: 6px; margin: 18px 0;">
-                            <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.05em; font-weight: 600;" data-i18n="demoAnalysisTitle">Shape Analysis and Comparison</h4>
-                            <p style="font-size: 0.95em; color: #7f8c8d; margin: 0;">
+                        <div class="demo-callout demo-callout-green">
+                            <h4 data-i18n="demoAnalysisTitle">Shape Analysis and Comparison</h4>
+                            <p>
                                 <span data-i18n="demoAnalysisRelated">Related papers:</span>
                                 <a href="https://doi.org/10.1109/TASE.2025.3529180">T-ASE (surface mapping)</a> ·
                                 <a href="https://doi.org/10.1016/j.robot.2025.105134">RAS (elastic contour mapping)</a>
                             </p>
                         </div>
-                        <iframe src="shape-comparison.html" class="demo-iframe" title="Shape Analysis and Comparison Tool" id="shape-iframe"></iframe>
+                        <iframe src="shape-comparison.html" class="demo-iframe" title="Shape Analysis and Comparison Tool" id="shape-iframe" loading="lazy"></iframe>
                     </div>
 
                 </div>
@@ -332,23 +369,23 @@
 
             <!-- Educational Robotics Collapsible Section -->
             <div class="dissemination-item">
-                <button class="dissemination-header" onclick="toggleDisseminationItem(this)">
-                    <span class="dissemination-toggle">▶</span>
-                    <h3 data-i18n="locoCorpTitle" style="display: inline; margin: 0; color: #27ae60;">Educational Robotics: LoCo CORP</h3>
+                <button class="dissemination-header" type="button" aria-expanded="false">
+                    <span class="dissemination-toggle" aria-hidden="true">↗</span>
+                    <h3 data-i18n="locoCorpTitle">Educational Robotics: LoCo CORP</h3>
                 </button>
                 <div class="dissemination-content">
-                    <div class="loco-content-card" style="background: white; padding: 20px; border-radius: 8px; margin-top: 15px; margin-bottom: 20px; border: 1px solid #ecf0f1;">
-                        <p style="margin: 0 0 15px 0; line-height: 1.7;"><span data-i18n="locoCorpIntroPrefix"></span> <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" style="color: #3498db; text-decoration: none; border-bottom: 1px solid #3498db;" data-i18n="locoCorpNoctisLink">Noctis and Aurel</a><span data-i18n="locoCorpIntroSuffix"></span></p>
+                    <div class="loco-content-card">
+                        <p><span data-i18n="locoCorpIntroPrefix"></span> <a href="https://www.kickstarter.com/projects/lococorp/noctis-and-aurel-tiny-robots-looking-for-makers?lang=es" data-i18n="locoCorpNoctisLink">Noctis and Aurel</a><span data-i18n="locoCorpIntroSuffix"></span></p>
                         
-                        <div class="loco-image-box" style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 15px 0; border-left: 3px solid #27ae60;">
-                            <p class="loco-image-label" style="margin: 0 0 10px 0; font-weight: 500; color: #2c3e50; font-size: 0.95em;">Programming in a learning-friendly way:</p>
-                            <img src="assets/images/microbit.gif" alt="Noctis programming with micro:bit" style="max-width: 100%; height: auto; border-radius: 4px;">
+                        <div class="loco-image-box">
+                            <p class="loco-image-label" data-i18n="locoProgrammingLabel">Programming in a learning-friendly way:</p>
+                            <img src="assets/images/microbit.gif" alt="Noctis programming with micro:bit" width="679" height="382" loading="lazy">
                         </div>
 
-                        <p style="margin: 20px 0 15px 0; line-height: 1.7;"><span data-i18n="locoVerseIntro"></span></p>
+                        <p><span data-i18n="locoVerseIntro"></span></p>
                         
-                        <div class="video-container" style="margin: 20px 0;">
-                            <iframe id="locoVerseVideo" width="100%" height="315" src="https://www.youtube.com/embed/gARHGLxpAdU" title="LoCoVerse - Educational Robotics Narrative" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <div class="video-container">
+                            <iframe id="locoVerseVideo" width="100%" height="315" src="https://www.youtube.com/embed/gARHGLxpAdU" title="LoCoVerse - Educational Robotics Narrative" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
                     </div>
                 </div>
@@ -356,15 +393,15 @@
 
             <!-- PhD Thesis Triptic Collapsible Section -->
             <div class="dissemination-item">
-                <button class="dissemination-header" onclick="toggleDisseminationItem(this)">
-                    <span class="dissemination-toggle">▶</span>
-                    <h3 data-i18n="thesisTripticTitle" style="display: inline; margin: 0;" class="thesis-triptic-title">My PhD Thesis in a Nutshell</h3>
+                <button class="dissemination-header" type="button" aria-expanded="false">
+                    <span class="dissemination-toggle" aria-hidden="true">↗</span>
+                    <h3 data-i18n="thesisTripticTitle" class="thesis-triptic-title">My PhD Thesis in a Nutshell</h3>
                 </button>
                 <div class="dissemination-content">
-                    <div class="triptic-content-card" style="background: white; padding: 20px; border-radius: 8px; margin-top: 15px; margin-bottom: 20px; border: 1px solid #ecf0f1;">
-                        <p style="margin: 0 0 20px 0; line-height: 1.7;" data-i18n="thesisTripticIntro">For my PhD thesis presentation, I created a flyer that summarizes the main contributions and findings of my research. Feel free to download and explore:</p>
+                    <div class="triptic-content-card">
+                        <p data-i18n="thesisTripticIntro">For my PhD thesis presentation, I created a flyer that summarizes the main contributions and findings of my research. Feel free to download and explore:</p>
                         
-                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <div class="download-actions">
                             <a href="assets/images/triptico_tesis_ENG.pdf" download class="header-btn triptic-download-btn" data-i18n="downloadTripticEN">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                                     <path d="M8 12L3 7h3V1h4v6h3l-5 5z"/>
@@ -385,46 +422,46 @@
             </div>
             
             </div>
-        </div>
+        </section>
 
-        <div id="panel-publications" class="section-panel">
-            <h2 id="publications"><span data-i18n="sectionPublications">Publications</span> <span class="toggle-icon">▼</span></h2>
+        <section id="panel-publications" class="section-panel" role="tabpanel" aria-labelledby="tab-publications" tabindex="0" hidden>
+            <div class="section-heading"><span class="section-index">04</span><div><p class="section-kicker" data-i18n="publicationsKicker">Selected record</p><h2 id="publications" data-i18n="sectionPublications">Publications</h2></div></div>
             <div class="section-content">
             <h3 data-i18n="journalsTitle">Journals</h3>
             <ol class="bib-list">
                 <li><span class="bib-label">[J9]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Data-Driven Shape Trajectory Control of Deformable Linear Objects,” <em>IEEE/ASME Transactions on Mechatronics</em>, pp. 1–12, 2026. doi: <a href="https://doi.org/10.1109/TMECH.2026.3715312">10.1109/TMECH.2026.3715312</a>.</li>
                 <li><span class="bib-label">[J8]</span> A. Caporali, <strong>I. Cuiral-Zueco</strong>, G. López-Nicolás and G. Palli, “Robotic perception and manipulation of deformable linear objects: A survey,” <em>The International Journal of Robotics Research</em>, 2026. doi: <a href="https://doi.org/10.1177/02783649261432253">10.1177/02783649261432253</a>.
                     <div class="pub-links">
-                        <a href="https://nachocz.github.io/robotic_perception_and_manipulation_of_DLOs_survey/" target="_blank" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
+                        <a href="https://nachocz.github.io/robotic_perception_and_manipulation_of_DLOs_survey/" target="_blank" rel="noopener noreferrer" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
                     </div>
                 </li>
                 <li><span class="bib-label">[J7]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Multi-scale elastic contour mapping for deformable object shape control,” <em>Robotics and Autonomous Systems</em>, vol. 194, p. 105134, 2025. doi: <a href="https://doi.org/10.1016/j.robot.2025.105134">10.1016/j.robot.2025.105134</a>.</li>
                 <li><span class="bib-label">[J6]</span> M. Aranda, <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “Distributed Control of Flexible Chained Multiagent Formations,” <em>IEEE Control Systems Letters</em>, vol. 9, pp. 2018–2023, 2025. doi: <a href="https://doi.org/10.1109/LCSYS.2025.3590428">10.1109/LCSYS.2025.3590428</a>.
                     <div class="pub-links">
-                        <a href="https://nachocz.github.io/distributed-flexible-chained-formations/" target="_blank" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
+                        <a href="https://nachocz.github.io/distributed-flexible-chained-formations/" target="_blank" rel="noopener noreferrer" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
                     </div>
                 </li>
                 <li><span class="bib-label">[J5]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Time Consistent Surface Mapping for Deformable Object Shape Control," <em>IEEE Transactions on Automation Science and Engineering</em>, vol. 22, pp. 11099–11111, 2025. doi: <a href="https://doi.org/10.1109/TASE.2025.3529180">10.1109/TASE.2025.3529180</a>.
                     <div class="pub-links">
-                        <a href="https://nachocz.github.io/time-consistent-surface-mapping/" target="_blank" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
-                        <a href="https://github.com/nachocz/time-consistent-surface-mapping" target="_blank" class="icon-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
+                        <a href="https://nachocz.github.io/time-consistent-surface-mapping/" target="_blank" rel="noopener noreferrer" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
+                        <a href="https://github.com/nachocz/time-consistent-surface-mapping" target="_blank" rel="noopener noreferrer" class="icon-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
                     </div>
                 </li>
                 <li><span class="bib-label">[J4]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Taxonomy of Deformable Object Shape Control," <em>IEEE Robotics and Automation Letters</em>, vol. 9, no. 10, pp. 9015–9022, 2024. doi: <a href="https://doi.org/10.1109/LRA.2024.3455770">10.1109/LRA.2024.3455770</a>.
                     <div class="pub-links">
-                        <a href="https://nachocz.github.io/Taxonomy-of-deformable-object-shape-control/index.html" target="_blank" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
-                        <a href="https://github.com/nachocz/Taxonomy-of-deformable-object-shape-control" target="_blank" class="icon-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
+                        <a href="https://nachocz.github.io/Taxonomy-of-deformable-object-shape-control/index.html" target="_blank" rel="noopener noreferrer" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
+                        <a href="https://github.com/nachocz/Taxonomy-of-deformable-object-shape-control" target="_blank" rel="noopener noreferrer" class="icon-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
                     </div>
                 </li>
                 <li><span class="bib-label">[J3]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Multiscale Procrustes-Based 3-D Shape Control," <em>IEEE/ASME Transactions on Mechatronics</em>, vol. 29, no. 3, pp. 1738–1748, 2024. doi: <a href="https://doi.org/10.1109/TMECH.2023.3325934">10.1109/TMECH.2023.3325934</a>.
                     <div class="pub-links">
-                        <a href="https://nachocz.github.io/Multi-scale-Procrustes-based-3D-shape-control/" target="_blank" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
-                        <a href="https://github.com/nachocz/Multi-scale-Procrustes-based-3D-shape-control" target="_blank" class="icon-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
+                        <a href="https://nachocz.github.io/Multi-scale-Procrustes-based-3D-shape-control/" target="_blank" rel="noopener noreferrer" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
+                        <a href="https://github.com/nachocz/Multi-scale-Procrustes-based-3D-shape-control" target="_blank" rel="noopener noreferrer" class="icon-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
                     </div>
                 </li>
                 <li><span class="bib-label">[J2]</span> <strong>I. Cuiral-Zueco</strong>, Y. Karayiannidis and G. López-Nicolás, "Contour Based Object-Compliant Shape Control," <em>IEEE Robotics and Automation Letters</em>, vol. 8, no. 8, pp. 5164–5171, 2023. doi: <a href="https://doi.org/10.1109/LRA.2023.3292617">10.1109/LRA.2023.3292617</a>.
                     <div class="pub-links">
-                        <a href="https://nachocz.github.io/contour-based-object-compliant-shape-control/" target="_blank" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
+                        <a href="https://nachocz.github.io/contour-based-object-compliant-shape-control/" target="_blank" rel="noopener noreferrer" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Project Page</a>
                     </div>
                 </li>
                 <li><span class="bib-label">[J1]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, “RGB-D Tracking and Optimal Perception of Deformable Objects,” <em>IEEE Access</em>, vol. 8, pp. 136884–136897, 2020. doi: <a href="https://doi.org/10.1109/ACCESS.2020.3012067">10.1109/ACCESS.2020.3012067</a>.</li>
@@ -434,21 +471,28 @@
             <ol class="bib-list">
                 <li><span class="bib-label">[C5]</span> <strong>I. Cuiral-Zueco</strong>, D. Hardman, M. Pierallini and E. Shahriari, "The Language of Deformation: Semantic Failure Analysis as a Prerequisite for Dexterous Manipulation of Deformable Objects," <em>European Robotics Forum (ERF)</em>, Stavanger, Norway, 2026.
                     <div class="pub-links">
-                        <a href="assets/ERF_2026/ERF_2026poster.pdf" target="_blank" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Poster</a>
+                        <a href="assets/ERF_2026/ERF_2026poster.pdf" target="_blank" rel="noopener noreferrer" class="icon-link page-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h5.793a1.5 1.5 0 0 1 1.06.44l3.207 3.207a1.5 1.5 0 0 1 .44 1.06V12.5A1.5 1.5 0 0 1 11.5 14h-9A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>Poster</a>
                     </div>
                 </li>
                 <li><span class="bib-label">[C4]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Elastic Contour Mapping for the Estimation of Abrupt Shape Deformations," <em>Proc. Iberian Robotics Conf.</em>, pp. 400–408, 2023.</li>
                 <li><span class="bib-label">[C3]</span> <strong>I. Cuiral-Zueco</strong>, G. López-Nicolás and H. Araujo, "Gripper positioning for object deformation tasks," <em>Proc. IEEE Int. Conf. Robot. Autom.</em> (ICRA), pp. 2403–2409, 2022. doi: <a href="https://doi.org/10.1109/ICRA46639.2022.9812304">10.1109/ICRA46639.2022.9812304</a>.</li>
                 <li><span class="bib-label">[C2]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Multi-scale Laplacian-based FMM for deformable object elastic shape estimation," <em>Proc. IEEE/RSJ Int. Conf. Intell. Robots Syst.</em> (IROS), pp. 1766–1772, 2021. doi: <a href="https://doi.org/10.1109/IROS51168.2021.9636857">10.1109/IROS51168.2021.9636857</a>.
                     <div class="pub-links">
-                        <a href="https://github.com/nachocz/FMM-elastic-shape-comparison" target="_blank" class="icon-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
+                        <a href="https://github.com/nachocz/FMM-elastic-shape-comparison" target="_blank" rel="noopener noreferrer" class="icon-link"><svg class="link-icon" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>Code</a>
                     </div>
                 </li>
                 <li><span class="bib-label">[C1]</span> <strong>I. Cuiral-Zueco</strong> and G. López-Nicolás, "Dynamic Occlusion Handling for Real Time Object Perception," <em>Proc. Int. Conf. Robot. Autom. Eng.</em> (ICRAE), pp. 66–70, 2020. doi: <a href="https://doi.org/10.1109/ICRAE50850.2020.9310850">10.1109/ICRAE50850.2020.9310850</a>.</li>
             </ol>
 
             </div>
-        </div>
+        </section>
+        </main>
+
+        <footer class="site-footer">
+            <p>© <span id="current-year">2026</span> Ignacio Cuiral-Zueco</p>
+            <p data-i18n="footerNote">Robotics, shape, and the intelligence in between.</p>
+            <a href="#" class="back-to-top" data-i18n="backToTop">Back to top ↑</a>
+        </footer>
     </div>
 
     <script src="i18n.js" defer></script>
