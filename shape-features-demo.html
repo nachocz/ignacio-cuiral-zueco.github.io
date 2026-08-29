@@ -234,7 +234,7 @@
             display: block;
             width: 100%;
             height: auto;
-            aspect-ratio: 96 / 41;
+            aspect-ratio: 240 / 109;
             border: 1px solid var(--line);
             border-radius: 10px;
             background: var(--canvas);
@@ -708,7 +708,7 @@
                 </div>
             </div>
             <h1 data-i18n="title">Shape Features &amp; Data-Driven Control</h1>
-            <p class="demo-intro" data-i18n="intro">Two robot arms hold a deformable linear object. The controller never sees a model: it probes the system, learns the local shape Jacobian from the observed response, and servos on whichever feature vector you select.</p>
+            <p class="demo-intro" data-i18n="intro">Two robot arms hold a deformable linear object — a discrete Kirchhoff rod, clamped at both ends, re-solved to quasi-static equilibrium every frame. The controller never sees that model: it probes the system, learns the local shape Jacobian from the observed response, and servos on whichever feature vector you select.</p>
         </header>
 
         <section class="stage">
@@ -724,11 +724,12 @@
                     <span class="legend-item" style="color: var(--ink)"><i class="swatch"></i><span data-i18n="legendObject">Object</span></span>
                     <span class="legend-item" style="color: #9b8171"><i class="swatch dashed"></i><span data-i18n="legendTarget">Target shape</span></span>
                     <span class="legend-item" id="legendFeature" style="color: var(--rep-points)"><i class="swatch dot"></i><span data-i18n="legendFeatures">Measured features</span></span>
-                    <span class="legend-item" style="color: var(--muted)"><span data-i18n="legendGrip">Ring handles rotate the grippers</span></span>
+                    <span class="legend-item" style="color: var(--muted)"><span data-i18n="rodModel">Discrete Kirchhoff rod · 24 segments</span></span>
                 </div>
                 <div class="toolbar">
                     <button id="playBtn" class="button button-primary" type="button" aria-pressed="false"><span class="glyph" aria-hidden="true">▶</span><span id="playLabel" data-i18n="playBtn">Play</span></button>
                     <button id="probeBtn" class="button" type="button" data-i18n="probeBtn">Probe &amp; learn Ĵ</button>
+                    <button id="targetBtn" class="button" type="button" data-i18n="targetBtn">New target</button>
                     <button id="resetBtn" class="button" type="button" data-i18n="resetBtn">Reset</button>
                     <span class="toolbar-divider" aria-hidden="true"></span>
                     <span class="toolbar-label" data-i18n="disturbLabel">Move the object:</span>
@@ -846,16 +847,17 @@
             en: {
                 demoKicker: 'Interactive research demo',
                 title: 'Shape Features & Data-Driven Control',
-                intro: 'Two robot arms hold a deformable linear object. The controller never sees a model: it probes the system, learns the local shape Jacobian from the observed response, and servos on whichever feature vector you select.',
+                intro: 'Two robot arms hold a deformable linear object — a discrete Kirchhoff rod, clamped at both ends, re-solved to quasi-static equilibrium every frame. The controller never sees that model: it probes the system, learns the local shape Jacobian from the observed response, and servos on whichever feature vector you select.',
                 sceneTitle: 'Robots, object and target',
                 sceneHint: 'Drag a gripper, its ring handle, or the object itself.',
                 legendObject: 'Object',
                 legendTarget: 'Target shape',
                 legendFeatures: 'Measured features',
-                legendGrip: 'Ring handles rotate the grippers',
+                rodModel: 'Discrete Kirchhoff rod · 24 segments',
                 playBtn: 'Play',
                 pauseBtn: 'Pause',
                 probeBtn: 'Probe & learn Ĵ',
+                targetBtn: 'New target',
                 resetBtn: 'Reset',
                 disturbLabel: 'Move the object:',
                 rigidBtn: 'Translate',
@@ -886,6 +888,8 @@
                 statusPaused: 'Controller paused.',
                 statusStalled: 'Stalled — the target is not reachable in this feature space.',
                 statusManual: 'Manual motion — plots keep streaming.',
+                statusTarget: 'New target sampled from a feasible clamped pose.',
+                statusLimit: 'Stopped: the rod cannot stretch any further.',
                 statusDisturb: 'Disturbance applied to the object.',
                 stepsLabel: 'steps',
                 learnMore: 'What changes between representations?',
@@ -907,16 +911,17 @@
             es: {
                 demoKicker: 'Demostración interactiva',
                 title: 'Características de Forma y Control Basado en Datos',
-                intro: 'Dos brazos robóticos sujetan un objeto lineal deformable. El controlador no conoce el modelo: explora el sistema, aprende el jacobiano local de forma a partir de la respuesta observada y controla el vector de características que elijas.',
+                intro: 'Dos brazos robóticos sujetan un objeto lineal deformable: una varilla discreta de Kirchhoff, empotrada en ambos extremos, cuyo equilibrio cuasiestático se recalcula en cada fotograma. El controlador no conoce ese modelo: explora el sistema, aprende el jacobiano local de forma a partir de la respuesta observada y controla el vector de características que elijas.',
                 sceneTitle: 'Robots, objeto y objetivo',
                 sceneHint: 'Arrastra una pinza, su anillo de giro o el propio objeto.',
                 legendObject: 'Objeto',
                 legendTarget: 'Forma objetivo',
                 legendFeatures: 'Características medidas',
-                legendGrip: 'Los anillos giran las pinzas',
+                rodModel: 'Varilla discreta de Kirchhoff · 24 segmentos',
                 playBtn: 'Reproducir',
                 pauseBtn: 'Pausar',
                 probeBtn: 'Explorar y aprender Ĵ',
+                targetBtn: 'Nuevo objetivo',
                 resetBtn: 'Reiniciar',
                 disturbLabel: 'Mueve el objeto:',
                 rigidBtn: 'Trasladar',
@@ -947,6 +952,8 @@
                 statusPaused: 'Controlador en pausa.',
                 statusStalled: 'Estancado — el objetivo no es alcanzable en este espacio de características.',
                 statusManual: 'Movimiento manual — las gráficas siguen actualizándose.',
+                statusTarget: 'Nuevo objetivo generado con una pose de sujeción factible.',
+                statusLimit: 'Detenido: la varilla no puede estirarse más.',
                 statusDisturb: 'Perturbación aplicada al objeto.',
                 stepsLabel: 'pasos',
                 learnMore: '¿Qué cambia entre representaciones?',
@@ -975,25 +982,30 @@
         // model constants
         // ------------------------------------------------------------------
         const TAU = Math.PI * 2;
-        const N_NODES = 9;
-        const REST = 1.58;
+        const N_NODES = 9;                       // measured points along the object
+        // Same discrete Kirchhoff rod as the two-robot manipulation demo, in world
+        // units: inextensible segments of fixed length, clamped at both ends.
+        const ROD = { length: 1.85, segments: 24, stiffness: 1, iterations: 48 };
+        ROD.h = ROD.length / ROD.segments;
+        const STRIDE = ROD.segments / (N_NODES - 1);
         const ARM = { l1: 1.30, l2: 1.10, l3: 0.28 };
         const BASES = [[-1.55, -0.95], [1.55, -0.95]];
         const FLOOR = -1.02;
-        const VIEW = { x0: -2.4, x1: 2.4, y0: -1.18, y1: 0.87 };
+        const VIEW = { x0: -2.4, x1: 2.4, y0: -1.18, y1: 1.00 };
 
         const KEYS = ['x0', 'y0', 'a0', 'x1', 'y1', 'a1'];
         const CMD_I18N = ['cmdXL', 'cmdYL', 'cmdTL', 'cmdXR', 'cmdYR', 'cmdTR'];
         const CMD_MATH = ['x₀', 'y₀', 'θ₀', 'x₁', 'y₁', 'θ₁'];
         const PROBE_AMPLITUDE = 0.085;   // metres for x/y, radians for theta
-        // kept inside the arms' comfortable reach so the IK never has to clamp
+        // Clamped SE(2) boundary conditions, boxed so the arms never have to clamp
+        // their IK and the rod stays between 0.39 and 0.90 of its own length.
         const LIMITS = {
-            x0: [-1.00, -0.14], y0: [-0.34, 0.54], a0: [-0.90, 0.90],
-            x1: [0.14, 1.00], y1: [-0.34, 0.54], a1: [-0.90, 0.90]
+            x0: [-0.80, -0.36], y0: [-0.22, 0.24], a0: [-0.85, 0.85],
+            x1: [0.36, 0.80], y1: [-0.22, 0.24], a1: [-0.85, 0.85]
         };
 
-        const HOME = { x0: -0.64, y0: 0.10, a0: 0.34, x1: 0.64, y1: 0.10, a1: -0.34 };
-        const GOAL = { x0: -0.90, y0: -0.16, a0: 0.78, x1: 0.50, y1: 0.44, a1: -0.16 };
+        const HOME = { x0: -0.58, y0: 0.00, a0: 0.28, x1: 0.58, y1: 0.00, a1: -0.28 };
+        const GOAL = { x0: -0.74, y0: -0.16, a0: 0.70, x1: 0.44, y1: 0.20, a1: 0.05 };
 
         const REPS = ['points', 'edges', 'curvature'];
         const REP_TAGS = ['pts', 'edg', 'κ'];
@@ -1003,7 +1015,7 @@
         // state
         // ------------------------------------------------------------------
         let base = { ...HOME };
-        const goal = { ...GOAL };
+        let goal = { ...GOAL };
         let representation = 'points';
         let jacobian = null;
         let running = false;
@@ -1034,36 +1046,229 @@
             return out;
         }
 
-        function nodes(s) {
+        // ------------------------------------------------------------------
+        // discrete Kirchhoff rod (same model as the two-robot demo)
+        // ------------------------------------------------------------------
+        const wrapAngle = (a) => Math.atan2(Math.sin(a), Math.cos(a));
+        const dist = (a, b) => Math.hypot(b[0] - a[0], b[1] - a[1]);
+
+        function integrateRod(start, angles) {
+            const pts = [[start[0], start[1]]];
+            for (const angle of angles) {
+                const prev = pts[pts.length - 1];
+                pts.push([prev[0] + ROD.h * Math.cos(angle), prev[1] + ROD.h * Math.sin(angle)]);
+            }
+            return pts;
+        }
+
+        function bendingEnergy(angles) {
+            let energy = 0;
+            for (let i = 1; i < angles.length; i++) {
+                const kappa = wrapAngle(angles[i] - angles[i - 1]);
+                energy += 0.5 * ROD.stiffness * kappa * kappa;
+            }
+            return energy;
+        }
+
+        function solveDense(matrix, rhs) {
+            const size = rhs.length;
+            const a = matrix.map((row, index) => [...row, rhs[index]]);
+            for (let column = 0; column < size; column++) {
+                let pivot = column;
+                for (let row = column + 1; row < size; row++) {
+                    if (Math.abs(a[row][column]) > Math.abs(a[pivot][column])) pivot = row;
+                }
+                if (Math.abs(a[pivot][column]) < 1e-10) return null;
+                [a[column], a[pivot]] = [a[pivot], a[column]];
+                const inv = 1 / a[column][column];
+                for (let e = column; e <= size; e++) a[column][e] *= inv;
+                for (let row = 0; row < size; row++) {
+                    if (row === column) continue;
+                    const factor = a[row][column];
+                    if (Math.abs(factor) < 1e-14) continue;
+                    for (let e = column; e <= size; e++) a[row][e] -= factor * a[column][e];
+                }
+            }
+            return a.map(row => row[size]);
+        }
+
+        function initialRodAngles(p0, p1, a0, a1, bend) {
+            const segmentCount = ROD.segments;
+            const internal = segmentCount - 2;
+            const innerL = [p0[0] + ROD.h * Math.cos(a0), p0[1] + ROD.h * Math.sin(a0)];
+            const innerR = [p1[0] - ROD.h * Math.cos(a1), p1[1] - ROD.h * Math.sin(a1)];
+            const chordAngle = Math.atan2(innerR[1] - innerL[1], innerR[0] - innerL[0]);
+            const chord = dist(innerL, innerR);
+            const paired = internal - internal % 2;
+            const centre = internal - paired;
+            const cosine = clamp((chord / ROD.h - centre) / paired, -1, 1);
+            const opening = Math.acos(cosine);
+            const angles = Array(segmentCount).fill(chordAngle);
+            const half = paired / 2;
+            for (let i = 0; i < half; i++) angles[i + 1] = chordAngle + bend * opening;
+            for (let i = 0; i < half; i++) angles[i + 1 + half + centre] = chordAngle - bend * opening;
+            angles[0] = a0;
+            angles[segmentCount - 1] = a1;
+            return angles;
+        }
+
+        function projectEndpoints(angles, p0, p1, maxIterations = 8) {
+            const last = angles.length - 1;
+            for (let iteration = 0; iteration < maxIterations; iteration++) {
+                const pts = integrateRod(p0, angles);
+                const end = pts[pts.length - 1];
+                const error = [end[0] - p1[0], end[1] - p1[1]];
+                if (Math.hypot(...error) < 1e-7) return true;
+                let xx = 1e-8;
+                let xy = 0;
+                let yy = 1e-8;
+                const columns = [];
+                for (let index = 1; index < last; index++) {
+                    const column = [-ROD.h * Math.sin(angles[index]), ROD.h * Math.cos(angles[index])];
+                    columns.push(column);
+                    xx += column[0] * column[0];
+                    xy += column[0] * column[1];
+                    yy += column[1] * column[1];
+                }
+                const det = xx * yy - xy * xy;
+                if (Math.abs(det) < 1e-10) return false;
+                const mx = (yy * error[0] - xy * error[1]) / det;
+                const my = (-xy * error[0] + xx * error[1]) / det;
+                const correction = columns.map(c => -(c[0] * mx + c[1] * my));
+                const largest = Math.max(...correction.map(Math.abs), 1e-9);
+                const scale = Math.min(1, 0.45 / largest);
+                for (let v = 0; v < correction.length; v++) angles[v + 1] += scale * correction[v];
+            }
+            const pts = integrateRod(p0, angles);
+            return dist(pts[pts.length - 1], p1) < 1e-4;
+        }
+
+        // Quasi-static equilibrium: minimise bending energy over the interior segment
+        // angles while both clamped ends and the endpoint positions are held exactly.
+        // SQP with a KKT step and a merit line search.
+        function solveRod(p0, p1, a0, a1, warm = null, bend = 1) {
+            const segmentCount = ROD.segments;
+            const variables = segmentCount - 2;
+            const angles = warm?.length === segmentCount
+                ? [...warm]
+                : initialRodAngles(p0, p1, a0, a1, bend);
+            angles[0] = a0;
+            angles[segmentCount - 1] = a1;
+            projectEndpoints(angles, p0, p1);
+
+            for (let iteration = 0; iteration < ROD.iterations; iteration++) {
+                const pts = integrateRod(p0, angles);
+                const end = pts[pts.length - 1];
+                const constraint = [end[0] - p1[0], end[1] - p1[1]];
+                const residual = Math.hypot(...constraint);
+
+                const gradient = Array(variables).fill(0);
+                const hessian = Array.from({ length: variables }, () => Array(variables).fill(0));
+                const jac = [Array(variables).fill(0), Array(variables).fill(0)];
+                for (let v = 0; v < variables; v++) {
+                    const index = v + 1;
+                    const prev = wrapAngle(angles[index] - angles[index - 1]);
+                    const next = wrapAngle(angles[index + 1] - angles[index]);
+                    gradient[v] = ROD.stiffness * (prev - next);
+                    hessian[v][v] = 2 * ROD.stiffness + 1e-5;
+                    if (v > 0) hessian[v][v - 1] = -ROD.stiffness;
+                    if (v < variables - 1) hessian[v][v + 1] = -ROD.stiffness;
+                    jac[0][v] = -ROD.h * Math.sin(angles[index]);
+                    jac[1][v] = ROD.h * Math.cos(angles[index]);
+                }
+                if (residual < 1e-4 && Math.max(...gradient.map(Math.abs)) < 1e-4) break;
+
+                const size = variables + 2;
+                const kkt = Array.from({ length: size }, () => Array(size).fill(0));
+                const rhs = Array(size).fill(0);
+                for (let row = 0; row < variables; row++) {
+                    rhs[row] = -gradient[row];
+                    for (let col = 0; col < variables; col++) kkt[row][col] = hessian[row][col];
+                    kkt[row][variables] = jac[0][row];
+                    kkt[row][variables + 1] = jac[1][row];
+                    kkt[variables][row] = jac[0][row];
+                    kkt[variables + 1][row] = jac[1][row];
+                }
+                // a small compliance keeps the KKT solve conditioned at the straight limit
+                kkt[variables][variables] = -1e-8;
+                kkt[variables + 1][variables + 1] = -1e-8;
+                rhs[variables] = -constraint[0];
+                rhs[variables + 1] = -constraint[1];
+
+                const solution = solveDense(kkt, rhs);
+                if (!solution) break;
+                const direction = solution.slice(0, variables);
+                const largest = Math.max(...direction.map(Math.abs), 1e-9);
+                if (residual < 1e-4 && largest < 1e-5) break;
+                const stepLimit = Math.min(1, 0.65 / largest);
+                const penalty = 4;
+                const oldMerit = bendingEnergy(angles) + penalty * residual * residual;
+                let accepted = false;
+                for (let ls = 0; ls < 9; ls++) {
+                    const scale = stepLimit * 0.5 ** ls;
+                    const candidate = [...angles];
+                    for (let v = 0; v < variables; v++) candidate[v + 1] += scale * direction[v];
+                    projectEndpoints(candidate, p0, p1, 6);
+                    const candidatePts = integrateRod(p0, candidate);
+                    const candidateResidual = dist(candidatePts[candidatePts.length - 1], p1);
+                    const candidateMerit = bendingEnergy(candidate) +
+                        penalty * candidateResidual * candidateResidual;
+                    const closes = residual > 1e-3 && candidateResidual < residual * (1 - 0.04 * scale);
+                    if (candidateMerit < oldMerit || closes || candidateResidual < 1e-5) {
+                        for (let i = 1; i < segmentCount - 1; i++) angles[i] = candidate[i];
+                        accepted = true;
+                        break;
+                    }
+                }
+                if (!accepted) break;
+            }
+
+            projectEndpoints(angles, p0, p1, 10);
+            const pts = integrateRod(p0, angles);
+            return { points: pts, angles, residual: dist(pts[pts.length - 1], p1) };
+        }
+
+        function solveStableRod(p0, p1, a0, a1, warm = null) {
+            const first = solveRod(p0, p1, a0, a1, warm);
+            if (first.residual <= 0.004) return first;
+            const candidates = [first];
+            if (warm) candidates.push(solveRod(p0, p1, a0, a1, null, 1));
+            candidates.push(solveRod(p0, p1, a0, a1, null, -1));
+            return candidates.reduce((best, c) => (c.residual < best.residual ? c : best));
+        }
+
+        // Reachability of a clamped pose pair: the rod is inextensible, so both the
+        // endpoints and the two inner clamped nodes have to stay within reach.
+        function rodFeasible(s) {
             const p0 = [s.x0, s.y0];
             const p1 = [s.x1, s.y1];
-            const h0 = [Math.cos(s.a0), Math.sin(s.a0)];
-            const h1 = [Math.cos(s.a1), Math.sin(s.a1)];
-            const cx = p1[0] - p0[0];
-            const cy = p1[1] - p0[1];
-            const chord = Math.hypot(cx, cy) || 1e-6;
-            // bending amplitude along the chord normal: the rod is elastic, so the
-            // bulge follows the object and rigid motions leave the shape untouched
-            const sag = 0.82 * Math.max(0, REST - chord);
-            const nx = cy / chord;
-            const ny = -cx / chord;
-            const k = 0.62 * REST;
-            const out = [];
-            for (let i = 0; i < N_NODES; i++) {
-                const t = i / (N_NODES - 1);
-                const t2 = t * t;
-                const t3 = t2 * t;
-                const h00 = 2 * t3 - 3 * t2 + 1;
-                const h10 = t3 - 2 * t2 + t;
-                const h01 = -2 * t3 + 3 * t2;
-                const h11 = t3 - t2;
-                const bump = 4 * t * (1 - t);
-                out.push([
-                    h00 * p0[0] + h10 * k * h0[0] + h01 * p1[0] + h11 * k * h1[0] + sag * bump * nx,
-                    h00 * p0[1] + h10 * k * h0[1] + h01 * p1[1] + h11 * k * h1[1] + sag * bump * ny
-                ]);
-            }
-            return out;
+            const innerL = [p0[0] + ROD.h * Math.cos(s.a0), p0[1] + ROD.h * Math.sin(s.a0)];
+            const innerR = [p1[0] - ROD.h * Math.cos(s.a1), p1[1] - ROD.h * Math.sin(s.a1)];
+            return dist(p0, p1) <= ROD.length + 1e-6 &&
+                dist(innerL, innerR) <= ROD.h * (ROD.segments - 2) + 1e-6;
+        }
+
+        // The equilibrium depends on where the rod already is, so each solve is
+        // warm-started from the previous configuration and cached per state.
+        let rodAngles = null;
+        let rodCache = null;
+        let rodCacheKey = '';
+
+        function rodFor(s) {
+            const key = KEYS.map(k => s[k].toFixed(5)).join(',');
+            if (key === rodCacheKey && rodCache) return rodCache;
+            const eq = solveStableRod([s.x0, s.y0], [s.x1, s.y1], s.a0, s.a1, rodAngles);
+            rodAngles = eq.angles;
+            rodCache = eq.points;
+            rodCacheKey = key;
+            return eq.points;
+        }
+
+        const measured = (pts) => pts.filter((_, i) => i % STRIDE === 0);
+
+        // measured points of the *current* object; the target carries its own rod
+        function nodes(s) {
+            return measured(rodFor(s));
         }
 
         function featuresOf(pts, type) {
@@ -1092,12 +1297,64 @@
             return out;
         }
 
-        const allFeatures = (s) => {
-            const pts = nodes(s);
-            return { points: featuresOf(pts, 'points'), edges: featuresOf(pts, 'edges'), curvature: featuresOf(pts, 'curvature') };
-        };
+        const featureSet = (pts) => ({
+            points: featuresOf(pts, 'points'),
+            edges: featuresOf(pts, 'edges'),
+            curvature: featuresOf(pts, 'curvature')
+        });
 
-        const goalFeatures = allFeatures(goal);
+        const allFeatures = (s) => featureSet(nodes(s));
+
+        let goalRod = null;
+        let goalNodes = null;
+        let goalFeatures = null;
+
+        // A target is a pair of clamped SE(2) boundary conditions plus the rod
+        // equilibrium they produce, so it is reachable by construction.
+        function setTarget(state) {
+            const eq = solveStableRod([state.x0, state.y0], [state.x1, state.y1], state.a0, state.a1, null);
+            goal = { ...state };
+            goalRod = eq.points;
+            goalNodes = measured(eq.points);
+            goalFeatures = featureSet(goalNodes);
+            return eq;
+        }
+
+        // Sample clamped boundary conditions until one is feasible for the rod,
+        // settles cleanly, and is far enough from the current shape to be worth
+        // servoing to.
+        function randomTarget() {
+            const current = allFeatures(effective()).points;
+            for (let attempt = 0; attempt < 240; attempt++) {
+                const candidate = {};
+                for (const k of KEYS) {
+                    const [lo, hi] = LIMITS[k];
+                    const pad = (hi - lo) * 0.07;
+                    candidate[k] = lo + pad + Math.random() * (hi - lo - 2 * pad);
+                }
+                if (!rodFeasible(candidate)) continue;
+                // keep the slack in a plausible manipulation band: below this the
+                // rod folds into a hairpin, above it there is nothing left to shape
+                const ratio = dist([candidate.x0, candidate.y0], [candidate.x1, candidate.y1]) / ROD.length;
+                if (ratio < 0.55 || ratio > 0.88) continue;
+                const eq = solveStableRod(
+                    [candidate.x0, candidate.y0], [candidate.x1, candidate.y1],
+                    candidate.a0, candidate.a1, null);
+                if (eq.residual > 1e-4) continue;
+                const f = featuresOf(measured(eq.points), 'points');
+                let separation = 0;
+                for (let i = 0; i < f.length; i++) {
+                    const d = f[i] - current[i];
+                    separation += d * d;
+                }
+                if (Math.sqrt(separation) < 0.6) continue;
+                setTarget(candidate);
+                return true;
+            }
+            return false;
+        }
+
+        setTarget(GOAL);
 
         function errorNorm(f, rep) {
             const t = goalFeatures[rep];
@@ -1356,7 +1613,7 @@
         const GAIN = 0.022;
         const DAMPING = 0.012;
         const STEP_CLAMP = 0.008;
-        const TOL = { points: 0.014, edges: 0.012, curvature: 0.010 };
+        const TOL = { points: 0.010, edges: 0.006, curvature: 0.005 };
 
         function controlStep() {
             if (!jacobian) return;
@@ -1394,7 +1651,15 @@
             if (du.some(v => !Number.isFinite(v))) { running = false; statusKey = 'statusStalled'; syncControls(); return; }
 
             const before = f;
+            const previous = { ...base };
             KEYS.forEach((k, i) => { base[k] = clamp(base[k] + du[i], LIMITS[k][0], LIMITS[k][1]); });
+            if (!rodFeasible(effective())) {
+                base = previous;
+                running = false;
+                statusKey = 'statusLimit';
+                syncControls();
+                return;
+            }
             const after = allFeatures(effective())[representation];
 
             // Broyden rank-one update of the estimated Jacobian
@@ -1457,10 +1722,13 @@
                 let ok = true;
                 for (let i = 0; i <= 32 && ok; i++) {
                     const d = rawGesture(type, i / 32, ref, amp);
+                    const pose = {};
                     for (const k of KEYS) {
                         const v = ref[k] + d[k];
+                        pose[k] = v;
                         if (v < LIMITS[k][0] - 1e-9 || v > LIMITS[k][1] + 1e-9) { ok = false; break; }
                     }
+                    if (ok && !rodFeasible(pose)) ok = false;
                 }
                 if (ok) return amp;
             }
@@ -1657,8 +1925,9 @@
             sceneH = h;
             const p = palette();
             const s = effective();
-            const pts = nodes(s);
-            const goalPts = nodes(goal);
+            const rod = rodFor(s);
+            const pts = measured(rod);
+            const goalPts = goalNodes;
             const scale = pxPerUnit();
 
             ctx.clearRect(0, 0, w, h);
@@ -1683,7 +1952,7 @@
             ctx.beginPath(); ctx.moveTo(0, fy); ctx.lineTo(w, fy); ctx.stroke();
 
             // target
-            smoothCurve(ctx, goalPts, alpha(p.target, 0.95), 0.029 * scale, [7, 6]);
+            smoothCurve(ctx, goalRod, alpha(p.target, 0.95), 0.029 * scale, [7, 6]);
             for (const g of [[goal.x0, goal.y0], [goal.x1, goal.y1]]) {
                 disc(ctx, g, 0.028 * scale, null, alpha(p.target, 0.8), 1.6);
             }
@@ -1694,8 +1963,8 @@
             poses.forEach((pose, i) => drawRobot(ctx, pose, p, activeArm === i));
 
             // object
-            smoothCurve(ctx, pts, alpha(p.object, 0.14), 0.062 * scale, null);
-            smoothCurve(ctx, pts, p.object, 0.034 * scale, null);
+            smoothCurve(ctx, rod, alpha(p.object, 0.14), 0.062 * scale, null);
+            smoothCurve(ctx, rod, p.object, 0.034 * scale, null);
 
             // feature overlay
             const hue = p.rep[representation];
@@ -2146,6 +2415,10 @@
 
         function resetAll() {
             base = { ...HOME };
+            rodAngles = null;
+            rodCache = null;
+            rodCacheKey = '';
+            setTarget(GOAL);
             lastState = { ...HOME };
             for (const k of KEYS) probeOffset[k] = 0;
             jacobian = null;
@@ -2179,8 +2452,7 @@
             for (let i = 0; i < 2; i++) {
                 if (Math.hypot(wx - grips[i][0], wy - grips[i][1]) < 0.13) return { mode: 'grip', side: i };
             }
-            const pts = nodes(s);
-            for (const pt of pts) {
+            for (const pt of rodFor(s)) {
                 if (Math.hypot(wx - pt[0], wy - pt[1]) < 0.11) return { mode: 'body', side: -1 };
             }
             return null;
@@ -2213,6 +2485,7 @@
             if (!drag) return;
             const rect = scene.getBoundingClientRect();
             const [wx, wy] = toWorld(event.clientX - rect.left, event.clientY - rect.top);
+            const previous = { ...base };
             if (drag.mode === 'angle') {
                 const gx = drag.side === 0 ? base.x0 : base.x1;
                 const gy = drag.side === 0 ? base.y0 : base.y1;
@@ -2232,6 +2505,8 @@
                 base.y0 = clamp(drag.start.y0 + dy, LIMITS.y0[0], LIMITS.y0[1]);
                 base.y1 = clamp(drag.start.y1 + dy, LIMITS.y1[0], LIMITS.y1[1]);
             }
+            // the rod is inextensible: refuse a drag it could not follow
+            if (!rodFeasible(effective())) base = previous;
         });
 
         const endDrag = (event) => {
@@ -2366,6 +2641,17 @@
         });
         playBtn.addEventListener('click', togglePlay);
         probeBtn.addEventListener('click', () => startProbe(false));
+        document.getElementById('targetBtn').addEventListener('click', () => {
+            if (probe) return;
+            running = false;
+            converged = false;
+            steps = 0;
+            gesture = null;
+            statusKey = randomTarget() ? 'statusTarget' : 'statusIdle';
+            refreshErrorScale();
+            for (const key of Object.keys(plots)) plots[key].scale = null;
+            syncControls();
+        });
         document.getElementById('resetBtn').addEventListener('click', resetAll);
         document.getElementById('rigidBtn').addEventListener('click', () => startGesture('rigid'));
         document.getElementById('rotateBtn').addEventListener('click', () => startGesture('rotate'));
