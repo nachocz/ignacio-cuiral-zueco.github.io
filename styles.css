@@ -1,58 +1,67 @@
 :root {
     color-scheme: light;
-    --bg: #ffffff;
+    --bg: #f7f8f7;
     --surface: #ffffff;
     --surface-raised: #ffffff;
-    --surface-muted: #edf3ef;
-    --ink: #13241f;
-    --ink-soft: #334940;
-    --muted: #65756e;
-    --line: #d7e2dc;
-    --line-strong: #b9c9c0;
-    --accent: #168867;
-    --accent-strong: #08664c;
-    --accent-soft: #dff5e9;
-    --signal: #c3ec7f;
-    --blue: #466ad7;
-    --blue-soft: #e8edff;
-    --orange: #bc5d2f;
-    --hero: #132b24;
-    --hero-text: #f7fbf8;
-    --hero-muted: #bdcec7;
-    --shadow-sm: 0 4px 14px rgba(25, 53, 43, 0.045);
-    --shadow-lg: 0 14px 40px rgba(20, 48, 39, 0.1);
+    --surface-muted: #f0f3f1;
+    --ink: #1d2522;
+    --ink-soft: #3f4a46;
+    --muted: #6d7773;
+    --line: #dce1de;
+    --line-strong: #c2cac6;
+    --accent: #5f806f;
+    --accent-strong: #3f6653;
+    --accent-soft: #eaf1ed;
+    --signal: #759987;
+    --blue: #587694;
+    --blue-soft: #e9eef2;
+    --orange: #9a684d;
+    --hero: #eef2ef;
+    --hero-text: #1b2420;
+    --hero-muted: #5f6c66;
+    --hero-accent: #496f5d;
+    --hero-border: #d9dfdb;
+    --hero-control: rgba(255, 255, 255, 0.62);
+    --hero-control-hover: #ffffff;
+    --hero-control-border: rgba(38, 61, 50, 0.16);
+    --shadow-sm: 0 3px 14px rgba(28, 39, 34, 0.035);
+    --shadow-lg: 0 14px 40px rgba(28, 39, 34, 0.08);
     --radius-sm: 12px;
     --radius-md: 12px;
     --radius-lg: 18px;
     --content-width: 1080px;
     --font-sans: "Aptos", "Segoe UI Variable", "Segoe UI", Helvetica, Arial, sans-serif;
     --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-    --font-mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
 }
 
 [data-theme="dark"] {
     color-scheme: dark;
-    --bg: #0c1412;
-    --surface: #111d19;
-    --surface-raised: #16231f;
-    --surface-muted: #1a2924;
-    --ink: #eef7f2;
-    --ink-soft: #c2d2ca;
-    --muted: #91a59b;
-    --line: #293b34;
-    --line-strong: #40554b;
-    --accent: #69d4ad;
-    --accent-strong: #8ae5c2;
-    --accent-soft: #173c30;
-    --signal: #c3ec7f;
-    --blue: #93aaff;
-    --blue-soft: #202d55;
-    --orange: #f09c70;
-    --hero: #152b24;
-    --hero-text: #f7fbf8;
-    --hero-muted: #bdcec7;
-    --shadow-sm: 0 10px 28px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 34px 90px rgba(0, 0, 0, 0.34);
+    --bg: #111513;
+    --surface: #171c19;
+    --surface-raised: #1c221f;
+    --surface-muted: #202723;
+    --ink: #eef1ef;
+    --ink-soft: #c3cbc7;
+    --muted: #929d97;
+    --line: #303833;
+    --line-strong: #48524c;
+    --accent: #8eaf9e;
+    --accent-strong: #b0cbbd;
+    --accent-soft: #26372f;
+    --signal: #9ebcab;
+    --blue: #93a8bc;
+    --blue-soft: #26313b;
+    --orange: #c1977f;
+    --hero: #191e1b;
+    --hero-text: #f1f3f2;
+    --hero-muted: #a8b1ac;
+    --hero-accent: #a2c0b0;
+    --hero-border: #303833;
+    --hero-control: rgba(255, 255, 255, 0.035);
+    --hero-control-hover: rgba(255, 255, 255, 0.075);
+    --hero-control-border: rgba(255, 255, 255, 0.12);
+    --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.3);
 }
 
 *,
@@ -162,11 +171,11 @@ a:hover {
 .header {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1.5fr) 220px;
-    min-height: 330px;
-    padding: 38px 42px;
+    grid-template-columns: minmax(0, 1.5fr) 200px;
+    min-height: 280px;
+    padding: 32px 36px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--hero-border);
     border-radius: var(--radius-lg);
     color: var(--hero-text);
     background: var(--hero);
@@ -184,30 +193,30 @@ a:hover {
 .section-kicker {
     margin: 0;
     color: var(--accent);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 750;
+    letter-spacing: 0.105em;
     line-height: 1.4;
     text-transform: uppercase;
 }
 
 .header .eyebrow {
-    color: var(--signal);
+    color: var(--hero-accent);
 }
 
 .header h1 {
     max-width: 780px;
-    margin: 12px 0 16px;
+    margin: 10px 0 14px;
     color: var(--hero-text);
-    font-size: clamp(3.1rem, 5vw, 4.65rem);
-    font-weight: 700;
-    letter-spacing: -0.065em;
-    line-height: 0.86;
+    font-size: clamp(2.35rem, 3.9vw, 3.25rem);
+    font-weight: 680;
+    letter-spacing: -0.055em;
+    line-height: 0.91;
 }
 
 .header h1 span {
-    color: var(--signal);
+    color: var(--hero-accent);
     font-family: var(--font-serif);
     font-size: 0.84em;
     font-style: italic;
@@ -245,7 +254,7 @@ a:hover {
     width: 17px;
     height: 17px;
     fill: none;
-    stroke: var(--signal);
+    stroke: var(--hero-accent);
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 1.8;
@@ -270,10 +279,10 @@ a:hover {
     align-items: center;
     justify-content: center;
     padding: 7px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--hero-control-border);
     border-radius: 999px;
     color: var(--hero-text);
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--hero-control);
     font-size: 0.78rem;
     font-weight: 700;
     text-decoration: none;
@@ -283,21 +292,21 @@ a:hover {
 
 .header-btn:hover {
     color: var(--hero-text);
-    border-color: rgba(255, 255, 255, 0.38);
-    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--hero-accent);
+    background: var(--hero-control-hover);
     transform: translateY(-2px);
 }
 
 .header-btn-primary {
     color: var(--hero-text);
-    border-color: rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--hero-control-border);
+    background: var(--hero-control);
 }
 
 .header-btn-primary:hover {
     color: var(--hero-text);
-    border-color: rgba(255, 255, 255, 0.38);
-    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--hero-accent);
+    background: var(--hero-control-hover);
 }
 
 .header-tools {
@@ -314,9 +323,9 @@ a:hover {
     display: flex;
     gap: 3px;
     padding: 3px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid var(--hero-control-border);
     border-radius: 999px;
-    background: rgba(5, 20, 15, 0.22);
+    background: var(--hero-control);
     backdrop-filter: blur(12px);
 }
 
@@ -346,11 +355,11 @@ a:hover {
 .lang-btn:hover,
 .lang-btn.active {
     color: var(--hero-text);
-    background: rgba(255, 255, 255, 0.13);
+    background: var(--hero-control-hover);
 }
 
 .lang-btn.active {
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 0 0 1px var(--hero-control-border);
 }
 
 .flag-icon {
@@ -363,14 +372,14 @@ a:hover {
 
 .theme-toggle {
     width: 42px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(5, 20, 15, 0.22);
+    border: 1px solid var(--hero-control-border);
+    background: var(--hero-control);
     backdrop-filter: blur(12px);
 }
 
 .theme-toggle:hover {
     color: var(--hero-text);
-    background: rgba(255, 255, 255, 0.13);
+    background: var(--hero-control-hover);
 }
 
 .theme-icon {
@@ -392,7 +401,7 @@ a:hover {
     position: relative;
     align-self: center;
     justify-self: end;
-    width: min(100%, 210px);
+    width: min(100%, 190px);
 }
 
 .portrait-frame {
@@ -400,9 +409,9 @@ a:hover {
     width: 100%;
     aspect-ratio: 1;
     padding: 5px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--hero-control-border);
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.045);
+    background: var(--hero-control);
 }
 
 .header-photo {
@@ -464,9 +473,9 @@ a:hover {
 
 .tab-index {
     color: var(--accent);
-    font-family: var(--font-mono);
-    font-size: 0.63rem;
-    font-weight: 700;
+    font-family: var(--font-sans);
+    font-size: 0.64rem;
+    font-weight: 750;
 }
 
 .section-tab-btn.active .tab-index {
@@ -520,9 +529,9 @@ a:hover {
     flex: 0 0 auto;
     border: 0;
     color: var(--accent);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    font-weight: 800;
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 750;
 }
 
 .section-heading h2 {
@@ -594,7 +603,7 @@ strong {
     display: block;
     margin-bottom: 5px;
     color: var(--accent);
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: 0.67rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -964,7 +973,7 @@ strong {
     top: 22px;
     left: 14px;
     color: var(--accent);
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: 0.75rem;
     font-weight: 800;
 }
@@ -1126,6 +1135,10 @@ strong {
     border-left-color: var(--accent);
 }
 
+.demo-callout-neutral {
+    border-left-color: var(--line-strong);
+}
+
 .demo-callout h4 {
     margin: 0 0 5px;
     font-size: 0.98rem;
@@ -1140,10 +1153,10 @@ strong {
 .demo-iframe {
     display: block;
     width: 100%;
-    height: 720px;
+    height: 760px;
     border: 1px solid var(--line);
     border-radius: 16px;
-    background: #fff;
+    background: var(--bg);
 }
 
 .loco-content-card,
@@ -1176,10 +1189,6 @@ strong {
     width: 100%;
     height: auto;
     border-radius: 11px;
-}
-
-.thesis-triptic-title {
-    color: var(--orange);
 }
 
 .download-actions {

@@ -1,0 +1,2394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data-Driven Shape Control | Ignacio Cuiral-Zueco</title>
+    <meta name="description" content="Two robot arms manipulate a deformable linear object while a data-driven controller learns the local shape Jacobian. Live plots of feature evolution, commanded actions and error.">
+    <script>
+        (() => {
+            const savedTheme = localStorage.getItem('theme');
+            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.dataset.theme = savedTheme || systemTheme;
+            document.documentElement.classList.toggle('is-embedded', window.self !== window.top);
+        })();
+    </script>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f7f8f7;
+            --surface: #ffffff;
+            --surface-soft: #f0f3f1;
+            --ink: #1d2522;
+            --ink-soft: #46504b;
+            --muted: #6d7773;
+            --line: #dce1de;
+            --line-strong: #c2cac6;
+            --accent: #527563;
+            --accent-strong: #3e624f;
+            --accent-soft: #eaf1ed;
+            --canvas: #fbfcfb;
+            --plot: #fbfcfb;
+            --rep-points: #2a78d6;
+            --rep-edges: #eb6834;
+            --rep-curvature: #1baf7a;
+            --shadow: 0 12px 36px rgba(28, 39, 34, 0.07);
+            font-family: "Aptos", "Segoe UI Variable", "Segoe UI", Helvetica, Arial, sans-serif;
+        }
+
+        [data-theme="dark"] {
+            color-scheme: dark;
+            --bg: #111513;
+            --surface: #171c19;
+            --surface-soft: #202723;
+            --ink: #eef1ef;
+            --ink-soft: #c3cbc7;
+            --muted: #929d97;
+            --line: #303833;
+            --line-strong: #48524c;
+            --accent: #91b19f;
+            --accent-strong: #b2cdbf;
+            --accent-soft: #26372f;
+            --canvas: #1c221f;
+            --plot: #1c221f;
+            --rep-points: #3987e5;
+            --rep-edges: #d95926;
+            --rep-curvature: #199e70;
+            --shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-width: 300px;
+            min-height: 100vh;
+            margin: 0;
+            padding: 18px;
+            color: var(--ink);
+            background: var(--bg);
+            font-size: 15px;
+            line-height: 1.5;
+            text-rendering: optimizeLegibility;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            color: inherit;
+        }
+
+        :focus-visible {
+            outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+            outline-offset: 2px;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0;
+        }
+
+        .demo-shell {
+            width: min(100%, 1120px);
+            margin: 0 auto;
+            padding: 24px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+
+        .is-embedded body {
+            min-height: 0;
+            padding: 0;
+            background: transparent;
+        }
+
+        .is-embedded .demo-shell {
+            width: 100%;
+            max-width: none;
+            padding: 20px;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .demo-topline {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .demo-kicker {
+            margin: 0;
+            color: var(--accent);
+            font-size: 0.7rem;
+            font-weight: 750;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 2px;
+            padding: 2px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--surface-soft);
+        }
+
+        .lang-btn {
+            min-width: 36px;
+            min-height: 30px;
+            padding: 4px 10px;
+            border: 0;
+            border-radius: 999px;
+            color: var(--muted);
+            background: transparent;
+            font-size: 0.72rem;
+            font-weight: 750;
+            cursor: pointer;
+        }
+
+        .lang-btn:hover {
+            color: var(--ink);
+        }
+
+        .lang-btn.active {
+            color: var(--ink);
+            background: var(--surface);
+            box-shadow: inset 0 0 0 1px var(--line);
+        }
+
+        h1 {
+            margin-bottom: 6px;
+            font-size: clamp(1.6rem, 3.6vw, 2.1rem);
+            font-weight: 680;
+            letter-spacing: -0.045em;
+            line-height: 1.05;
+        }
+
+        .demo-intro {
+            max-width: 760px;
+            margin-bottom: 16px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .card {
+            min-width: 0;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--surface);
+        }
+
+        .card-heading {
+            display: flex;
+            gap: 12px;
+            align-items: baseline;
+            justify-content: space-between;
+            padding: 10px 13px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .card-heading h2,
+        .card-heading h3 {
+            margin: 0;
+            font-size: 0.82rem;
+            font-weight: 720;
+        }
+
+        .card-note {
+            color: var(--muted);
+            font-size: 0.67rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ---------- stage ---------- */
+
+        .stage {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 252px;
+            gap: 12px;
+            align-items: start;
+        }
+
+        .scene-wrap {
+            position: relative;
+            padding: 10px;
+            background: var(--surface-soft);
+        }
+
+        #sceneCanvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 96 / 41;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--canvas);
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        .scene-legend {
+            display: flex;
+            gap: 13px;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 8px 13px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.67rem;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .swatch {
+            width: 18px;
+            height: 0;
+            border-top: 3px solid currentColor;
+            border-radius: 2px;
+        }
+
+        .swatch.dashed {
+            border-top-style: dashed;
+        }
+
+        .swatch.dot {
+            width: 9px;
+            height: 9px;
+            border: 0;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 10px 13px;
+            border-top: 1px solid var(--line);
+        }
+
+        .toolbar-divider {
+            width: 1px;
+            height: 22px;
+            margin: 0 3px;
+            background: var(--line);
+        }
+
+        .toolbar-label {
+            margin-right: 1px;
+            color: var(--muted);
+            font-size: 0.67rem;
+            font-weight: 700;
+        }
+
+        .button {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            min-height: 33px;
+            padding: 6px 11px;
+            border: 1px solid var(--line-strong);
+            border-radius: 8px;
+            color: var(--ink);
+            background: var(--surface);
+            font-size: 0.71rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .button:hover:not(:disabled) {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .button:disabled {
+            color: var(--muted);
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+
+        .button-primary {
+            min-width: 92px;
+            color: #ffffff;
+            border-color: var(--accent-strong);
+            background: var(--accent-strong);
+        }
+
+        .button-primary:hover:not(:disabled) {
+            color: #ffffff;
+            background: var(--accent);
+        }
+
+        [data-theme="dark"] .button-primary,
+        [data-theme="dark"] .button-primary:hover:not(:disabled) {
+            color: #152019;
+        }
+
+        .glyph {
+            font-size: 0.72rem;
+            line-height: 1;
+        }
+
+        /* ---------- side rail ---------- */
+
+        .rail {
+            display: grid;
+            gap: 12px;
+        }
+
+        .rep-group {
+            display: grid;
+            gap: 1px;
+            background: var(--line);
+        }
+
+        .rep-btn {
+            display: grid;
+            grid-template-columns: 10px minmax(0, 1fr);
+            gap: 9px;
+            align-items: center;
+            padding: 9px 12px;
+            border: 0;
+            border-left: 3px solid transparent;
+            background: var(--surface);
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .rep-btn:hover {
+            background: var(--surface-soft);
+        }
+
+        .rep-btn[aria-pressed="true"] {
+            border-left-color: currentColor;
+            background: var(--surface-soft);
+        }
+
+        .rep-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .rep-text {
+            display: block;
+            min-width: 0;
+            color: var(--ink);
+        }
+
+        .rep-text strong {
+            display: block;
+            font-size: 0.74rem;
+            font-weight: 720;
+        }
+
+        .rep-text span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.63rem;
+            line-height: 1.35;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--line);
+        }
+
+        .metric {
+            padding: 9px 10px;
+            background: var(--surface);
+        }
+
+        .metric span {
+            display: block;
+            margin-bottom: 2px;
+            color: var(--muted);
+            font-size: 0.6rem;
+        }
+
+        .metric strong {
+            color: var(--ink);
+            font-size: 0.78rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .jacobian-content {
+            padding: 10px 12px 12px;
+        }
+
+        .jacobian-row {
+            display: grid;
+            grid-template-columns: 30px minmax(0, 1fr);
+            gap: 7px;
+            align-items: center;
+        }
+
+        .jacobian-row + .jacobian-row {
+            margin-top: 3px;
+        }
+
+        .jacobian-label {
+            color: var(--muted);
+            font-size: 0.6rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .jacobian-cells {
+            display: grid;
+            gap: 2px;
+        }
+
+        .jacobian-cell {
+            min-width: 0;
+            height: 15px;
+            border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+            border-radius: 3px;
+        }
+
+        .empty-model {
+            margin: 0;
+            padding: 16px 10px;
+            color: var(--muted);
+            font-size: 0.68rem;
+            line-height: 1.45;
+            text-align: center;
+        }
+
+        .status-line {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding: 9px 12px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.67rem;
+        }
+
+        .status-dot {
+            flex: none;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--muted);
+        }
+
+        .status-dot.live {
+            background: var(--accent);
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            50% { opacity: 0.3; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .status-dot.live { animation: none; }
+        }
+
+        /* ---------- plots ---------- */
+
+        .plot-section {
+            margin-top: 12px;
+        }
+
+        .plot-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .plot-grid-2 {
+            display: grid;
+            grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .plot-canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: var(--plot);
+            cursor: crosshair;
+        }
+
+        .plot-canvas.tall {
+            aspect-ratio: 16 / 7;
+        }
+
+        .plot-canvas.short {
+            aspect-ratio: 16 / 8;
+        }
+
+        .plot-readout {
+            color: var(--muted);
+            font-size: 0.66rem;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .plot-readout b {
+            color: var(--ink);
+            font-weight: 700;
+        }
+
+        .series-table {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 2px 10px;
+            padding: 9px 13px 11px;
+            border-top: 1px solid var(--line);
+        }
+
+        .series-table.single {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 4px 10px;
+        }
+
+        .series-item {
+            display: grid;
+            grid-template-columns: 9px minmax(0, 1fr) auto;
+            gap: 6px;
+            align-items: center;
+            color: var(--muted);
+            font-size: 0.63rem;
+        }
+
+        .series-chip {
+            width: 9px;
+            height: 9px;
+            border-radius: 2px;
+        }
+
+        .series-item em {
+            overflow: hidden;
+            color: var(--ink-soft);
+            font-style: normal;
+            font-weight: 700;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .series-item b {
+            color: var(--ink);
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            text-align: right;
+        }
+
+        .learn-more {
+            margin-top: 12px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--surface);
+        }
+
+        .learn-more summary {
+            padding: 12px 15px;
+            font-size: 0.8rem;
+            font-weight: 720;
+            cursor: pointer;
+        }
+
+        .representation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            padding-top: 1px;
+            border-top: 1px solid var(--line);
+            background: var(--line);
+        }
+
+        .representation-grid article {
+            padding: 13px 14px;
+            background: var(--surface);
+        }
+
+        .representation-grid h3 {
+            margin-bottom: 4px;
+            font-size: 0.76rem;
+        }
+
+        .representation-grid p {
+            margin-bottom: 0;
+            color: var(--muted);
+            font-size: 0.69rem;
+        }
+
+        @media (max-width: 960px) {
+            .stage {
+                grid-template-columns: 1fr;
+            }
+
+            .rail {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 820px) {
+            body {
+                padding: 10px;
+            }
+
+            .demo-shell,
+            .is-embedded .demo-shell {
+                padding: 15px;
+            }
+
+            .plot-grid-3,
+            .plot-grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            /* stacked plots keep a fixed height instead of a wide aspect ratio,
+               otherwise a full-width panel is taller than the whole viewport */
+            .plot-canvas.tall {
+                height: 142px;
+                aspect-ratio: auto;
+            }
+
+            .plot-canvas.short {
+                height: 168px;
+                aspect-ratio: auto;
+            }
+
+            .representation-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .rail {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .series-table {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .series-table.single {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="demo-shell">
+        <header>
+            <div class="demo-topline">
+                <p class="demo-kicker" data-i18n="demoKicker">Interactive research demo</p>
+                <div class="language-switcher" aria-label="Language">
+                    <button class="lang-btn active" type="button" data-lang="en" aria-pressed="true">EN</button>
+                    <button class="lang-btn" type="button" data-lang="es" aria-pressed="false">ES</button>
+                </div>
+            </div>
+            <h1 data-i18n="title">Shape Features &amp; Data-Driven Control</h1>
+            <p class="demo-intro" data-i18n="intro">Two robot arms hold a deformable linear object. The controller never sees a model: it probes the system, learns the local shape Jacobian from the observed response, and servos on whichever feature vector you select.</p>
+        </header>
+
+        <section class="stage">
+            <article class="card">
+                <div class="card-heading">
+                    <h2 data-i18n="sceneTitle">Robots, object and target</h2>
+                    <span id="sceneHint" class="card-note" data-i18n="sceneHint">Drag a gripper, its ring handle, or the object itself.</span>
+                </div>
+                <div class="scene-wrap">
+                    <canvas id="sceneCanvas" role="img" aria-label="Two planar robot arms holding a deformable linear object, with the target shape shown dashed"></canvas>
+                </div>
+                <div class="scene-legend">
+                    <span class="legend-item" style="color: var(--ink)"><i class="swatch"></i><span data-i18n="legendObject">Object</span></span>
+                    <span class="legend-item" style="color: #9b8171"><i class="swatch dashed"></i><span data-i18n="legendTarget">Target shape</span></span>
+                    <span class="legend-item" id="legendFeature" style="color: var(--rep-points)"><i class="swatch dot"></i><span data-i18n="legendFeatures">Measured features</span></span>
+                    <span class="legend-item" style="color: var(--muted)"><span data-i18n="legendGrip">Ring handles rotate the grippers</span></span>
+                </div>
+                <div class="toolbar">
+                    <button id="playBtn" class="button button-primary" type="button" aria-pressed="false"><span class="glyph" aria-hidden="true">▶</span><span id="playLabel" data-i18n="playBtn">Play</span></button>
+                    <button id="probeBtn" class="button" type="button" data-i18n="probeBtn">Probe &amp; learn Ĵ</button>
+                    <button id="resetBtn" class="button" type="button" data-i18n="resetBtn">Reset</button>
+                    <span class="toolbar-divider" aria-hidden="true"></span>
+                    <span class="toolbar-label" data-i18n="disturbLabel">Move the object:</span>
+                    <button id="rigidBtn" class="button" type="button" data-i18n="rigidBtn">Translate</button>
+                    <button id="rotateBtn" class="button" type="button" data-i18n="rotateBtn">Rotate</button>
+                    <button id="waveBtn" class="button" type="button" data-i18n="waveBtn">Wave</button>
+                </div>
+            </article>
+
+            <aside class="rail">
+                <article class="card">
+                    <div class="card-heading">
+                        <h3 data-i18n="repTitle">Controlled feature vector</h3>
+                    </div>
+                    <div class="rep-group" role="group" aria-label="Shape representation">
+                        <button class="rep-btn" type="button" data-representation="points" aria-pressed="true" style="color: var(--rep-points)">
+                            <i class="rep-dot" aria-hidden="true"></i>
+                            <span class="rep-text"><strong data-i18n="pointCoordinates">Point coordinates</strong><span data-i18n="pointsNote">18-D · pose and shape</span></span>
+                        </button>
+                        <button class="rep-btn" type="button" data-representation="edges" aria-pressed="false" style="color: var(--rep-edges)">
+                            <i class="rep-dot" aria-hidden="true"></i>
+                            <span class="rep-text"><strong data-i18n="edgeVectors">Edge vectors</strong><span data-i18n="edgesNote">16-D · translation-invariant</span></span>
+                        </button>
+                        <button class="rep-btn" type="button" data-representation="curvature" aria-pressed="false" style="color: var(--rep-curvature)">
+                            <i class="rep-dot" aria-hidden="true"></i>
+                            <span class="rep-text"><strong data-i18n="curvature">Curvature</strong><span data-i18n="curvatureNote">7-D · rigid-motion-invariant</span></span>
+                        </button>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric"><span data-i18n="errorNorm">‖e‖</span><strong id="errorNorm">0.000</strong></div>
+                        <div class="metric"><span data-i18n="modelRank">Rank</span><strong id="modelRank">—</strong></div>
+                        <div class="metric"><span data-i18n="conditioning">Cond</span><strong id="conditionNumber">—</strong></div>
+                    </div>
+                    <div class="status-line">
+                        <i id="statusDot" class="status-dot" aria-hidden="true"></i>
+                        <span id="statusText" aria-live="polite" data-i18n="statusIdle">Idle — press Play to probe and servo.</span>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <div class="card-heading">
+                        <h3 data-i18n="jacobianTitle">Learned Jacobian Ĵ</h3>
+                        <span id="jacobianNote" class="card-note">6 × 18</span>
+                    </div>
+                    <div id="jacobianContent" class="jacobian-content">
+                        <p class="empty-model" data-i18n="emptyModel">No model yet. Probing applies a small motion on each of the six commands and measures the feature response.</p>
+                    </div>
+                </article>
+            </aside>
+        </section>
+
+        <section class="plot-section">
+            <div class="plot-grid-3">
+                <article class="card">
+                    <div class="card-heading">
+                        <h3 data-i18n="featPointsTitle">Point coordinates</h3>
+                        <span id="readoutPoints" class="plot-readout"></span>
+                    </div>
+                    <canvas id="plotPoints" class="plot-canvas tall" data-plot="points" role="img" aria-label="Time evolution of the point-coordinate feature components"></canvas>
+                </article>
+                <article class="card">
+                    <div class="card-heading">
+                        <h3 data-i18n="featEdgesTitle">Edge vectors</h3>
+                        <span id="readoutEdges" class="plot-readout"></span>
+                    </div>
+                    <canvas id="plotEdges" class="plot-canvas tall" data-plot="edges" role="img" aria-label="Time evolution of the edge-vector feature components"></canvas>
+                </article>
+                <article class="card">
+                    <div class="card-heading">
+                        <h3 data-i18n="featCurvatureTitle">Curvature</h3>
+                        <span id="readoutCurvature" class="plot-readout"></span>
+                    </div>
+                    <canvas id="plotCurvature" class="plot-canvas tall" data-plot="curvature" role="img" aria-label="Time evolution of the curvature feature components"></canvas>
+                </article>
+            </div>
+
+            <div class="plot-grid-2">
+                <article class="card">
+                    <div class="card-heading">
+                        <h3 data-i18n="actionTitle">End-effector velocity u̇</h3>
+                        <span id="readoutAction" class="plot-readout"></span>
+                    </div>
+                    <canvas id="plotAction" class="plot-canvas short" data-plot="action" role="img" aria-label="Time evolution of the six end-effector velocity components"></canvas>
+                    <div id="actionSeries" class="series-table"></div>
+                </article>
+                <article class="card">
+                    <div class="card-heading">
+                        <h3 data-i18n="errorTitle">Normalised error ‖e‖ / ‖e₀‖</h3>
+                        <span id="readoutError" class="plot-readout"></span>
+                    </div>
+                    <canvas id="plotError" class="plot-canvas short" data-plot="error" role="img" aria-label="Time evolution of the normalised shape error for the three representations"></canvas>
+                    <div id="errorSeries" class="series-table single"></div>
+                </article>
+            </div>
+        </section>
+
+        <details class="learn-more">
+            <summary data-i18n="learnMore">What changes between representations?</summary>
+            <div class="representation-grid">
+                <article><h3 data-i18n="pointsHeading">Point coordinates</h3><p data-i18n="pointsDesc">Keep position, orientation and shape. Best for placement, but any rigid motion shows up as error.</p></article>
+                <article><h3 data-i18n="edgesHeading">Edge vectors</h3><p data-i18n="edgesDesc">Remove translation while keeping orientation and local direction changes. Translating the object leaves this error untouched.</p></article>
+                <article><h3 data-i18n="curvatureHeading">Curvature</h3><p data-i18n="curvatureDesc">Remove translation and rotation, isolating intrinsic bending. Shape converges, but pose becomes unobservable and uncontrolled.</p></article>
+            </div>
+        </details>
+    </main>
+
+    <script>
+    (() => {
+        'use strict';
+
+        // ------------------------------------------------------------------
+        // translations
+        // ------------------------------------------------------------------
+        const translations = {
+            en: {
+                demoKicker: 'Interactive research demo',
+                title: 'Shape Features & Data-Driven Control',
+                intro: 'Two robot arms hold a deformable linear object. The controller never sees a model: it probes the system, learns the local shape Jacobian from the observed response, and servos on whichever feature vector you select.',
+                sceneTitle: 'Robots, object and target',
+                sceneHint: 'Drag a gripper, its ring handle, or the object itself.',
+                legendObject: 'Object',
+                legendTarget: 'Target shape',
+                legendFeatures: 'Measured features',
+                legendGrip: 'Ring handles rotate the grippers',
+                playBtn: 'Play',
+                pauseBtn: 'Pause',
+                probeBtn: 'Probe & learn Ĵ',
+                resetBtn: 'Reset',
+                disturbLabel: 'Move the object:',
+                rigidBtn: 'Translate',
+                rotateBtn: 'Rotate',
+                waveBtn: 'Wave',
+                repTitle: 'Controlled feature vector',
+                pointCoordinates: 'Point coordinates',
+                pointsNote: '18-D · pose and shape',
+                edgeVectors: 'Edge vectors',
+                edgesNote: '16-D · translation-invariant',
+                curvature: 'Curvature',
+                curvatureNote: '7-D · rigid-motion-invariant',
+                errorNorm: '‖e‖',
+                modelRank: 'Rank',
+                conditioning: 'Cond',
+                jacobianTitle: 'Learned Jacobian Ĵ',
+                emptyModel: 'No model yet. Probing applies a small motion on each of the six commands and measures the feature response.',
+                featPointsTitle: 'Point coordinates',
+                featEdgesTitle: 'Edge vectors',
+                featCurvatureTitle: 'Curvature',
+                actionTitle: 'End-effector velocity u̇',
+                errorTitle: 'Normalised error ‖e‖ / ‖e₀‖',
+                statusIdle: 'Idle — press Play to probe and servo.',
+                statusProbing: 'Probing command',
+                statusLearned: 'Ĵ estimated from the probing data.',
+                statusRunning: 'Controller running',
+                statusConverged: 'Converged for the selected feature vector.',
+                statusPaused: 'Controller paused.',
+                statusStalled: 'Stalled — the target is not reachable in this feature space.',
+                statusManual: 'Manual motion — plots keep streaming.',
+                statusDisturb: 'Disturbance applied to the object.',
+                stepsLabel: 'steps',
+                learnMore: 'What changes between representations?',
+                pointsHeading: 'Point coordinates',
+                pointsDesc: 'Keep position, orientation and shape. Best for placement, but any rigid motion shows up as error.',
+                edgesHeading: 'Edge vectors',
+                edgesDesc: 'Remove translation while keeping orientation and local direction changes. Translating the object leaves this error untouched.',
+                curvatureHeading: 'Curvature',
+                curvatureDesc: 'Remove translation and rotation, isolating intrinsic bending. Shape converges, but pose becomes unobservable and uncontrolled.',
+                cmdXL: 'x left',
+                cmdYL: 'y left',
+                cmdTL: 'θ left',
+                cmdXR: 'x right',
+                cmdYR: 'y right',
+                cmdTR: 'θ right',
+                nowLabel: 'now',
+                dimLabel: 'dim'
+            },
+            es: {
+                demoKicker: 'Demostración interactiva',
+                title: 'Características de Forma y Control Basado en Datos',
+                intro: 'Dos brazos robóticos sujetan un objeto lineal deformable. El controlador no conoce el modelo: explora el sistema, aprende el jacobiano local de forma a partir de la respuesta observada y controla el vector de características que elijas.',
+                sceneTitle: 'Robots, objeto y objetivo',
+                sceneHint: 'Arrastra una pinza, su anillo de giro o el propio objeto.',
+                legendObject: 'Objeto',
+                legendTarget: 'Forma objetivo',
+                legendFeatures: 'Características medidas',
+                legendGrip: 'Los anillos giran las pinzas',
+                playBtn: 'Reproducir',
+                pauseBtn: 'Pausar',
+                probeBtn: 'Explorar y aprender Ĵ',
+                resetBtn: 'Reiniciar',
+                disturbLabel: 'Mueve el objeto:',
+                rigidBtn: 'Trasladar',
+                rotateBtn: 'Rotar',
+                waveBtn: 'Ondear',
+                repTitle: 'Vector de características controlado',
+                pointCoordinates: 'Coordenadas de puntos',
+                pointsNote: '18-D · pose y forma',
+                edgeVectors: 'Vectores de arista',
+                edgesNote: '16-D · invariante a traslación',
+                curvature: 'Curvatura',
+                curvatureNote: '7-D · invariante a movimiento rígido',
+                errorNorm: '‖e‖',
+                modelRank: 'Rango',
+                conditioning: 'Cond',
+                jacobianTitle: 'Jacobiano aprendido Ĵ',
+                emptyModel: 'Aún no hay modelo. La exploración aplica un pequeño movimiento en cada uno de los seis comandos y mide la respuesta de las características.',
+                featPointsTitle: 'Coordenadas de puntos',
+                featEdgesTitle: 'Vectores de arista',
+                featCurvatureTitle: 'Curvatura',
+                actionTitle: 'Velocidad del efector u̇',
+                errorTitle: 'Error normalizado ‖e‖ / ‖e₀‖',
+                statusIdle: 'En espera — pulsa Reproducir para explorar y controlar.',
+                statusProbing: 'Explorando el comando',
+                statusLearned: 'Ĵ estimado con los datos de exploración.',
+                statusRunning: 'Controlador en marcha',
+                statusConverged: 'Convergido para el vector de características elegido.',
+                statusPaused: 'Controlador en pausa.',
+                statusStalled: 'Estancado — el objetivo no es alcanzable en este espacio de características.',
+                statusManual: 'Movimiento manual — las gráficas siguen actualizándose.',
+                statusDisturb: 'Perturbación aplicada al objeto.',
+                stepsLabel: 'pasos',
+                learnMore: '¿Qué cambia entre representaciones?',
+                pointsHeading: 'Coordenadas de puntos',
+                pointsDesc: 'Conservan posición, orientación y forma. Sirven para colocar, pero cualquier movimiento rígido aparece como error.',
+                edgesHeading: 'Vectores de arista',
+                edgesDesc: 'Eliminan la traslación y conservan la orientación y los cambios locales de dirección. Trasladar el objeto no altera este error.',
+                curvatureHeading: 'Curvatura',
+                curvatureDesc: 'Elimina traslación y rotación para aislar la flexión intrínseca. La forma converge, pero la pose deja de ser observable y queda sin controlar.',
+                cmdXL: 'x izq.',
+                cmdYL: 'y izq.',
+                cmdTL: 'θ izq.',
+                cmdXR: 'x der.',
+                cmdYR: 'y der.',
+                cmdTR: 'θ der.',
+                nowLabel: 'ahora',
+                dimLabel: 'dim'
+            }
+        };
+
+        const isEmbedded = window.self !== window.top;
+        let lang = localStorage.getItem('language') || 'en';
+        const dict = () => translations[lang] || translations.en;
+
+        // ------------------------------------------------------------------
+        // model constants
+        // ------------------------------------------------------------------
+        const TAU = Math.PI * 2;
+        const N_NODES = 9;
+        const REST = 1.58;
+        const ARM = { l1: 1.30, l2: 1.10, l3: 0.28 };
+        const BASES = [[-1.55, -0.95], [1.55, -0.95]];
+        const FLOOR = -1.02;
+        const VIEW = { x0: -2.4, x1: 2.4, y0: -1.18, y1: 0.87 };
+
+        const KEYS = ['x0', 'y0', 'a0', 'x1', 'y1', 'a1'];
+        const CMD_I18N = ['cmdXL', 'cmdYL', 'cmdTL', 'cmdXR', 'cmdYR', 'cmdTR'];
+        const CMD_MATH = ['x₀', 'y₀', 'θ₀', 'x₁', 'y₁', 'θ₁'];
+        const PROBE_AMPLITUDE = 0.085;   // metres for x/y, radians for theta
+        // kept inside the arms' comfortable reach so the IK never has to clamp
+        const LIMITS = {
+            x0: [-1.00, -0.14], y0: [-0.34, 0.54], a0: [-0.90, 0.90],
+            x1: [0.14, 1.00], y1: [-0.34, 0.54], a1: [-0.90, 0.90]
+        };
+
+        const HOME = { x0: -0.64, y0: 0.10, a0: 0.34, x1: 0.64, y1: 0.10, a1: -0.34 };
+        const GOAL = { x0: -0.90, y0: -0.16, a0: 0.78, x1: 0.50, y1: 0.44, a1: -0.16 };
+
+        const REPS = ['points', 'edges', 'curvature'];
+        const REP_TAGS = ['pts', 'edg', 'κ'];
+        const DIMS = { points: 2 * N_NODES, edges: 2 * (N_NODES - 1), curvature: N_NODES - 2 };
+
+        // ------------------------------------------------------------------
+        // state
+        // ------------------------------------------------------------------
+        let base = { ...HOME };
+        const goal = { ...GOAL };
+        let representation = 'points';
+        let jacobian = null;
+        let running = false;
+        let steps = 0;
+        let converged = false;
+        let statusKey = 'statusIdle';
+        let probe = null;
+        let gesture = null;
+        let drag = null;
+        let resumeAfterProbe = false;
+        let visible = true;
+
+        const probeOffset = { x0: 0, y0: 0, a0: 0, x1: 0, y1: 0, a1: 0 };
+        const zeroOffset = () => ({ x0: 0, y0: 0, a0: 0, x1: 0, y1: 0, a1: 0 });
+
+        // ------------------------------------------------------------------
+        // kinematics & shape model
+        // ------------------------------------------------------------------
+        const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
+
+        function effective() {
+            const out = {};
+            const g = gesture ? gestureDelta() : null;
+            for (const k of KEYS) {
+                let v = base[k] + probeOffset[k] + (g ? g[k] : 0);
+                out[k] = clamp(v, LIMITS[k][0], LIMITS[k][1]);
+            }
+            return out;
+        }
+
+        function nodes(s) {
+            const p0 = [s.x0, s.y0];
+            const p1 = [s.x1, s.y1];
+            const h0 = [Math.cos(s.a0), Math.sin(s.a0)];
+            const h1 = [Math.cos(s.a1), Math.sin(s.a1)];
+            const cx = p1[0] - p0[0];
+            const cy = p1[1] - p0[1];
+            const chord = Math.hypot(cx, cy) || 1e-6;
+            // bending amplitude along the chord normal: the rod is elastic, so the
+            // bulge follows the object and rigid motions leave the shape untouched
+            const sag = 0.82 * Math.max(0, REST - chord);
+            const nx = cy / chord;
+            const ny = -cx / chord;
+            const k = 0.62 * REST;
+            const out = [];
+            for (let i = 0; i < N_NODES; i++) {
+                const t = i / (N_NODES - 1);
+                const t2 = t * t;
+                const t3 = t2 * t;
+                const h00 = 2 * t3 - 3 * t2 + 1;
+                const h10 = t3 - 2 * t2 + t;
+                const h01 = -2 * t3 + 3 * t2;
+                const h11 = t3 - t2;
+                const bump = 4 * t * (1 - t);
+                out.push([
+                    h00 * p0[0] + h10 * k * h0[0] + h01 * p1[0] + h11 * k * h1[0] + sag * bump * nx,
+                    h00 * p0[1] + h10 * k * h0[1] + h01 * p1[1] + h11 * k * h1[1] + sag * bump * ny
+                ]);
+            }
+            return out;
+        }
+
+        function featuresOf(pts, type) {
+            if (type === 'points') {
+                const out = new Array(2 * pts.length);
+                for (let i = 0; i < pts.length; i++) { out[2 * i] = pts[i][0]; out[2 * i + 1] = pts[i][1]; }
+                return out;
+            }
+            const ex = [];
+            const ey = [];
+            for (let i = 0; i < pts.length - 1; i++) {
+                ex.push(pts[i + 1][0] - pts[i][0]);
+                ey.push(pts[i + 1][1] - pts[i][1]);
+            }
+            if (type === 'edges') {
+                const out = [];
+                for (let i = 0; i < ex.length; i++) { out.push(ex[i], ey[i]); }
+                return out;
+            }
+            const ang = ex.map((v, i) => Math.atan2(ey[i], v));
+            const out = [];
+            for (let i = 0; i < ang.length - 1; i++) {
+                const d = ang[i + 1] - ang[i];
+                out.push(Math.atan2(Math.sin(d), Math.cos(d)));
+            }
+            return out;
+        }
+
+        const allFeatures = (s) => {
+            const pts = nodes(s);
+            return { points: featuresOf(pts, 'points'), edges: featuresOf(pts, 'edges'), curvature: featuresOf(pts, 'curvature') };
+        };
+
+        const goalFeatures = allFeatures(goal);
+
+        function errorNorm(f, rep) {
+            const t = goalFeatures[rep];
+            let sum = 0;
+            for (let i = 0; i < t.length; i++) { const d = t[i] - f[rep][i]; sum += d * d; }
+            return Math.sqrt(sum);
+        }
+
+        let errorScale = { points: 1, edges: 1, curvature: 1 };
+        function refreshErrorScale() {
+            const f = allFeatures(effective());
+            for (const rep of REPS) errorScale[rep] = Math.max(errorNorm(f, rep), 1e-3);
+        }
+
+        // inverse kinematics of a planar 3R arm, elbow-up, with reach clamping
+        function solveArm(baseXY, ee, psi) {
+            let wx = ee[0] - ARM.l3 * Math.cos(psi);
+            let wy = ee[1] - ARM.l3 * Math.sin(psi);
+            let dx = wx - baseXY[0];
+            let dy = wy - baseXY[1];
+            let r = Math.hypot(dx, dy);
+            const rMax = ARM.l1 + ARM.l2 - 1e-4;
+            const rMin = Math.abs(ARM.l1 - ARM.l2) + 1e-3;
+            if (r > rMax) { const f = rMax / r; dx *= f; dy *= f; r = rMax; }
+            if (r < rMin) { const f = r < 1e-6 ? 0 : rMin / r; dx *= f || 1; dy *= f || 1; r = rMin; }
+            const c2 = clamp((r * r - ARM.l1 * ARM.l1 - ARM.l2 * ARM.l2) / (2 * ARM.l1 * ARM.l2), -1, 1);
+            const s2 = Math.sqrt(Math.max(0, 1 - c2 * c2));
+            const phi = Math.atan2(dy, dx);
+            let best = null;
+            for (const sign of [1, -1]) {
+                const t2 = Math.atan2(sign * s2, c2);
+                const t1 = phi - Math.atan2(ARM.l2 * Math.sin(t2), ARM.l1 + ARM.l2 * Math.cos(t2));
+                const elbow = [baseXY[0] + ARM.l1 * Math.cos(t1), baseXY[1] + ARM.l1 * Math.sin(t1)];
+                if (!best || elbow[1] > best.elbow[1]) best = { t1, t2, elbow };
+            }
+            const wrist = [best.elbow[0] + ARM.l2 * Math.cos(best.t1 + best.t2), best.elbow[1] + ARM.l2 * Math.sin(best.t1 + best.t2)];
+            const tip = [wrist[0] + ARM.l3 * Math.cos(psi), wrist[1] + ARM.l3 * Math.sin(psi)];
+            return { base: baseXY, elbow: best.elbow, wrist, tip, psi };
+        }
+
+        const armPoses = (s) => [
+            solveArm(BASES[0], [s.x0, s.y0], s.a0),
+            solveArm(BASES[1], [s.x1, s.y1], s.a1 + Math.PI)
+        ];
+
+        // ------------------------------------------------------------------
+        // linear algebra
+        // ------------------------------------------------------------------
+        function gram(J) {
+            const n = KEYS.length;
+            const G = Array.from({ length: n }, () => new Array(n).fill(0));
+            for (let i = 0; i < n; i++) {
+                for (let j = i; j < n; j++) {
+                    let sum = 0;
+                    for (let r = 0; r < J.length; r++) sum += J[r][i] * J[r][j];
+                    G[i][j] = G[j][i] = sum;
+                }
+            }
+            return G;
+        }
+
+        function solveSym(A, b) {
+            const n = b.length;
+            const M = A.map((row, i) => [...row, b[i]]);
+            for (let c = 0; c < n; c++) {
+                let p = c;
+                for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r;
+                [M[c], M[p]] = [M[p], M[c]];
+                const d = Math.abs(M[c][c]) < 1e-12 ? 1e-12 : M[c][c];
+                for (let j = c; j <= n; j++) M[c][j] /= d;
+                for (let r = 0; r < n; r++) {
+                    if (r === c) continue;
+                    const f = M[r][c];
+                    if (f === 0) continue;
+                    for (let j = c; j <= n; j++) M[r][j] -= f * M[c][j];
+                }
+            }
+            return M.map(row => row[n]);
+        }
+
+        function eigenvalues(A) {
+            const a = A.map(row => [...row]);
+            const n = a.length;
+            for (let sweep = 0; sweep < 40; sweep++) {
+                let p = 0, q = 1, largest = 0;
+                for (let i = 0; i < n; i++) {
+                    for (let j = i + 1; j < n; j++) {
+                        if (Math.abs(a[i][j]) > largest) { largest = Math.abs(a[i][j]); p = i; q = j; }
+                    }
+                }
+                if (largest < 1e-12) break;
+                const theta = 0.5 * Math.atan2(2 * a[p][q], a[q][q] - a[p][p]);
+                const c = Math.cos(theta);
+                const s = Math.sin(theta);
+                for (let k = 0; k < n; k++) {
+                    if (k === p || k === q) continue;
+                    const apk = a[p][k];
+                    const aqk = a[q][k];
+                    a[p][k] = a[k][p] = c * apk - s * aqk;
+                    a[q][k] = a[k][q] = s * apk + c * aqk;
+                }
+                const app = a[p][p], aqq = a[q][q], apq = a[p][q];
+                a[p][p] = c * c * app - 2 * s * c * apq + s * s * aqq;
+                a[q][q] = s * s * app + 2 * s * c * apq + c * c * aqq;
+                a[p][q] = a[q][p] = 0;
+            }
+            return a.map((row, i) => Math.max(row[i], 0));
+        }
+
+        // ------------------------------------------------------------------
+        // colours
+        // ------------------------------------------------------------------
+        const hexToRgb = (hex) => [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
+        const rgbToHex = (c) => '#' + c.map(v => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, '0')).join('');
+        const mix = (a, b, t) => rgbToHex(hexToRgb(a).map((v, i) => v + (hexToRgb(b)[i] - v) * t));
+        const alpha = (hex, a) => { const c = hexToRgb(hex); return `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a})`; };
+
+        const isDark = () => document.documentElement.dataset.theme === 'dark';
+
+        function palette() {
+            const dark = isDark();
+            const rep = dark
+                ? { points: '#3987e5', edges: '#d95926', curvature: '#199e70' }
+                : { points: '#2a78d6', edges: '#eb6834', curvature: '#1baf7a' };
+            const ramp = {};
+            for (const key of REPS) {
+                ramp[key] = dark
+                    ? [mix(rep[key], '#000000', 0.30), mix(rep[key], '#ffffff', 0.34)]
+                    : [mix(rep[key], '#ffffff', 0.26), mix(rep[key], '#000000', 0.38)];
+            }
+            return {
+                dark,
+                rep,
+                ramp,
+                action: dark
+                    ? ['#3987e5', '#d95926', '#199e70', '#c98500', '#d55181', '#008300']
+                    : ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300'],
+                surface: dark ? '#1c221f' : '#fbfcfb',
+                grid: dark ? '#2a322d' : '#e8ece9',
+                gridStrong: dark ? '#3a443d' : '#d5dcd8',
+                text: dark ? '#8f9c95' : '#727d78',
+                textStrong: dark ? '#dfe6e2' : '#2b3531',
+                object: dark ? '#e6ece9' : '#2b3531',
+                target: dark ? '#c0a18e' : '#9b8171',
+                robot: dark ? '#6f7d77' : '#9aa6a1',
+                robotDeep: dark ? '#586661' : '#7b8983',
+                joint: dark ? '#aab6b0' : '#5d6a64',
+                accent: dark ? '#91b19f' : '#527563',
+                divPos: dark ? '#3987e5' : '#2a78d6',
+                divNeg: dark ? '#e66767' : '#e34948',
+                divMid: dark ? '#383835' : '#f0efec'
+            };
+        }
+
+        const rampColor = (rep, i, n, p) => mix(p.ramp[rep][0], p.ramp[rep][1], n <= 1 ? 0.5 : i / (n - 1));
+
+        // ------------------------------------------------------------------
+        // history buffer
+        // ------------------------------------------------------------------
+        const HIST = 300;
+        const SAMPLE_MS = 33;
+        const history = [];
+        let lastSample = performance.now();
+        let lastState = { ...HOME };
+        let velocity = new Array(6).fill(0);
+
+        function pushSample(now, dt) {
+            const s = effective();
+            const inst = KEYS.map((k, i) => (s[k] - lastState[k]) / Math.max(dt, 1e-3));
+            velocity = velocity.map((v, i) => v + (inst[i] - v) * 0.45);
+            lastState = s;
+            const f = allFeatures(s);
+            history.push({
+                t: now,
+                f,
+                e: { points: errorNorm(f, 'points'), edges: errorNorm(f, 'edges'), curvature: errorNorm(f, 'curvature') },
+                u: velocity.slice()
+            });
+            while (history.length > HIST) history.shift();
+        }
+
+        // ------------------------------------------------------------------
+        // probing
+        // ------------------------------------------------------------------
+        const PROBE_MS = 430;              // identical for every DoF
+        const PROBE_PEAK = 0.3041;         // phase of the extrema of the windowed sine
+        const PROBE_GAIN = 1 / 0.7698;     // rescales that window back to unit peak
+
+        // One cycle, windowed so the velocity is zero at both ends: every DoF then
+        // gets exactly the same excursion, with no jump at the hand-over.
+        const probeWave = (phase) =>
+            PROBE_AMPLITUDE * PROBE_GAIN * Math.sin(TAU * phase) * Math.sin(Math.PI * phase);
+
+        function startProbe(thenRun) {
+            gesture = null;
+            resumeAfterProbe = !!thenRun;
+            running = false;
+            // t0 is stamped on the first animation frame, not on the click, so the
+            // first DoF gets the same frame budget as the other five
+            probe = { index: 0, t0: null, plus: [], minus: [] };
+            converged = false;
+            statusKey = 'statusProbing';
+            syncControls();
+        }
+
+        // One command at a time: a full +delta / -delta wiggle, so the column is a
+        // central difference and the exactly-unobservable directions stay at zero.
+        function stepProbe(now) {
+            if (probe.t0 === null) probe.t0 = now;
+            const phase = (now - probe.t0) / PROBE_MS;
+            const key = KEYS[probe.index];
+            if (phase >= 1) {
+                probeOffset[key] = 0;
+                probe.index += 1;
+                probe.t0 = now;
+                if (probe.index >= KEYS.length) finishProbe();
+                return;
+            }
+            probeOffset[key] = probeWave(phase);
+            if (!probe.plus[probe.index] && phase >= PROBE_PEAK) {
+                probe.plus[probe.index] = { f: allFeatures(effective())[representation], d: probeOffset[key] };
+            }
+            if (!probe.minus[probe.index] && phase >= 1 - PROBE_PEAK) {
+                probe.minus[probe.index] = { f: allFeatures(effective())[representation], d: probeOffset[key] };
+            }
+        }
+
+        function finishProbe() {
+            const dim = DIMS[representation];
+            const J = Array.from({ length: dim }, () => new Array(KEYS.length).fill(0));
+            for (let c = 0; c < KEYS.length; c++) {
+                const hi = probe.plus[c];
+                const lo = probe.minus[c];
+                if (!hi || !lo) continue;
+                const step = hi.d - lo.d;
+                if (Math.abs(step) < 1e-9) continue;
+                for (let r = 0; r < dim; r++) J[r][c] = (hi.f[r] - lo.f[r]) / step;
+            }
+            jacobian = J;
+            probe = null;
+            for (const k of KEYS) probeOffset[k] = 0;
+            statusKey = 'statusLearned';
+            if (resumeAfterProbe) {
+                resumeAfterProbe = false;
+                running = true;
+                steps = 0;
+                statusKey = 'statusRunning';
+            }
+            renderJacobian();
+            syncControls();
+        }
+
+        // ------------------------------------------------------------------
+        // controller
+        // ------------------------------------------------------------------
+        const GAIN = 0.022;
+        const DAMPING = 0.012;
+        const STEP_CLAMP = 0.008;
+        const TOL = { points: 0.014, edges: 0.012, curvature: 0.010 };
+
+        function controlStep() {
+            if (!jacobian) return;
+            const s = effective();
+            const f = allFeatures(s)[representation];
+            const t = goalFeatures[representation];
+            const err = t.map((v, i) => v - f[i]);
+            const norm = Math.hypot(...err);
+            if (norm < TOL[representation]) {
+                running = false;
+                converged = true;
+                statusKey = 'statusConverged';
+                syncControls();
+                return;
+            }
+            if (steps > 2000) {
+                running = false;
+                statusKey = 'statusStalled';
+                syncControls();
+                return;
+            }
+
+            const G = gram(jacobian);
+            let trace = 0;
+            for (let i = 0; i < G.length; i++) trace += G[i][i];
+            const mu = Math.max(DAMPING * trace / G.length, 1e-6);
+            for (let i = 0; i < G.length; i++) G[i][i] += mu;
+            const rhs = KEYS.map((_, c) => {
+                let sum = 0;
+                for (let r = 0; r < jacobian.length; r++) sum += jacobian[r][c] * err[r];
+                return sum;
+            });
+            const raw = solveSym(G, rhs);
+            const du = raw.map(v => clamp(v * GAIN, -STEP_CLAMP, STEP_CLAMP));
+            if (du.some(v => !Number.isFinite(v))) { running = false; statusKey = 'statusStalled'; syncControls(); return; }
+
+            const before = f;
+            KEYS.forEach((k, i) => { base[k] = clamp(base[k] + du[i], LIMITS[k][0], LIMITS[k][1]); });
+            const after = allFeatures(effective())[representation];
+
+            // Broyden rank-one update of the estimated Jacobian
+            let denom = 0;
+            for (const v of du) denom += v * v;
+            if (denom > 1e-10) {
+                for (let r = 0; r < jacobian.length; r++) {
+                    let pred = 0;
+                    for (let c = 0; c < KEYS.length; c++) pred += jacobian[r][c] * du[c];
+                    const resid = (after[r] - before[r] - pred) / denom;
+                    for (let c = 0; c < KEYS.length; c++) jacobian[r][c] += 0.35 * resid * du[c];
+                }
+            }
+            steps += 1;
+        }
+
+        // ------------------------------------------------------------------
+        // gestures (rigid translate / rotate / wave)
+        // ------------------------------------------------------------------
+        const GESTURES = {
+            rigid: { dur: 3000 },
+            rotate: { dur: 3000 },
+            wave: { dur: 3200 }
+        };
+
+        function rawGesture(type, phase, ref, amp) {
+            const d = zeroOffset();
+            if (type === 'rigid') {
+                const a = Math.sin(TAU * phase) * amp;
+                d.x0 = d.x1 = 0.36 * a;
+                d.y0 = d.y1 = 0.18 * a;
+            } else if (type === 'rotate') {
+                const th = 0.55 * amp * Math.sin(TAU * phase);
+                const cx = (ref.x0 + ref.x1) / 2;
+                const cy = (ref.y0 + ref.y1) / 2;
+                const c = Math.cos(th);
+                const s = Math.sin(th);
+                const rx0 = ref.x0 - cx, ry0 = ref.y0 - cy;
+                const rx1 = ref.x1 - cx, ry1 = ref.y1 - cy;
+                d.x0 = c * rx0 - s * ry0 - rx0;
+                d.y0 = s * rx0 + c * ry0 - ry0;
+                d.x1 = c * rx1 - s * ry1 - rx1;
+                d.y1 = s * rx1 + c * ry1 - ry1;
+                d.a0 = th;
+                d.a1 = th;
+            } else {
+                const a = Math.sin(2 * TAU * phase) * amp;
+                d.y0 = 0.17 * a;
+                d.y1 = -0.17 * a;
+                d.a0 = 0.6 * a;
+                d.a1 = 0.6 * a;
+            }
+            return d;
+        }
+
+        // Largest amplitude that never runs into a joint limit: without this the
+        // clamp would break the rigid motion and hide the invariance it should show.
+        function feasibleAmplitude(type, ref) {
+            for (let amp = 1; amp > 0.12; amp -= 0.05) {
+                let ok = true;
+                for (let i = 0; i <= 32 && ok; i++) {
+                    const d = rawGesture(type, i / 32, ref, amp);
+                    for (const k of KEYS) {
+                        const v = ref[k] + d[k];
+                        if (v < LIMITS[k][0] - 1e-9 || v > LIMITS[k][1] + 1e-9) { ok = false; break; }
+                    }
+                }
+                if (ok) return amp;
+            }
+            return 0.12;
+        }
+
+        function gestureDelta() {
+            const phase = (performance.now() - gesture.t0) / GESTURES[gesture.type].dur;
+            if (phase >= 1) { gesture = null; return zeroOffset(); }
+            return rawGesture(gesture.type, phase, gesture.ref, gesture.amp);
+        }
+
+        function startGesture(type) {
+            if (probe) return;
+            const ref = { ...base };
+            gesture = { type, t0: performance.now(), ref, amp: feasibleAmplitude(type, ref) };
+            statusKey = 'statusDisturb';
+            syncControls();
+        }
+
+        // ------------------------------------------------------------------
+        // canvas helpers
+        // ------------------------------------------------------------------
+        function fitCanvas(cv) {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const w = cv.clientWidth;
+            const h = cv.clientHeight;
+            if (!w || !h) return null;
+            const pw = Math.round(w * dpr);
+            const ph = Math.round(h * dpr);
+            if (cv.width !== pw || cv.height !== ph) { cv.width = pw; cv.height = ph; }
+            const ctx = cv.getContext('2d');
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            return { ctx, w, h };
+        }
+
+        const scene = document.getElementById('sceneCanvas');
+        let sceneW = 0;
+        let sceneH = 0;
+
+        const toPx = (p) => [
+            (p[0] - VIEW.x0) / (VIEW.x1 - VIEW.x0) * sceneW,
+            (VIEW.y1 - p[1]) / (VIEW.y1 - VIEW.y0) * sceneH
+        ];
+        const toWorld = (x, y) => [
+            VIEW.x0 + (x / sceneW) * (VIEW.x1 - VIEW.x0),
+            VIEW.y1 - (y / sceneH) * (VIEW.y1 - VIEW.y0)
+        ];
+        const pxPerUnit = () => sceneW / (VIEW.x1 - VIEW.x0);
+
+        function smoothCurve(ctx, pts, color, width, dash) {
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.setLineDash(dash || []);
+            ctx.beginPath();
+            const P = pts.map(toPx);
+            ctx.moveTo(P[0][0], P[0][1]);
+            for (let i = 0; i < P.length - 1; i++) {
+                const mx = (P[i][0] + P[i + 1][0]) / 2;
+                const my = (P[i][1] + P[i + 1][1]) / 2;
+                ctx.quadraticCurveTo(P[i][0], P[i][1], mx, my);
+            }
+            ctx.lineTo(P[P.length - 1][0], P[P.length - 1][1]);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function arrow(ctx, from, to, color, width, head) {
+            const [x0, y0] = toPx(from);
+            const [x1, y1] = toPx(to);
+            const len = Math.hypot(x1 - x0, y1 - y0);
+            if (len < 1.5) return;
+            const ang = Math.atan2(y1 - y0, x1 - x0);
+            const h = head || 6;
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = width || 1.5;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            ctx.lineTo(x1, y1);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x1 - h * Math.cos(ang - 0.42), y1 - h * Math.sin(ang - 0.42));
+            ctx.lineTo(x1 - h * Math.cos(ang + 0.42), y1 - h * Math.sin(ang + 0.42));
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function disc(ctx, p, r, fill, stroke, lw) {
+            const [x, y] = toPx(p);
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, TAU);
+            if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+            if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 1.5; ctx.stroke(); }
+        }
+
+        // ------------------------------------------------------------------
+        // scene rendering
+        // ------------------------------------------------------------------
+        function drawRobot(ctx, pose, p, active) {
+            const scale = pxPerUnit();
+            const chain = [pose.base, pose.elbow, pose.wrist, pose.tip];
+            ctx.save();
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            const widths = [0.072, 0.055, 0.036];
+            for (let i = 0; i < 3; i++) {
+                const a = toPx(chain[i]);
+                const b = toPx(chain[i + 1]);
+                ctx.strokeStyle = i === 0 ? p.robotDeep : p.robot;
+                ctx.lineWidth = widths[i] * scale;
+                ctx.beginPath();
+                ctx.moveTo(a[0], a[1]);
+                ctx.lineTo(b[0], b[1]);
+                ctx.stroke();
+                ctx.strokeStyle = alpha(p.surface, 0.55);
+                ctx.lineWidth = Math.max(1, widths[i] * scale * 0.16);
+                ctx.beginPath();
+                ctx.moveTo(a[0], a[1]);
+                ctx.lineTo(b[0], b[1]);
+                ctx.stroke();
+            }
+            // pedestal
+            const bp = toPx(pose.base);
+            const fp = toPx([pose.base[0], FLOOR]);
+            ctx.fillStyle = p.robotDeep;
+            ctx.beginPath();
+            ctx.moveTo(bp[0] - 0.055 * scale, bp[1]);
+            ctx.lineTo(bp[0] + 0.055 * scale, bp[1]);
+            ctx.lineTo(fp[0] + 0.16 * scale, fp[1]);
+            ctx.lineTo(fp[0] - 0.16 * scale, fp[1]);
+            ctx.closePath();
+            ctx.fill();
+            // joints
+            for (const j of [pose.base, pose.elbow, pose.wrist]) {
+                disc(ctx, j, 0.032 * scale, p.surface, p.joint, Math.max(1.5, 0.012 * scale));
+            }
+            // gripper jaws
+            const c = Math.cos(pose.psi);
+            const s = Math.sin(pose.psi);
+            const nx = -s;
+            const ny = c;
+            const jaw = 0.10;
+            const open = active ? 0.062 : 0.050;
+            ctx.strokeStyle = active ? p.accent : p.joint;
+            ctx.lineWidth = Math.max(2, 0.022 * scale);
+            for (const sgn of [1, -1]) {
+                const a = [pose.tip[0] - c * 0.03 + nx * sgn * open, pose.tip[1] - s * 0.03 + ny * sgn * open];
+                const b = [a[0] + c * jaw, a[1] + s * jaw];
+                ctx.beginPath();
+                const pa = toPx(a);
+                const pb = toPx(b);
+                ctx.moveTo(pa[0], pa[1]);
+                ctx.lineTo(pb[0], pb[1]);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function drawHandles(ctx, s, p) {
+            const scale = pxPerUnit();
+            const grips = [[s.x0, s.y0], [s.x1, s.y1]];
+            const angs = [s.a0, s.a1];
+            for (let i = 0; i < 2; i++) {
+                const hx = grips[i][0] + 0.26 * Math.cos(angs[i]);
+                const hy = grips[i][1] + 0.26 * Math.sin(angs[i]);
+                ctx.save();
+                ctx.setLineDash([3, 3]);
+                ctx.strokeStyle = alpha(p.accent, 0.5);
+                ctx.lineWidth = 1.2;
+                const a = toPx(grips[i]);
+                const b = toPx([hx, hy]);
+                ctx.beginPath();
+                ctx.moveTo(a[0], a[1]);
+                ctx.lineTo(b[0], b[1]);
+                ctx.stroke();
+                ctx.restore();
+                disc(ctx, [hx, hy], 0.033 * scale, alpha(p.surface, 0.9), p.accent, 2);
+            }
+        }
+
+        function drawScene() {
+            const fit = fitCanvas(scene);
+            if (!fit) return;
+            const { ctx, w, h } = fit;
+            sceneW = w;
+            sceneH = h;
+            const p = palette();
+            const s = effective();
+            const pts = nodes(s);
+            const goalPts = nodes(goal);
+            const scale = pxPerUnit();
+
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = p.surface;
+            ctx.fillRect(0, 0, w, h);
+
+            // grid
+            ctx.strokeStyle = p.grid;
+            ctx.lineWidth = 1;
+            for (let gx = Math.ceil(VIEW.x0 / 0.4) * 0.4; gx < VIEW.x1; gx += 0.4) {
+                const x = toPx([gx, 0])[0];
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+            }
+            for (let gy = Math.ceil(VIEW.y0 / 0.4) * 0.4; gy < VIEW.y1; gy += 0.4) {
+                const y = toPx([0, gy])[1];
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            }
+            // floor
+            ctx.strokeStyle = p.gridStrong;
+            ctx.lineWidth = 1.5;
+            const fy = toPx([0, FLOOR])[1];
+            ctx.beginPath(); ctx.moveTo(0, fy); ctx.lineTo(w, fy); ctx.stroke();
+
+            // target
+            smoothCurve(ctx, goalPts, alpha(p.target, 0.95), 0.029 * scale, [7, 6]);
+            for (const g of [[goal.x0, goal.y0], [goal.x1, goal.y1]]) {
+                disc(ctx, g, 0.028 * scale, null, alpha(p.target, 0.8), 1.6);
+            }
+
+            // robots
+            const poses = armPoses(s);
+            const activeArm = drag ? drag.side : (probe ? (probe.index < 3 ? 0 : 1) : -1);
+            poses.forEach((pose, i) => drawRobot(ctx, pose, p, activeArm === i));
+
+            // object
+            smoothCurve(ctx, pts, alpha(p.object, 0.14), 0.062 * scale, null);
+            smoothCurve(ctx, pts, p.object, 0.034 * scale, null);
+
+            // feature overlay
+            const hue = p.rep[representation];
+            if (representation === 'points') {
+                pts.forEach((pt, i) => {
+                    arrow(ctx, pt, goalPts[i], alpha(hue, 0.45), 1.3, 5);
+                });
+                pts.forEach((pt, i) => {
+                    disc(ctx, pt, 0.024 * scale, hue, p.surface, 1.6);
+                });
+            } else if (representation === 'edges') {
+                for (let i = 0; i < pts.length - 1; i++) {
+                    arrow(ctx, pts[i], pts[i + 1], hue, 1.8, 6);
+                }
+            } else {
+                const kappa = featuresOf(pts, 'curvature');
+                const kmax = Math.max(...kappa.map(Math.abs), 0.05);
+                for (let i = 1; i < pts.length - 1; i++) {
+                    const v = kappa[i - 1];
+                    const r = (0.016 + 0.042 * Math.abs(v) / kmax) * scale;
+                    // radius = |curvature|, filled vs hollow = its sign
+                    disc(ctx, pts[i], r, v >= 0 ? alpha(hue, 0.42) : alpha(p.surface, 0.85), hue, 1.8);
+                }
+            }
+
+            drawHandles(ctx, s, p);
+
+            // probing badge
+            if (probe) {
+                const label = `${dict().statusProbing} ${CMD_MATH[probe.index]}`;
+                ctx.save();
+                ctx.font = '600 12px system-ui, sans-serif';
+                const tw = ctx.measureText(label).width;
+                ctx.fillStyle = alpha(p.accent, 0.14);
+                ctx.strokeStyle = alpha(p.accent, 0.55);
+                ctx.lineWidth = 1;
+                const bx = 12, by = 12, bw = tw + 20, bh = 24;
+                ctx.beginPath();
+                if (ctx.roundRect) ctx.roundRect(bx, by, bw, bh, 7); else ctx.rect(bx, by, bw, bh);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = p.textStrong;
+                ctx.textBaseline = 'middle';
+                ctx.fillText(label, bx + 10, by + bh / 2 + 0.5);
+                ctx.restore();
+                // probe direction indicator at the moving gripper
+                const side = probe.index < 3 ? 0 : 1;
+                const grip = side === 0 ? [s.x0, s.y0] : [s.x1, s.y1];
+                const kind = probe.index % 3;
+                if (kind === 0) arrow(ctx, grip, [grip[0] + 0.28, grip[1]], p.accent, 2, 6);
+                else if (kind === 1) arrow(ctx, grip, [grip[0], grip[1] + 0.28], p.accent, 2, 6);
+                else {
+                    ctx.save();
+                    const [cx, cy] = toPx(grip);
+                    ctx.strokeStyle = p.accent;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 0.16 * scale, -0.9, 0.9);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+
+            // step counter
+            if (running || steps > 0) {
+                ctx.save();
+                ctx.font = '600 11px ui-monospace, SFMono-Regular, Menlo, monospace';
+                ctx.fillStyle = p.text;
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText(`${steps} ${dict().stepsLabel}`, w - 12, h - 10);
+                ctx.restore();
+            }
+        }
+
+        // ------------------------------------------------------------------
+        // plots
+        // ------------------------------------------------------------------
+        const PAD = { l: 36, r: 30, t: 8, b: 15 };
+        const plots = {};
+        let cursor = null;
+
+        function definePlots() {
+            for (const rep of REPS) {
+                const dim = DIMS[rep];
+                plots[rep] = {
+                    canvas: document.getElementById('plot' + rep[0].toUpperCase() + rep.slice(1)),
+                    readout: document.getElementById('readout' + rep[0].toUpperCase() + rep.slice(1)),
+                    kind: 'feature',
+                    rep,
+                    dim,
+                    scale: null
+                };
+            }
+            plots.action = {
+                canvas: document.getElementById('plotAction'),
+                readout: document.getElementById('readoutAction'),
+                kind: 'action',
+                dim: 6,
+                scale: null
+            };
+            plots.error = {
+                canvas: document.getElementById('plotError'),
+                readout: document.getElementById('readoutError'),
+                kind: 'error',
+                dim: 3,
+                scale: null
+            };
+        }
+
+        function seriesValue(plot, sample, i) {
+            if (plot.kind === 'feature') return sample.f[plot.rep][i];
+            if (plot.kind === 'action') return sample.u[i];
+            return sample.e[REPS[i]] / errorScale[REPS[i]];
+        }
+
+        function seriesColor(plot, i, p) {
+            if (plot.kind === 'feature') return rampColor(plot.rep, i, plot.dim, p);
+            if (plot.kind === 'action') return p.action[i];
+            return p.rep[REPS[i]];
+        }
+
+        function drawPlot(plot) {
+            const fit = fitCanvas(plot.canvas);
+            if (!fit) return;
+            const { ctx, w, h } = fit;
+            const p = palette();
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = p.surface;
+            ctx.fillRect(0, 0, w, h);
+
+            const x0 = PAD.l;
+            const x1 = w - PAD.r;
+            const y0 = PAD.t;
+            const y1 = h - PAD.b;
+            if (x1 <= x0 || y1 <= y0) return;
+
+            // vertical range
+            let lo = Infinity;
+            let hi = -Infinity;
+            for (const sample of history) {
+                for (let i = 0; i < plot.dim; i++) {
+                    const v = seriesValue(plot, sample, i);
+                    if (v < lo) lo = v;
+                    if (v > hi) hi = v;
+                }
+            }
+            if (plot.kind === 'feature') {
+                const t = goalFeatures[plot.rep];
+                for (const v of t) { if (v < lo) lo = v; if (v > hi) hi = v; }
+            }
+            if (!Number.isFinite(lo)) { lo = -1; hi = 1; }
+            if (plot.kind === 'error') { lo = Math.min(lo, 0); hi = Math.max(hi, 1); }
+            if (plot.kind === 'action') { const m = Math.max(Math.abs(lo), Math.abs(hi), 0.05); lo = -m; hi = m; }
+            const span = Math.max(hi - lo, 1e-3);
+            lo -= span * 0.09;
+            hi += span * 0.09;
+            if (plot.kind === 'error') lo = 0;
+            if (!plot.scale) plot.scale = { lo, hi };
+            plot.scale.lo += (lo - plot.scale.lo) * 0.14;
+            plot.scale.hi += (hi - plot.scale.hi) * 0.14;
+            const sLo = plot.scale.lo;
+            const sHi = plot.scale.hi;
+            const yOf = (v) => y1 - (v - sLo) / Math.max(sHi - sLo, 1e-6) * (y1 - y0);
+            const xOf = (i) => x0 + (HIST <= 1 ? 1 : i / (HIST - 1)) * (x1 - x0);
+
+            // grid
+            ctx.save();
+            ctx.strokeStyle = p.grid;
+            ctx.lineWidth = 1;
+            for (let k = 0; k <= 3; k++) {
+                const y = y0 + (y1 - y0) * k / 3;
+                ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+            }
+            if (sLo < 0 && sHi > 0) {
+                ctx.strokeStyle = p.gridStrong;
+                const yz = yOf(0);
+                ctx.beginPath(); ctx.moveTo(x0, yz); ctx.lineTo(x1, yz); ctx.stroke();
+            }
+            ctx.restore();
+
+            // target ticks for the feature panels
+            if (plot.kind === 'feature') {
+                const t = goalFeatures[plot.rep];
+                ctx.save();
+                ctx.setLineDash([3, 3]);
+                ctx.lineWidth = 1.4;
+                for (let i = 0; i < t.length; i++) {
+                    ctx.strokeStyle = alpha(seriesColor(plot, i, p), 0.55);
+                    const y = yOf(t[i]);
+                    ctx.beginPath();
+                    ctx.moveTo(x1 + 3, y);
+                    ctx.lineTo(x1 + 13, y);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            // series
+            const offset = HIST - history.length;
+            ctx.save();
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            for (let i = 0; i < plot.dim; i++) {
+                ctx.strokeStyle = seriesColor(plot, i, p);
+                ctx.globalAlpha = plot.kind === 'feature' ? 0.82 : 1;
+                ctx.lineWidth = plot.kind === 'feature' ? 1.4 : 2;
+                if (plot.kind === 'error' && REPS[i] === representation) ctx.lineWidth = 2.8;
+                ctx.beginPath();
+                for (let k = 0; k < history.length; k++) {
+                    const x = xOf(offset + k);
+                    const y = yOf(seriesValue(plot, history[k], i));
+                    if (k === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1;
+
+            // current value markers
+            if (history.length) {
+                const last = history[history.length - 1];
+                const xEnd = xOf(HIST - 1);
+                for (let i = 0; i < plot.dim; i++) {
+                    ctx.fillStyle = seriesColor(plot, i, p);
+                    ctx.beginPath();
+                    ctx.arc(xEnd, yOf(seriesValue(plot, last, i)), plot.kind === 'feature' ? 1.8 : 2.6, 0, TAU);
+                    ctx.fill();
+                }
+                // direct labels on the error panel
+                if (plot.kind === 'error') {
+                    ctx.font = '600 9.5px system-ui, sans-serif';
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                    const placed = [];
+                    for (let i = 0; i < 3; i++) {
+                        let y = yOf(seriesValue(plot, last, i));
+                        while (placed.some(v => Math.abs(v - y) < 10)) y -= 10;
+                        placed.push(y);
+                        ctx.fillStyle = p.rep[REPS[i]];
+                        ctx.fillText(REP_TAGS[i], x1 + 4, y);
+                    }
+                }
+            }
+            ctx.restore();
+
+            // axis labels
+            ctx.save();
+            ctx.font = '9.5px ui-monospace, SFMono-Regular, Menlo, monospace';
+            ctx.fillStyle = p.text;
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(fmtAxis(sHi), x0 - 5, y0 + 4);
+            ctx.fillText(fmtAxis(sLo), x0 - 5, y1 - 4);
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText(`−${((HIST * SAMPLE_MS) / 1000).toFixed(0)}s`, x0, y1 + 2);
+            ctx.textAlign = 'right';
+            ctx.fillText(dict().nowLabel, x1, y1 + 2);
+            ctx.restore();
+
+            // shared crosshair
+            if (cursor !== null && history.length) {
+                const idx = clamp(Math.round(offset + cursor * (history.length - 1)), offset, HIST - 1);
+                const x = xOf(idx);
+                ctx.save();
+                ctx.strokeStyle = alpha(p.textStrong, 0.35);
+                ctx.lineWidth = 1;
+                ctx.setLineDash([2, 3]);
+                ctx.beginPath();
+                ctx.moveTo(x, y0);
+                ctx.lineTo(x, y1);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        const fmtValue = (v) => (Math.abs(v) < 5e-4 ? 0 : v).toFixed(3);
+
+        function fmtAxis(v) {
+            const a = Math.abs(v);
+            if (a >= 100) return v.toFixed(0);
+            if (a >= 10) return v.toFixed(1);
+            return v.toFixed(2);
+        }
+
+        function sampleAtCursor() {
+            if (!history.length) return null;
+            if (cursor === null) return history[history.length - 1];
+            const k = clamp(Math.round(cursor * (history.length - 1)), 0, history.length - 1);
+            return history[k];
+        }
+
+        function updateReadouts() {
+            const sample = sampleAtCursor();
+            if (!sample) return;
+            const words = dict();
+            for (const rep of REPS) {
+                plots[rep].readout.innerHTML =
+                    `${words.dimLabel} ${DIMS[rep]} · ‖e‖ <b>${sample.e[rep].toFixed(3)}</b>`;
+            }
+            const speed = Math.hypot(...sample.u);
+            plots.action.readout.innerHTML = `‖u̇‖ <b>${speed.toFixed(3)}</b>`;
+            plots.error.readout.innerHTML = REPS
+                .map(r => `${(sample.e[r] / errorScale[r]).toFixed(2)}`)
+                .join(' · ');
+            for (let i = 0; i < 6; i++) {
+                const cell = document.getElementById('actVal' + i);
+                if (cell) cell.textContent = fmtValue(sample.u[i]);
+            }
+            for (let i = 0; i < 3; i++) {
+                const cell = document.getElementById('errVal' + i);
+                if (cell) cell.textContent = sample.e[REPS[i]].toFixed(3);
+            }
+        }
+
+        function buildSeriesTables() {
+            const p = palette();
+            const words = dict();
+            const action = document.getElementById('actionSeries');
+            action.replaceChildren();
+            for (let i = 0; i < 6; i++) {
+                const item = document.createElement('span');
+                item.className = 'series-item';
+                item.innerHTML =
+                    `<i class="series-chip" style="background:${p.action[i]}"></i><em>${CMD_MATH[i]}</em><b id="actVal${i}">0.000</b>`;
+                item.title = words[CMD_I18N[i]];
+                action.appendChild(item);
+            }
+            const err = document.getElementById('errorSeries');
+            err.replaceChildren();
+            REPS.forEach((rep, i) => {
+                const item = document.createElement('span');
+                item.className = 'series-item';
+                const label = rep === 'points' ? words.pointCoordinates : rep === 'edges' ? words.edgeVectors : words.curvature;
+                item.innerHTML =
+                    `<i class="series-chip" style="background:${p.rep[rep]}"></i><em>${label}</em><b id="errVal${i}">0.000</b>`;
+                err.appendChild(item);
+            });
+        }
+
+        // ------------------------------------------------------------------
+        // Jacobian panel
+        // ------------------------------------------------------------------
+        function divColor(v, scale, p) {
+            const t = clamp(Math.abs(v) / Math.max(scale, 1e-9), 0, 1);
+            return mix(p.divMid, v >= 0 ? p.divPos : p.divNeg, 0.12 + 0.88 * t);
+        }
+
+        function renderJacobian() {
+            const holder = document.getElementById('jacobianContent');
+            const note = document.getElementById('jacobianNote');
+            note.textContent = `6 × ${DIMS[representation]}`;
+            if (!jacobian) {
+                holder.replaceChildren();
+                const msg = document.createElement('p');
+                msg.className = 'empty-model';
+                msg.dataset.i18n = 'emptyModel';
+                msg.textContent = dict().emptyModel;
+                holder.appendChild(msg);
+                document.getElementById('modelRank').textContent = '—';
+                document.getElementById('conditionNumber').textContent = '—';
+                return;
+            }
+            const p = palette();
+            let max = 1e-9;
+            for (const row of jacobian) for (const v of row) max = Math.max(max, Math.abs(v));
+            holder.replaceChildren();
+            for (let c = 0; c < KEYS.length; c++) {
+                const row = document.createElement('div');
+                row.className = 'jacobian-row';
+                const label = document.createElement('span');
+                label.className = 'jacobian-label';
+                label.textContent = CMD_MATH[c];
+                const cells = document.createElement('div');
+                cells.className = 'jacobian-cells';
+                cells.style.gridTemplateColumns = `repeat(${jacobian.length}, minmax(2px, 1fr))`;
+                for (let r = 0; r < jacobian.length; r++) {
+                    const cell = document.createElement('span');
+                    cell.className = 'jacobian-cell';
+                    cell.style.background = divColor(jacobian[r][c], max, p);
+                    cell.title = `Ĵ[${r + 1}, ${c + 1}] = ${jacobian[r][c].toFixed(3)}`;
+                    cells.appendChild(cell);
+                }
+                row.append(label, cells);
+                holder.appendChild(row);
+            }
+            const sv = eigenvalues(gram(jacobian)).map(Math.sqrt).sort((a, b) => b - a);
+            const active = sv.filter(v => v > sv[0] * 1e-3);
+            document.getElementById('modelRank').textContent = `${active.length}/6`;
+            const cond = active.length > 1 ? active[0] / active[active.length - 1] : Infinity;
+            document.getElementById('conditionNumber').textContent = Number.isFinite(cond) ? cond.toFixed(1) : '∞';
+        }
+
+        // ------------------------------------------------------------------
+        // controls
+        // ------------------------------------------------------------------
+        const playBtn = document.getElementById('playBtn');
+        const probeBtn = document.getElementById('probeBtn');
+
+        function syncControls() {
+            const words = dict();
+            playBtn.setAttribute('aria-pressed', String(running));
+            playBtn.querySelector('.glyph').textContent = running ? '❚❚' : '▶';
+            document.getElementById('playLabel').textContent = running ? words.pauseBtn : words.playBtn;
+            playBtn.disabled = !!probe;
+            probeBtn.disabled = !!probe;
+            const dot = document.getElementById('statusDot');
+            dot.classList.toggle('live', running || !!probe);
+            let text = words[statusKey] || words.statusIdle;
+            if (statusKey === 'statusProbing' && probe) text = `${text} ${CMD_MATH[probe.index]} …`;
+            if (statusKey === 'statusRunning') text = `${text} · ${steps} ${words.stepsLabel}`;
+            document.getElementById('statusText').textContent = text;
+            document.getElementById('errorNorm').textContent =
+                history.length ? history[history.length - 1].e[representation].toFixed(3) : '0.000';
+            const legend = document.getElementById('legendFeature');
+            legend.style.color = `var(--rep-${representation})`;
+        }
+
+        function setRepresentation(rep) {
+            if (rep === representation) return;
+            representation = rep;
+            jacobian = null;
+            running = false;
+            converged = false;
+            steps = 0;
+            statusKey = 'statusIdle';
+            document.querySelectorAll('[data-representation]').forEach(btn => {
+                btn.setAttribute('aria-pressed', String(btn.dataset.representation === rep));
+            });
+            renderJacobian();
+            syncControls();
+        }
+
+        function togglePlay() {
+            if (probe) return;
+            if (running) {
+                running = false;
+                statusKey = 'statusPaused';
+            } else if (!jacobian) {
+                startProbe(true);
+            } else {
+                if (converged) { converged = false; steps = 0; }
+                running = true;
+                statusKey = 'statusRunning';
+            }
+            syncControls();
+        }
+
+        function resetAll() {
+            base = { ...HOME };
+            lastState = { ...HOME };
+            for (const k of KEYS) probeOffset[k] = 0;
+            jacobian = null;
+            running = false;
+            probe = null;
+            gesture = null;
+            drag = null;
+            steps = 0;
+            converged = false;
+            statusKey = 'statusIdle';
+            history.length = 0;
+            velocity = new Array(6).fill(0);
+            for (const key of Object.keys(plots)) plots[key].scale = null;
+            refreshErrorScale();
+            renderJacobian();
+            syncControls();
+        }
+
+        // ------------------------------------------------------------------
+        // pointer interaction on the scene
+        // ------------------------------------------------------------------
+        function hitTest(wx, wy) {
+            const s = effective();
+            const grips = [[s.x0, s.y0], [s.x1, s.y1]];
+            const angs = [s.a0, s.a1];
+            for (let i = 0; i < 2; i++) {
+                const hx = grips[i][0] + 0.26 * Math.cos(angs[i]);
+                const hy = grips[i][1] + 0.26 * Math.sin(angs[i]);
+                if (Math.hypot(wx - hx, wy - hy) < 0.10) return { mode: 'angle', side: i };
+            }
+            for (let i = 0; i < 2; i++) {
+                if (Math.hypot(wx - grips[i][0], wy - grips[i][1]) < 0.13) return { mode: 'grip', side: i };
+            }
+            const pts = nodes(s);
+            for (const pt of pts) {
+                if (Math.hypot(wx - pt[0], wy - pt[1]) < 0.11) return { mode: 'body', side: -1 };
+            }
+            return null;
+        }
+
+        scene.addEventListener('pointermove', (event) => {
+            if (drag) return;
+            const rect = scene.getBoundingClientRect();
+            const [wx, wy] = toWorld(event.clientX - rect.left, event.clientY - rect.top);
+            const hit = hitTest(wx, wy);
+            scene.style.cursor = hit ? (hit.mode === 'angle' ? 'grab' : 'move') : 'crosshair';
+        });
+
+        scene.addEventListener('pointerdown', (event) => {
+            if (probe) return;
+            const rect = scene.getBoundingClientRect();
+            const [wx, wy] = toWorld(event.clientX - rect.left, event.clientY - rect.top);
+            const hit = hitTest(wx, wy);
+            if (!hit) return;
+            event.preventDefault();
+            scene.setPointerCapture(event.pointerId);
+            drag = { ...hit, wx, wy, start: { ...base } };
+            running = false;
+            gesture = null;
+            statusKey = 'statusManual';
+            syncControls();
+        });
+
+        scene.addEventListener('pointermove', (event) => {
+            if (!drag) return;
+            const rect = scene.getBoundingClientRect();
+            const [wx, wy] = toWorld(event.clientX - rect.left, event.clientY - rect.top);
+            if (drag.mode === 'angle') {
+                const gx = drag.side === 0 ? base.x0 : base.x1;
+                const gy = drag.side === 0 ? base.y0 : base.y1;
+                const ang = Math.atan2(wy - gy, wx - gx);
+                const key = drag.side === 0 ? 'a0' : 'a1';
+                base[key] = clamp(ang, LIMITS[key][0], LIMITS[key][1]);
+            } else if (drag.mode === 'grip') {
+                const kx = drag.side === 0 ? 'x0' : 'x1';
+                const ky = drag.side === 0 ? 'y0' : 'y1';
+                base[kx] = clamp(drag.start[kx] + (wx - drag.wx), LIMITS[kx][0], LIMITS[kx][1]);
+                base[ky] = clamp(drag.start[ky] + (wy - drag.wy), LIMITS[ky][0], LIMITS[ky][1]);
+            } else {
+                const dx = wx - drag.wx;
+                const dy = wy - drag.wy;
+                base.x0 = clamp(drag.start.x0 + dx, LIMITS.x0[0], LIMITS.x0[1]);
+                base.x1 = clamp(drag.start.x1 + dx, LIMITS.x1[0], LIMITS.x1[1]);
+                base.y0 = clamp(drag.start.y0 + dy, LIMITS.y0[0], LIMITS.y0[1]);
+                base.y1 = clamp(drag.start.y1 + dy, LIMITS.y1[0], LIMITS.y1[1]);
+            }
+        });
+
+        const endDrag = (event) => {
+            if (!drag) return;
+            drag = null;
+            if (scene.hasPointerCapture && event.pointerId !== undefined && scene.hasPointerCapture(event.pointerId)) {
+                scene.releasePointerCapture(event.pointerId);
+            }
+        };
+        scene.addEventListener('pointerup', endDrag);
+        scene.addEventListener('pointercancel', endDrag);
+
+        // crosshair over the plots
+        function attachCursor(canvasEl) {
+            canvasEl.addEventListener('pointermove', (event) => {
+                const rect = canvasEl.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const inner = rect.width - PAD.l - PAD.r;
+                cursor = clamp((x - PAD.l) / Math.max(inner, 1), 0, 1);
+            });
+            canvasEl.addEventListener('pointerleave', () => { cursor = null; });
+        }
+
+        // ------------------------------------------------------------------
+        // main loop
+        // ------------------------------------------------------------------
+        let lastFrame = performance.now();
+
+        function frame(now) {
+            const dt = Math.min((now - lastFrame) / 1000, 0.1);
+            lastFrame = now;
+            if (visible) {
+                if (probe) stepProbe(now);
+                else if (running) controlStep();
+                if (gesture && (now - gesture.t0) >= GESTURES[gesture.type].dur) gesture = null;
+
+                if (now - lastSample >= SAMPLE_MS) {
+                    pushSample(now, (now - lastSample) / 1000);
+                    lastSample = now;
+                    for (const key of Object.keys(plots)) drawPlot(plots[key]);
+                    updateReadouts();
+                    if (running || probe) syncControls();
+                    else {
+                        document.getElementById('errorNorm').textContent =
+                            history[history.length - 1].e[representation].toFixed(3);
+                    }
+                }
+                drawScene();
+            }
+            requestAnimationFrame(frame);
+        }
+
+        // ------------------------------------------------------------------
+        // i18n / theme plumbing
+        // ------------------------------------------------------------------
+        function applyTranslations() {
+            const words = dict();
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const value = words[el.dataset.i18n];
+                if (value) el.textContent = value;
+            });
+            document.documentElement.lang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                const active = btn.dataset.lang === lang;
+                btn.classList.toggle('active', active);
+                btn.setAttribute('aria-pressed', String(active));
+            });
+            buildSeriesTables();
+            renderJacobian();
+            syncControls();
+            updateReadouts();
+            requestAnimationFrame(reportHeight);
+        }
+
+        function setLanguage(next) {
+            if (!translations[next]) return;
+            lang = next;
+            localStorage.setItem('language', next);
+            applyTranslations();
+        }
+
+        function setTheme(theme) {
+            if (theme !== 'light' && theme !== 'dark') return;
+            document.documentElement.dataset.theme = theme;
+            if (!isEmbedded) localStorage.setItem('theme', theme);
+            buildSeriesTables();
+            renderJacobian();
+            updateReadouts();
+            requestAnimationFrame(reportHeight);
+        }
+
+        let lastReportedHeight = 0;
+
+        function reportHeight() {
+            if (!isEmbedded) return;
+            const height = document.documentElement.scrollHeight;
+            if (Math.abs(height - lastReportedHeight) < 2) return;
+            lastReportedHeight = height;
+            window.parent.postMessage({
+                type: 'demoHeight',
+                demo: 'shape-features',
+                height
+            }, window.location.protocol === 'file:' ? '*' : window.location.origin);
+        }
+
+        window.addEventListener('load', reportHeight);
+        // hidden panels get no rendering lifecycle, so poll for the moment
+        // this demo is finally laid out; reportHeight() ignores no-op changes
+        setInterval(reportHeight, 500);
+
+        window.addEventListener('message', (event) => {
+            if (window.location.protocol !== 'file:' && event.origin !== window.location.origin) return;
+            if (event.data?.type === 'setPreferences') {
+                setLanguage(event.data.language);
+                setTheme(event.data.theme);
+            } else if (event.data?.type === 'setLanguage') {
+                setLanguage(event.data.language);
+            }
+        });
+
+        // ------------------------------------------------------------------
+        // wiring
+        // ------------------------------------------------------------------
+        definePlots();
+        for (const key of Object.keys(plots)) attachCursor(plots[key].canvas);
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+        });
+        document.querySelectorAll('[data-representation]').forEach(btn => {
+            btn.addEventListener('click', () => setRepresentation(btn.dataset.representation));
+        });
+        playBtn.addEventListener('click', togglePlay);
+        probeBtn.addEventListener('click', () => startProbe(false));
+        document.getElementById('resetBtn').addEventListener('click', resetAll);
+        document.getElementById('rigidBtn').addEventListener('click', () => startGesture('rigid'));
+        document.getElementById('rotateBtn').addEventListener('click', () => startGesture('rotate'));
+        document.getElementById('waveBtn').addEventListener('click', () => startGesture('wave'));
+
+        const observer = new ResizeObserver(() => reportHeight());
+        observer.observe(document.querySelector('.demo-shell'));
+
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver((entries) => {
+                visible = entries.some(entry => entry.isIntersecting);
+            }, { rootMargin: '120px' }).observe(document.querySelector('.demo-shell'));
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) visible = false;
+            else visible = true;
+        });
+
+        refreshErrorScale();
+        applyTranslations();
+        requestAnimationFrame(frame);
+        reportHeight();
+    })();
+    </script>
+</body>
+</html>

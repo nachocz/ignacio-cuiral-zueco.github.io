@@ -25,395 +25,620 @@
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://nachocz.github.io/shape-comparison.html">
+    <script>
+        (() => {
+            const savedTheme = localStorage.getItem('theme');
+            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.dataset.theme = savedTheme || systemTheme;
+            document.documentElement.classList.toggle('is-embedded', window.self !== window.top);
+        })();
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
+        :root {
+            color-scheme: light;
+            --bg: #f7f8f7;
+            --surface: #ffffff;
+            --surface-soft: #f0f3f1;
+            --ink: #1d2522;
+            --ink-soft: #46504b;
+            --muted: #6d7773;
+            --line: #dce1de;
+            --line-strong: #c2cac6;
+            --accent: #527563;
+            --accent-strong: #3e624f;
+            --accent-soft: #eaf1ed;
+            --target: #a65f5b;
+            --current: #60866e;
+            --clay: #9a7653;
+            --canvas: #fbfcfb;
+            --canvas-grid: #e8ece9;
+            --shadow: 0 12px 36px rgba(28, 39, 34, 0.07);
+            --radius: 14px;
+            font-family: "Aptos", "Segoe UI Variable", "Segoe UI", Helvetica, Arial, sans-serif;
+        }
+
+        [data-theme="dark"] {
+            color-scheme: dark;
+            --bg: #111513;
+            --surface: #171c19;
+            --surface-soft: #202723;
+            --ink: #eef1ef;
+            --ink-soft: #c3cbc7;
+            --muted: #929d97;
+            --line: #303833;
+            --line-strong: #48524c;
+            --accent: #91b19f;
+            --accent-strong: #b2cdbf;
+            --accent-soft: #26372f;
+            --target: #d28b86;
+            --current: #8eb29a;
+            --clay: #c09670;
+            --canvas: #1c221f;
+            --canvas-grid: #2a322d;
+            --shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+        }
+
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            padding: 20px;
+            min-width: 300px;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            margin: 0;
+            padding: 18px;
+            color: var(--ink);
+            background: var(--bg);
+            font-size: 15px;
+            line-height: 1.5;
+            text-rendering: optimizeLegibility;
+            transition: color 160ms ease, background-color 160ms ease;
         }
 
-        .header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            color: inherit;
+        }
+
+        :focus-visible {
+            outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+            outline-offset: 2px;
+        }
+
+        .demo-shell {
+            width: min(100%, 980px);
+            margin: 0 auto;
+            padding: 24px;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+
+        .is-embedded body {
+            min-height: 0;
+            padding: 0;
+            background: transparent;
+        }
+
+        .is-embedded .demo-shell {
             width: 100%;
-            max-width: 1000px;
-            margin-bottom: 20px;
+            max-width: none;
+            padding: 22px;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .demo-heading {
+            margin-bottom: 16px;
+        }
+
+        .demo-topline {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 7px;
+        }
+
+        .demo-kicker {
+            margin: 0;
+            color: var(--accent);
+            font-size: 0.7rem;
+            font-weight: 750;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 2px;
+            padding: 2px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--surface-soft);
         }
 
         .lang-btn {
-            padding: 6px 12px;
-            background: #ecf0f1;
-            border: 1px solid #dfe6e9;
-            border-radius: 20px;
+            min-width: 36px;
+            min-height: 30px;
+            padding: 4px 9px;
+            border: 0;
+            border-radius: 999px;
+            color: var(--muted);
+            background: transparent;
+            font-size: 0.72rem;
+            font-weight: 750;
             cursor: pointer;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.85em;
-            transition: all 0.3s ease;
         }
 
         .lang-btn:hover {
-            background: #dfe6e9;
+            color: var(--ink);
         }
 
         .lang-btn.active {
-            background: #3498db;
-            color: white;
-            border-color: #2980b9;
+            color: var(--ink);
+            background: var(--surface);
+            box-shadow: inset 0 0 0 1px var(--line);
         }
 
-        body.dark-theme .lang-btn {
-            background: #1f2633;
-            border-color: #2a3140;
-            color: #e6e6e6;
-        }
-
-        body.dark-theme .lang-btn:hover {
-            background: #2a3140;
-        }
-
-        body.dark-theme .lang-btn.active {
-            background: #2c6fb3;
-            border-color: #3b82c4;
-            color: #ffffff;
-        }
-
-        .demo-container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            max-width: 1000px;
-            width: 100%;
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0;
         }
 
         h1 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.8em;
+            margin-bottom: 7px;
+            color: var(--ink);
+            font-size: clamp(1.65rem, 4vw, 2.25rem);
+            font-weight: 680;
+            letter-spacing: -0.045em;
+            line-height: 1.05;
         }
 
-        .layout {
+        .demo-intro {
+            max-width: 760px;
+            margin-bottom: 0;
+            color: var(--muted);
+            font-size: 0.94rem;
+        }
+
+        .tip-strip {
+            display: flex;
+            gap: 8px;
+            align-items: baseline;
+            margin-bottom: 14px;
+            padding: 10px 12px;
+            border-left: 3px solid var(--accent);
+            color: var(--muted);
+            background: var(--accent-soft);
+            font-size: 0.78rem;
+        }
+
+        .tip-strip strong {
+            flex: 0 0 auto;
+            color: var(--ink);
+        }
+
+        .workspace {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 14px;
+            align-items: start;
         }
 
-        .panel {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
+        .card {
+            min-width: 0;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--surface);
         }
 
-        .panel h3 {
-            color: #2c3e50;
-            font-size: 1.1em;
-            margin-bottom: 12px;
-            text-align: center;
+        .card-heading {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 46px;
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .card-heading h2,
+        .card-heading h3 {
+            margin: 0;
+            color: var(--ink);
+            font-size: 0.86rem;
+            font-weight: 720;
+            letter-spacing: -0.01em;
+        }
+
+        .metric {
+            display: flex;
+            gap: 6px;
+            align-items: baseline;
+            color: var(--muted);
+            font-size: 0.68rem;
+        }
+
+        .metric output {
+            color: var(--accent-strong);
+            font-size: 0.88rem;
+            font-variant-numeric: tabular-nums;
+            font-weight: 750;
+        }
+
+        .canvas-wrap {
+            padding: 10px;
+            background: var(--surface-soft);
         }
 
         canvas {
             display: block;
-            background: white;
-            border: 2px solid #ecf0f1;
-            border-radius: 8px;
             width: 100%;
             height: auto;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: var(--canvas);
         }
 
-        #targetCanvas {
-            cursor: default;
+        #targetCanvas,
+        #shapesCanvas {
+            aspect-ratio: 1;
         }
 
         #shapesCanvas {
             cursor: crosshair;
+            touch-action: none;
         }
 
-        button {
-            padding: 10px 20px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.95em;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 10px;
+        .plot-block {
+            padding: 0 10px 10px;
+            background: var(--surface-soft);
         }
 
-        button:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .status {
-            background: #ecf0f1;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            color: #2c3e50;
-            font-size: 0.95em;
-            line-height: 1.5;
-        }
-
-        .instructions {
-            background: #e8f4f8;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            color: #2c3e50;
-            font-size: 0.9em;
-            line-height: 1.6;
+        #errorCanvas {
+            aspect-ratio: 8 / 3;
         }
 
         .plot-note {
             margin-top: 6px;
-            font-size: 0.85em;
-            color: #7f8c8d;
-            text-align: center;
+            color: var(--muted);
+            font-size: 0.68rem;
         }
 
-        .tools {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 15px;
+        .tool-panel {
+            padding: 12px;
+            border-top: 1px solid var(--line);
+        }
+
+        .tool-segment {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px;
+            padding: 3px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--surface-soft);
         }
 
         .tool-btn {
-            padding: 10px 20px;
-            background: #ecf0f1;
-            color: #2c3e50;
-            border: 2px solid #bdc3c7;
-            border-radius: 6px;
+            min-height: 36px;
+            padding: 7px 9px;
+            border: 0;
+            border-radius: 7px;
+            color: var(--muted);
+            background: transparent;
+            font-size: 0.75rem;
+            font-weight: 700;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 0.95em;
-            transition: all 0.3s ease;
         }
 
         .tool-btn:hover {
-            background: #d5dbdb;
-            transform: translateY(-2px);
+            color: var(--ink);
         }
 
         .tool-btn.active {
-            background: #3498db;
-            color: white;
-            border-color: #2980b9;
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            color: var(--ink);
+            background: var(--surface);
+            box-shadow: inset 0 0 0 1px var(--line);
         }
 
-        body.dark-theme {
-            background: #0f1115;
-            color: #e6e6e6;
+        .tool-btn::before {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin-right: 7px;
+            border: 1px solid currentColor;
+            border-radius: 50%;
+            content: "";
         }
 
-        body.dark-theme .demo-container,
-        body.dark-theme .panel,
-        body.dark-theme .instructions,
-        body.dark-theme .status {
-            background: #151922 !important;
-            color: #e6e6e6 !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        #toolClay::before {
+            background: var(--clay);
         }
 
-        body.dark-theme canvas {
-            border-color: #2a3140;
+        .brush-control {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 10px;
+            align-items: center;
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 0.72rem;
         }
 
-        body.dark-theme h1,
-        body.dark-theme h3,
-        body.dark-theme p,
-        body.dark-theme li,
-        body.dark-theme span,
-        body.dark-theme strong {
-            color: #e6e6e6 !important;
+        .brush-control output {
+            min-width: 38px;
+            color: var(--ink);
+            font-variant-numeric: tabular-nums;
+            font-weight: 700;
+            text-align: right;
         }
 
-        body.dark-theme button {
-            background: #2c6fb3;
+        input[type="range"] {
+            width: 100%;
+            margin: 0;
+            accent-color: var(--accent);
+            cursor: ew-resize;
         }
 
-        body.dark-theme button:hover {
-            background: #3b82c4;
+        .action-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
         }
 
-        body.dark-theme .tool-btn {
-            background: #1f2633;
-            border-color: #2a3140;
-            color: #e6e6e6;
+        .button {
+            min-height: 36px;
+            padding: 7px 10px;
+            border: 1px solid var(--line-strong);
+            border-radius: 8px;
+            color: var(--ink);
+            background: var(--surface);
+            font-size: 0.74rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: border-color 150ms ease, background-color 150ms ease;
         }
 
-        body.dark-theme .tool-btn.active {
-            background: #2c6fb3;
-            border-color: #3b82c4;
+        .button:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
         }
 
-        @media (max-width: 768px) {
+        .button-primary {
+            color: #ffffff;
+            border-color: var(--accent-strong);
+            background: var(--accent-strong);
+        }
+
+        [data-theme="dark"] .button-primary {
+            color: #152019;
+        }
+
+        .button-primary:hover {
+            color: #ffffff;
+            border-color: var(--accent);
+            background: var(--accent);
+        }
+
+        [data-theme="dark"] .button-primary:hover {
+            color: #152019;
+        }
+
+        .status {
+            min-height: 42px;
+            margin-top: 14px;
+            padding: 11px 13px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            color: var(--ink-soft);
+            background: var(--surface-soft);
+            font-size: 0.78rem;
+        }
+
+        .learn-more {
+            margin-top: 14px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--surface);
+        }
+
+        .learn-more summary {
+            padding: 13px 15px;
+            color: var(--ink);
+            font-size: 0.82rem;
+            font-weight: 720;
+            cursor: pointer;
+        }
+
+        .learn-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            padding: 0 15px 16px;
+            border-top: 1px solid var(--line);
+        }
+
+        .learn-content section {
+            padding-top: 14px;
+        }
+
+        .learn-content h3 {
+            margin-bottom: 8px;
+            font-size: 0.83rem;
+        }
+
+        .learn-content p {
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-size: 0.78rem;
+        }
+
+        .learn-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .learn-content strong {
+            color: var(--ink);
+        }
+
+        @media (max-width: 720px) {
             body {
                 padding: 10px;
             }
 
-            .demo-container {
-                padding: 15px;
+            .demo-shell,
+            .is-embedded .demo-shell {
+                padding: 16px;
             }
 
-            h1 {
-                font-size: 1.4em;
+            .workspace {
+                grid-template-columns: 1fr;
             }
 
-            .layout {
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
+            .learn-content {
+                grid-template-columns: 1fr;
+                gap: 2px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .tip-strip {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 2px;
             }
 
-            .panel {
-                padding: 10px;
+            .action-row {
+                grid-template-columns: 1fr;
             }
+        }
 
-            .panel h3 {
-                font-size: 0.85em;
-                margin-bottom: 8px;
-            }
-
-            #targetCanvas,
-            #shapesCanvas {
-                width: 100%;
-                height: auto;
-            }
-
-            #errorCanvas {
-                width: 100%;
-                height: auto;
-                margin-top: 8px;
-            }
-
-            .instructions {
-                font-size: 0.85em;
-                padding: 10px;
-            }
-
-            .instructions ul {
-                margin: 8px 0 8px 12px;
-                line-height: 1.6;
-            }
-
-            .instructions li {
-                font-size: 0.85em;
-            }
-
-            button {
-                padding: 6px 10px;
-                font-size: 0.8em;
-            }
-
-            .tools {
-                display: flex;
-                gap: 6px;
-            }
-
-            .tool-btn {
-                flex: 1;
-                padding: 6px 4px;
-                font-size: 0.75em;
-            }
-
-            .plot-note {
-                font-size: 0.7em;
-            }
-
-            .status {
-                font-size: 0.8em;
-                padding: 8px;
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
             }
         }
     </style>
 </head>
-<body class="dark-theme">
-    <div class="header-bar">
-        <div></div>
-        <div id="language-switcher" style="display: flex; gap: 6px;">
-            <button id="lang-en" class="lang-btn active" data-lang="en">EN</button>
-            <button id="lang-es" class="lang-btn" data-lang="es">ES</button>
-        </div>
-    </div>
-    <div class="demo-container">
-        <h1 data-i18n="title">Shape Comparison Game</h1>
-        
-        <p style="text-align: center; margin: 15px auto 20px; max-width: 700px; font-size: 0.95em; color: #555; line-height: 1.6;">
-            <span data-i18n="gameInstructions">Remove or add material from the clay block (right) to make its shape fit the target shape (left).</span>
-            <strong data-i18n="gameTip">Tip:</strong> <span data-i18n="gameTipText">Start removing material from the sides.</span>
-        </p>
-        
-        <div class="layout">
-            <div class="panel">
-                <h3 data-i18n="targetShapeLabel">Target Shape</h3>
-                <canvas id="targetCanvas" width="400" height="400"></canvas>
-                <canvas id="errorCanvas" width="400" height="150" style="margin-top: 12px;"></canvas>
-                <div class="plot-note" data-i18n="shapeResidualNote">Shape mismatch, lower is better</div>
-            </div>
-            
-            <div class="panel">
-                <h3 data-i18n="sculptingCanvasLabel">Sculpting Canvas (try to match target)</h3>
-                <canvas id="shapesCanvas" width="400" height="400"></canvas>
-                <div class="tools" style="margin-top: 12px;">
-                    <button class="tool-btn active" onclick="selectTool('chisel')" id="toolChisel"><span data-i18n="chiselBtn">🔨 Chisel (remove material)</span></button>
-                    <button class="tool-btn" onclick="selectTool('clay')" id="toolClay"><span data-i18n="clayBtn">🏺 Clay (add material)</span></button>
+<body>
+    <main class="demo-shell">
+        <header class="demo-heading">
+            <div class="demo-topline">
+                <p class="demo-kicker" data-i18n="demoKicker">Interactive research demo</p>
+                <div class="language-switcher" aria-label="Language">
+                    <button id="lang-en" class="lang-btn active" type="button" data-lang="en" aria-pressed="true">EN</button>
+                    <button id="lang-es" class="lang-btn" type="button" data-lang="es" aria-pressed="false">ES</button>
                 </div>
-                <button onclick="resetSculpt()" data-i18n="resetBlockBtn">🔄 Reset Block</button>
             </div>
+            <h1 data-i18n="title">Shape Comparison</h1>
+            <p class="demo-intro" data-i18n="gameInstructions">Remove or restore material on the right until its contour matches the target on the left.</p>
+        </header>
+
+        <div class="tip-strip">
+            <strong data-i18n="gameTip">A useful start:</strong>
+            <span data-i18n="gameTipText">Work gradually from the outer edges and watch the mismatch curve.</span>
         </div>
 
-        <div class="status" id="statusText" style="min-height: 20px;">
-        </div>
-        
-        <div class="instructions">
-            <strong data-i18n="howToPlay">How to Play</strong>
-            <ul style="margin: 12px 0 12px 20px; line-height: 1.8; color: #2c3e50;">
-                <li><strong data-i18n="goal">Goal:</strong> <span data-i18n="goalDesc">Shape the block on the right to match the red target shape on the left</span></li>
-                <li><strong data-i18n="sculpting">Sculpting:</strong> <span data-i18n="sculptingDesc">The right panel shows your block as a grid of particles. Use Chisel to remove particles and Clay to add them back</span></li>
-                <li><strong data-i18n="feedback">Feedback:</strong> <span data-i18n="feedbackDesc">Your current shape appears in green on the left. The error curve shows how close you are, lower values are better</span></li>
-            </ul>
-            
-            <strong data-i18n="whyMatters">Why This Matters</strong>
-            <ul style="margin: 12px 0 12px 20px; line-height: 1.8; color: #2c3e50;">
-                <li data-i18n="matterText1">Humans naturally compare shapes and judge how closely objects match. Sculptors show this skill at its highest level, constantly adjusting their work against a target until the pieces look identical</li>
-                <li data-i18n="matterText2">Robots need systems that help them compare shapes properly so they can know whether they are manipulating the object in the desired direction towards the target shape or away from it</li>
-            </ul>
-        </div>
-    </div>
+        <section class="workspace" aria-label="Shape comparison workspace">
+            <article class="card">
+                <div class="card-heading">
+                    <h2 data-i18n="targetShapeLabel">Target and comparison</h2>
+                    <span class="metric">
+                        <span data-i18n="mismatchLabel">Mismatch</span>
+                        <output id="residualValue">—</output>
+                    </span>
+                </div>
+                <div class="canvas-wrap">
+                    <canvas id="targetCanvas" width="400" height="400" role="img" aria-label="Target shape and current contour comparison"></canvas>
+                </div>
+                <div class="plot-block">
+                    <canvas id="errorCanvas" width="400" height="150" role="img" aria-label="Shape mismatch history"></canvas>
+                    <p class="plot-note" data-i18n="shapeResidualNote">Shape mismatch over time; lower is better.</p>
+                </div>
+            </article>
+
+            <article class="card">
+                <div class="card-heading">
+                    <h2 data-i18n="sculptingCanvasLabel">Sculpting workspace</h2>
+                </div>
+                <div class="canvas-wrap">
+                    <canvas id="shapesCanvas" width="400" height="400" aria-label="Interactive material sculpting canvas"></canvas>
+                </div>
+                <div class="tool-panel">
+                    <div class="tool-segment" role="group" aria-label="Sculpting tool">
+                        <button class="tool-btn active" type="button" data-tool="chisel" id="toolChisel" aria-pressed="true">
+                            <span data-i18n="chiselBtn">Remove material</span>
+                        </button>
+                        <button class="tool-btn" type="button" data-tool="clay" id="toolClay" aria-pressed="false">
+                            <span data-i18n="clayBtn">Restore material</span>
+                        </button>
+                    </div>
+
+                    <label class="brush-control" for="brushSizeSlider">
+                        <span data-i18n="brushSize">Tool size</span>
+                        <input id="brushSizeSlider" type="range" min="10" max="36" step="2" value="20">
+                        <output id="brushSizeValue" for="brushSizeSlider">20 px</output>
+                    </label>
+
+                    <div class="action-row">
+                        <button id="resetBlockBtn" class="button" type="button" data-i18n="resetBlockBtn">Reset block</button>
+                        <button id="newShapeBtn" class="button button-primary" type="button" data-i18n="newShapeBtn">New target</button>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <div class="status" id="statusText" aria-live="polite"></div>
+
+        <details class="learn-more">
+            <summary data-i18n="howToPlay">How it works</summary>
+            <div class="learn-content">
+                <section>
+                    <h3 data-i18n="interactionGuide">Interaction guide</h3>
+                    <p><strong data-i18n="goal">Objective:</strong> <span data-i18n="goalDesc">Sculpt the block so that its contour matches the target.</span></p>
+                    <p><strong data-i18n="sculpting">Sculpting:</strong> <span data-i18n="sculptingDesc">Drag over the block to remove or restore particles.</span></p>
+                    <p><strong data-i18n="feedback">Feedback:</strong> <span data-i18n="feedbackDesc">The overlay and curve quantify how close the shapes are. Lower is better.</span></p>
+                </section>
+                <section>
+                    <h3 data-i18n="whyMatters">Research context</h3>
+                    <p data-i18n="matterText1">People compare and refine shapes naturally; robots need an explicit, robust measure of the same difference.</p>
+                    <p data-i18n="matterText2">Shape comparison gives a robot feedback about whether a manipulation is moving an object toward or away from its target.</p>
+                </section>
+            </div>
+        </details>
+    </main>
 
     <script>
         // i18n Translations Object
         const translations = {
             en: {
-                title: 'Shape Comparison Game',
-                gameInstructions: 'Remove or add material from the clay block (right) to make its shape fit the target shape (left).',
-                gameTip: 'Tip:',
-                gameTipText: 'Start removing material from the sides and do so uniformly.',
-                howToPlay: 'How to Play',
+                demoKicker: 'Interactive research demo',
+                mismatchLabel: 'Mismatch',
+                brushSize: 'Tool size',
+                newShapeBtn: 'New target',
+                interactionGuide: 'Interaction guide',
+                title: 'Shape Comparison',
+                gameInstructions: 'Remove or restore material on the right until its contour matches the target on the left.',
+                gameTip: 'A useful start:',
+                gameTipText: 'Work gradually from the outer edges and watch the mismatch curve.',
+                howToPlay: 'How it works',
                 goal: 'Goal:',
                 goalDesc: 'Shape the block on the right so that its contour matches the red shape on the left',
                 sculpting: 'Sculpting:',
@@ -423,23 +648,28 @@
                 whyMatters: 'What does this example illustrate?',
                 matterText1: 'Humans are capable of comparing shapes naturally and robustly, accurately judging the degree of similarity between the shapes of objects. Sculptors are a clear example of this skill: they constantly adjust the sculpture against a model or reference image until the piece and the reference model are nearly identical',
                 matterText2: 'Similarly, robots need systems that help them compare shapes correctly to know whether they are manipulating the object towards the target reference shape or away from it. Part of my research focuses on developing shape comparison systems to help robots understand how close they are to the target shape and in which direction they should manipulate the object to get closer to it.',
-                targetShapeLabel: 'Target Shape',
-                shapeResidualNote: 'Shape mismatch (how different the red and green shapes are), lower is better',
-                sculptingCanvasLabel: 'Sculpting Canvas',
-                chiselBtn: '🔨 Chisel (remove material)',
-                clayBtn: '🏺 Clay (add material)',
-                resetBlockBtn: '🔄 Reset Block',
+                targetShapeLabel: 'Target and comparison',
+                shapeResidualNote: 'Shape mismatch over time; lower is better.',
+                sculptingCanvasLabel: 'Sculpting workspace',
+                chiselBtn: 'Remove material',
+                clayBtn: 'Restore material',
+                resetBlockBtn: 'Reset block',
                 initialStatusText: 'Sculpt the shape to match the target. The residual curve updates as you sculpt.',
                 statusText: 'Sculpt the shape to match the target.',
                 legendTargetShape: 'Target shape',
                 legendCurrentShape: 'Current shape'
             },
             es: {
-                title: 'Juego de Comparación de Formas',
-                gameInstructions: 'Elimina o añade material del bloque de arcilla (derecha) para que su forma encaje con la forma objetivo (izquierda).',
-                gameTip: 'Consejo:',
-                gameTipText: 'Empieza eliminando material desde los lados y de forma uniforme.',
-                howToPlay: 'Cómo Jugar',
+                demoKicker: 'Demostración interactiva',
+                mismatchLabel: 'Desajuste',
+                brushSize: 'Tamaño',
+                newShapeBtn: 'Nuevo objetivo',
+                interactionGuide: 'Guía de interacción',
+                title: 'Comparación de Formas',
+                gameInstructions: 'Elimina o restaura material a la derecha hasta que su contorno coincida con el objetivo de la izquierda.',
+                gameTip: 'Un buen comienzo:',
+                gameTipText: 'Trabaja gradualmente desde los bordes y observa la curva de desajuste.',
+                howToPlay: 'Cómo funciona',
                 goal: 'Objetivo:',
                 goalDesc: 'Dar forma al bloque de la derecha para que su contorno coincida con la forma roja de la izquierda',
                 sculpting: 'Esculpir:',
@@ -449,12 +679,12 @@
                 whyMatters: '¿Qué ilustra este ejemplo?',
                 matterText1: 'Los seres humanos son capaces de comparar formas de forma natural y robusta, juzgando con acierto el grado de similitud entre la forma de los objetos. Los escultores son un claro ejemplo de esta habilidad: ajustan constantemente la escultura con respecto a un modelo o imagen de referencia hasta que la pieza y el modelo de referencia son casi idénticos',
                 matterText2: 'De forma similar, los robots necesitan sistemas que les ayuden a comparar formas correctamente para saber si están manipulando el objeto hacia la forma de referencia objetivo o alejándose de ella. Parte de mi investigación se centra en desarrollar sistemas de comparación de formas para ayudar a los robots a entender cómo de cerca están de la forma objetivo y en qué dirección deben manipular el objeto para acercarse a ella.',
-                targetShapeLabel: 'Forma Objetivo',
-                shapeResidualNote: 'Error de forma (cómo de diferentes son las formas roja y verde), cuanto más bajo, mejor',
-                sculptingCanvasLabel: 'Bloque a esculpir',
-                chiselBtn: '🔨 Cincel (eliminar material)',
-                clayBtn: '🏺 Arcilla (agregar material)',
-                resetBlockBtn: '🔄 Reiniciar Bloque',
+                targetShapeLabel: 'Objetivo y comparación',
+                shapeResidualNote: 'Desajuste de forma en el tiempo; cuanto más bajo, mejor.',
+                sculptingCanvasLabel: 'Espacio de escultura',
+                chiselBtn: 'Eliminar material',
+                clayBtn: 'Restaurar material',
+                resetBlockBtn: 'Reiniciar bloque',
                 initialStatusText: 'Esculpe la forma para que coincida con el objetivo. La curva de residuo se actualiza mientras esculpes.',
                 statusText: 'Esculpe la forma para que coincida con el objetivo.',
                 legendTargetShape: 'Forma objetivo',
@@ -462,10 +692,12 @@
             }
         };
 
-        // i18n Functions
+        // Language, theme and parent-page integration
         let currentLanguage = localStorage.getItem('language') || 'en';
+        const isEmbedded = window.self !== window.top;
 
         function setLanguage(lang) {
+            if (!translations[lang]) return;
             currentLanguage = lang;
             localStorage.setItem('language', lang);
             applyTranslations();
@@ -476,6 +708,7 @@
                 drawErrorPlot();
                 renderSculpt();
             }
+            requestAnimationFrame(reportHeight);
         }
 
         function applyTranslations() {
@@ -491,19 +724,40 @@
 
         function updateLanguageButtons() {
             document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-lang') === currentLanguage);
+                const isActive = btn.getAttribute('data-lang') === currentLanguage;
+                btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-pressed', String(isActive));
             });
+        }
+
+        function setTheme(theme) {
+            if (theme !== 'light' && theme !== 'dark') return;
+            document.documentElement.dataset.theme = theme;
+            if (!isEmbedded) localStorage.setItem('theme', theme);
+            if (targetLoaded) {
+                drawTargetShape();
+                drawErrorPlot();
+                renderSculpt();
+            }
+            requestAnimationFrame(reportHeight);
+        }
+
+        let lastReportedHeight = 0;
+
+        function reportHeight() {
+            if (!isEmbedded) return;
+            const height = document.documentElement.scrollHeight;
+            if (Math.abs(height - lastReportedHeight) < 2) return;
+            lastReportedHeight = height;
+            window.parent.postMessage({
+                type: 'demoHeight',
+                demo: 'shape-comparison',
+                height
+            }, window.location.protocol === 'file:' ? '*' : window.location.origin);
         }
 
         // Initialize i18n on page load
         document.addEventListener('DOMContentLoaded', () => {
-            // Check if parent page has set a language preference
-            const parentLang = window.parent.document ? window.parent.document.documentElement.lang : null;
-            if (parentLang && (parentLang === 'en' || parentLang === 'es')) {
-                currentLanguage = parentLang;
-                localStorage.setItem('language', parentLang);
-            }
-            
             applyTranslations();
             updateLanguageButtons();
 
@@ -513,16 +767,23 @@
                     setLanguage(btn.getAttribute('data-lang'));
                 });
             });
-            
-            // Apply dark theme if parent page has it
-            if (window.parent.document.body.classList.contains('dark-theme')) {
-                document.body.classList.add('dark-theme');
-            }
+            const resizeObserver = new ResizeObserver(() => reportHeight());
+            resizeObserver.observe(document.querySelector('.demo-shell'));
+            reportHeight();
         });
 
-        // Listen for language changes from parent window
+        // Keep embedded preferences aligned with the portfolio page.
+        window.addEventListener('load', reportHeight);
+        // hidden panels get no rendering lifecycle, so poll for the moment
+        // this demo is finally laid out; reportHeight() ignores no-op changes
+        setInterval(reportHeight, 500);
+
         window.addEventListener('message', (event) => {
-            if (event.data.type === 'setLanguage') {
+            if (window.location.protocol !== 'file:' && event.origin !== window.location.origin) return;
+            if (event.data?.type === 'setPreferences') {
+                setLanguage(event.data.language);
+                setTheme(event.data.theme);
+            } else if (event.data?.type === 'setLanguage') {
                 setLanguage(event.data.language);
             }
         });
@@ -530,35 +791,27 @@
         const targetCanvas = document.getElementById('targetCanvas');
         const targetCtx = targetCanvas.getContext('2d');
         const shapesCanvas = document.getElementById('shapesCanvas');
-        const shapesCtx = shapesCanvas.getContext('2d');
         const errorCanvas = document.getElementById('errorCanvas');
         const errorCtx = errorCanvas.getContext('2d');
         const statusText = document.getElementById('statusText');
+        const residualValue = document.getElementById('residualValue');
 
         let currentTool = 'chisel';  // 'chisel' for erasing, 'clay' for adding
 
         function selectTool(tool) {
             currentTool = tool;
-            document.getElementById('toolChisel').classList.remove('active');
-            document.getElementById('toolClay').classList.remove('active');
-            if (tool === 'chisel') {
-                document.getElementById('toolChisel').classList.add('active');
-                sculptCanvas.style.cursor = 'crosshair';
-            } else {
-                document.getElementById('toolClay').classList.add('active');
-                sculptCanvas.style.cursor = 'cell';
-            }
+            document.querySelectorAll('[data-tool]').forEach(button => {
+                const isActive = button.dataset.tool === tool;
+                button.classList.toggle('active', isActive);
+                button.setAttribute('aria-pressed', String(isActive));
+            });
+            sculptCanvas.style.cursor = tool === 'chisel' ? 'crosshair' : 'cell';
         }
 
         const NUM_POINTS = 100;
-        const NUM_SHAPES = 3;  // Unused in sculpting mode
         let targetShape = [];
-        let userGuess = null;
-        let gameState = 'playing';
-        let procrustesDistances = [];
         let targetLoaded = false;
         let isSculpting = false;
-        let sculptHistory = [];
         let residualHistory = [];
         let lastResidual = null;
         let currentSculptShape = [];
@@ -575,8 +828,7 @@
         let isAnimating = false;  // Flag to prevent multiple animation loops
         const PARTICLE_RADIUS = 6.5;  // Larger particles for clay-like appearance
         const PARTICLE_COLOR = '#8B6F47';  // Brownish clay color
-        const ERASE_RADIUS = 20;
-        const ALPHA_RADIUS = 15;  // Concavity parameter
+        let brushRadius = 20;
 
         // Load and parse the target SVG (embedded path data)
         function loadTargetShape() {
@@ -929,11 +1181,33 @@
             ctx.stroke();
         }
 
+        function canvasPalette() {
+            const dark = document.documentElement.dataset.theme === 'dark';
+            return dark ? {
+                background: '#1c221f',
+                grid: '#303833',
+                text: '#b9c3bd',
+                target: '#d28b86',
+                current: '#8eb29a',
+                curve: '#91b19f',
+                contour: '#66726b'
+            } : {
+                background: '#fbfcfb',
+                grid: '#e8ece9',
+                text: '#53605a',
+                target: '#a65f5b',
+                current: '#60866e',
+                curve: '#527563',
+                contour: '#b6bfba'
+            };
+        }
+
         function drawTargetShape() {
-            targetCtx.fillStyle = 'white';
+            const palette = canvasPalette();
+            targetCtx.fillStyle = palette.background;
             targetCtx.fillRect(0, 0, targetCanvas.width, targetCanvas.height);
             
-            targetCtx.strokeStyle = '#f0f0f0';
+            targetCtx.strokeStyle = palette.grid;
             targetCtx.lineWidth = 1;
             for (let i = 0; i < targetCanvas.width; i += 50) {
                 targetCtx.beginPath();
@@ -948,11 +1222,11 @@
                 targetCtx.stroke();
             }
             
-            drawShape(targetCtx, targetShape, '#e74c3c', 3, true);
+            drawShape(targetCtx, targetShape, palette.target, 3, true);
             
             // Overlay current sculpt shape (no alignment, just draw it)
             if (currentSculptShape.length > 0) {
-                drawShape(targetCtx, currentSculptShape, '#27ae60', 3, false);
+                drawShape(targetCtx, currentSculptShape, palette.current, 3, false);
             }
             
             // Draw legend in top-left corner
@@ -966,34 +1240,35 @@
             targetCtx.textBaseline = 'middle';
             
             // Red solid line (target shape)
-            targetCtx.strokeStyle = '#e74c3c';
+            targetCtx.strokeStyle = palette.target;
             targetCtx.lineWidth = 3;
             targetCtx.beginPath();
             targetCtx.moveTo(legendX, legendY);
             targetCtx.lineTo(legendX + lineLength, legendY);
             targetCtx.stroke();
-            targetCtx.fillStyle = '#2c3e50';
+            targetCtx.fillStyle = palette.text;
             targetCtx.fillText(translations[currentLanguage].legendTargetShape, legendX + lineLength + 8, legendY);
             
             // Green solid line (current shape)
-            targetCtx.strokeStyle = '#27ae60';
+            targetCtx.strokeStyle = palette.current;
             targetCtx.lineWidth = 3;
             targetCtx.beginPath();
             targetCtx.moveTo(legendX, legendY + lineSpacing);
             targetCtx.lineTo(legendX + lineLength, legendY + lineSpacing);
             targetCtx.stroke();
-            targetCtx.fillStyle = '#2c3e50';
+            targetCtx.fillStyle = palette.text;
             targetCtx.fillText(translations[currentLanguage].legendCurrentShape, legendX + lineLength + 8, legendY + lineSpacing);
             
-            targetCtx.fillStyle = '#2c3e50';
+            targetCtx.fillStyle = palette.text;
             targetCtx.font = 'bold 14px Arial';
         }
 
         function drawErrorPlot() {
-            errorCtx.fillStyle = 'white';
+            const palette = canvasPalette();
+            errorCtx.fillStyle = palette.background;
             errorCtx.fillRect(0, 0, errorCanvas.width, errorCanvas.height);
 
-            errorCtx.strokeStyle = '#ecf0f1';
+            errorCtx.strokeStyle = palette.grid;
             errorCtx.lineWidth = 1;
             for (let i = 0; i <= 4; i++) {
                 const y = 20 + i * ((errorCanvas.height - 40) / 4);
@@ -1009,7 +1284,7 @@
             const plotW = errorCanvas.width - 40;
             const plotH = errorCanvas.height - 40;
 
-            errorCtx.strokeStyle = '#3498db';
+            errorCtx.strokeStyle = palette.curve;
             errorCtx.lineWidth = 2;
             errorCtx.beginPath();
             residualHistory.forEach((v, i) => {
@@ -1023,9 +1298,9 @@
             });
             errorCtx.stroke();
 
-            errorCtx.fillStyle = '#7f8c8d';
+            errorCtx.fillStyle = palette.text;
             errorCtx.font = '12px Arial';
-            errorCtx.fillText('Residual', 24, 16);
+            errorCtx.fillText(currentLanguage === 'es' ? 'Desajuste' : 'Mismatch', 24, 16);
         }
 
         // Helper: Check if a grid cell is valid and alive
@@ -1109,10 +1384,11 @@
         }
 
         function renderSculpt() {
-            sculptCtx.fillStyle = 'white';
+            const palette = canvasPalette();
+            sculptCtx.fillStyle = palette.background;
             sculptCtx.fillRect(0, 0, sculptCanvas.width, sculptCanvas.height);
 
-            sculptCtx.strokeStyle = '#f0f0f0';
+            sculptCtx.strokeStyle = palette.grid;
             sculptCtx.lineWidth = 1;
             for (let i = 0; i < sculptCanvas.width; i += 50) {
                 sculptCtx.beginPath();
@@ -1156,7 +1432,7 @@
 
             // Draw contour
             if (currentSculptShape.length > 0) {
-                drawShape(sculptCtx, currentSculptShape, '#d0d0d0', 2, false);
+                drawShape(sculptCtx, currentSculptShape, palette.contour, 2, false);
             }
         }
         
@@ -1273,12 +1549,11 @@
                 if (residualHistory.length > 200) residualHistory.shift();
                 
                 // Translate the status text based on current language
-                const t = translations[currentLanguage];
                 const statusMsg = currentLanguage === 'es' 
                     ? `Desajuste actual de forma (más bajo es mejor): ${lastResidual.toFixed(4)}`
                     : `Current shape mismatch (lower is better): ${lastResidual.toFixed(4)}`;
                 statusText.textContent = statusMsg;
-                statusText.style.background = '#ecf0f1';
+                residualValue.value = lastResidual.toFixed(4);
             }
 
             renderSculpt();
@@ -1322,11 +1597,11 @@
 
             residualHistory = [];
             currentSculptShape = [];
+            residualValue.value = '—';
             
             // Translate the status text based on current language
             const t = translations[currentLanguage];
             statusText.textContent = t.statusText;
-            statusText.style.background = '#ecf0f1';
 
             updateResidualAndRender();
         }
@@ -1341,7 +1616,7 @@
                     const dy = p.y - y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     
-                    if (dist < ERASE_RADIUS) {
+                    if (dist < brushRadius) {
                         if (currentTool === 'chisel') {
                             // Remove material (chisel)
                             if (p.alive) {
@@ -1384,25 +1659,49 @@
             return { x, y };
         }
 
-        sculptCanvas.addEventListener('mousedown', (e) => {
+        document.querySelectorAll('[data-tool]').forEach(button => {
+            button.addEventListener('click', () => selectTool(button.dataset.tool));
+        });
+
+        const brushSizeSlider = document.getElementById('brushSizeSlider');
+        const brushSizeValue = document.getElementById('brushSizeValue');
+        brushSizeSlider.addEventListener('input', () => {
+            brushRadius = Number.parseInt(brushSizeSlider.value, 10);
+            brushSizeValue.value = `${brushRadius} px`;
+        });
+
+        document.getElementById('resetBlockBtn').addEventListener('click', resetSculpt);
+        document.getElementById('newShapeBtn').addEventListener('click', () => {
+            targetShape = generateRandomShape(200, 200);
+            targetLoaded = true;
+            resetSculpt();
+        });
+
+        sculptCanvas.addEventListener('pointerdown', (event) => {
+            if (event.pointerType === 'mouse' && event.button !== 0) return;
+            event.preventDefault();
             isSculpting = true;
-            const { x, y } = getCanvasPos(e);
+            sculptCanvas.setPointerCapture(event.pointerId);
+            const { x, y } = getCanvasPos(event);
             eraseAt(x, y);
         });
 
-        sculptCanvas.addEventListener('mousemove', (e) => {
+        sculptCanvas.addEventListener('pointermove', (event) => {
             if (!isSculpting) return;
-            const { x, y } = getCanvasPos(e);
+            event.preventDefault();
+            const { x, y } = getCanvasPos(event);
             eraseAt(x, y);
         });
 
-        sculptCanvas.addEventListener('mouseup', () => {
+        function endSculpting(event) {
             isSculpting = false;
-        });
+            if (sculptCanvas.hasPointerCapture(event.pointerId)) {
+                sculptCanvas.releasePointerCapture(event.pointerId);
+            }
+        }
 
-        sculptCanvas.addEventListener('mouseleave', () => {
-            isSculpting = false;
-        });
+        sculptCanvas.addEventListener('pointerup', endSculpting);
+        sculptCanvas.addEventListener('pointercancel', endSculpting);
 
         // Initialize by loading the target shape
         loadTargetShape();
