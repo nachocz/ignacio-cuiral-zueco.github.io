@@ -324,70 +324,49 @@
         <section id="panel-dissemination" class="section-panel" role="tabpanel" aria-labelledby="tab-dissemination" tabindex="0" hidden>
             <div class="section-heading"><span class="section-index">05</span><div><p class="section-kicker" data-i18n="disseminationKicker">Demos & outreach</p><h2 id="dissemination" data-i18n="sectionDissemination">Dissemination</h2></div></div>
             <div class="section-content">
-            <p class="dissemination-intro" data-i18n="disseminationIntro">Research becomes easier to understand when you can test an idea yourself. Explore the learning journey below, then discover my educational robotics and thesis outreach work.</p>
+            <p class="dissemination-intro" data-i18n="disseminationIntro">Four interactive demonstrations of deformable-object shape control, followed by my educational robotics and outreach work.</p>
 
             <section class="journey-intro" aria-labelledby="journey-title">
-                <p class="journey-eyebrow" data-i18n="journeyEyebrow">A four-step interactive story</p>
-                <h3 id="journey-title" data-i18n="journeyTitle">How can a robot shape something flexible?</h3>
-                <p data-i18n="journeyIntro">Start by solving the manipulation problem yourself, then unpack the comparison, representation and data-driven control ideas behind it.</p>
-                <div class="journey-map" aria-label="Manipulate, compare, represent, and control" data-i18n-aria-label="journeyMapAria">
-                    <div class="journey-map-step">
-                        <span class="journey-number">01</span>
-                        <div><strong data-i18n="journeyManipulate">Manipulate</strong><span data-i18n="journeyManipulateDesc">Try to match a target by moving the robots.</span></div>
-                    </div>
-                    <span class="journey-arrow" aria-hidden="true">→</span>
-                    <div class="journey-map-step">
-                        <span class="journey-number">02</span>
-                        <div><strong data-i18n="journeyCompare">Compare</strong><span data-i18n="journeyCompareDesc">See how comparison drives repeated correction.</span></div>
-                    </div>
-                    <span class="journey-arrow" aria-hidden="true">→</span>
-                    <div class="journey-map-step">
-                        <span class="journey-number">03</span>
-                        <div><strong data-i18n="journeyRepresent">Represent</strong><span data-i18n="journeyRepresentDesc">Choose what information defines the shape.</span></div>
-                    </div>
-                    <span class="journey-arrow" aria-hidden="true">→</span>
-                    <div class="journey-map-step">
-                        <span class="journey-number">04</span>
-                        <div><strong data-i18n="journeyDataDriven">Data-driven</strong><span data-i18n="journeyDataDrivenDesc">Estimate the response and close the control loop.</span></div>
-                    </div>
-                </div>
+                <p class="journey-eyebrow" data-i18n="journeyEyebrow">Four demonstrations</p>
+                <h3 id="journey-title" data-i18n="journeyTitle">Shape control of deformable objects</h3>
+                <p data-i18n="journeyIntro">The demonstrations build up a single control loop: manipulate a deformable object by hand, quantify how close two shapes are, choose the features that define shape error, then estimate the shape Jacobian and close the loop.</p>
             </section>
             
             <!-- Interactive Demos Collapsible Section -->
             <div class="dissemination-item">
                 <button class="dissemination-header" type="button" aria-expanded="false">
                     <span class="dissemination-toggle" aria-hidden="true">↗</span>
-                    <h3 data-i18n="interactiveDerosTitle">Interactive Learning Journey</h3>
+                    <h3 data-i18n="interactiveDerosTitle">Interactive Demonstrations</h3>
                 </button>
                 <div class="dissemination-content">
-                    <p class="dissemination-description" data-i18n="interactiveDemosDesc">Follow the four steps in order for a guided introduction, or jump directly to the question that interests you.</p>
+                    <p class="dissemination-description" data-i18n="interactiveDemosDesc">The demonstrations are ordered, but each one stands alone.</p>
 
                     <div class="demo-tabs" role="tablist" aria-label="Interactive demos" data-i18n-aria-label="interactiveDemosAria">
                         <button class="demo-tab-btn active" type="button" data-target="demo-manipulate">
                             <span class="demo-tab-index">01</span>
-                            <span class="demo-tab-copy"><strong data-i18n="journeyManipulate">Manipulate</strong><small data-i18n="demoShapeControl">Match the cable by hand</small></span>
+                            <span class="demo-tab-copy"><strong data-i18n="journeyManipulate">Manipulate</strong><small data-i18n="demoShapeControl">Manual shape servoing</small></span>
                         </button>
                         <button class="demo-tab-btn" type="button" data-target="demo-shape-compare">
                             <span class="demo-tab-index">02</span>
-                            <span class="demo-tab-copy"><strong data-i18n="journeyCompare">Compare</strong><small data-i18n="demoShapeComparison">Think like a sculptor</small></span>
+                            <span class="demo-tab-copy"><strong data-i18n="journeyCompare">Compare</strong><small data-i18n="demoShapeComparison">Measuring shape similarity</small></span>
                         </button>
                         <button class="demo-tab-btn" type="button" data-target="demo-representations">
                             <span class="demo-tab-index">03</span>
-                            <span class="demo-tab-copy"><strong data-i18n="journeyRepresent">Represent</strong><small data-i18n="demoRepresentations">Compare three shape descriptions</small></span>
+                            <span class="demo-tab-copy"><strong data-i18n="journeyRepresent">Represent</strong><small data-i18n="demoRepresentations">Representations and invariance</small></span>
                         </button>
                         <button class="demo-tab-btn" type="button" data-target="demo-data-driven">
                             <span class="demo-tab-index">04</span>
-                            <span class="demo-tab-copy"><strong data-i18n="journeyDataDriven">Data-driven</strong><small data-i18n="demoDataDriven">Close the loop automatically</small></span>
+                            <span class="demo-tab-copy"><strong data-i18n="journeyDataDriven">Shape control</strong><small data-i18n="demoDataDriven">Estimated Jacobian and feedback</small></span>
                         </button>
                     </div>
 
                     <div id="demo-manipulate" class="demo-panel active">
                         <div class="demo-callout demo-callout-blue">
                             <p class="demo-step-kicker"><span data-i18n="journeyStep">Step</span> 1 · <span data-i18n="journeyManipulate">Manipulate</span></p>
-                            <h4 data-i18n="demoShapeTitle">Can you make the cable match the target?</h4>
-                            <p data-i18n="demoShapeLead">Move either robot gripper and build an intuition for the flexible-object shape-control problem.</p>
-                            <p class="demo-mission"><strong data-i18n="demoTryThis">Try this:</strong> <span data-i18n="demoShapeMission">Drag one gripper or rotation ring at a time. Keep a movement only when the shape error falls.</span></p>
-                            <p class="demo-model-note" data-i18n="demoShapeModel">This exact robot, rod model and target return in step 4, where a data-driven controller takes over the task.</p>
+                            <h4 data-i18n="demoShapeTitle">Manual shape servoing</h4>
+                            <p data-i18n="demoShapeLead">Two planar manipulators hold a deformable linear object at both ends. Moving either gripper changes the shape of the whole object.</p>
+                            <p class="demo-mission"><strong data-i18n="demoTryThis">Task:</strong> <span data-i18n="demoShapeMission">Move one gripper or rotation ring at a time and keep the change only when the shape error decreases.</span></p>
+                            <p class="demo-model-note" data-i18n="demoShapeModel">The same manipulators, rod model and target return in step 4, where an estimated Jacobian replaces the operator.</p>
                             <p class="demo-research-links"><span data-i18n="demoExploreResearch">Explore the research:</span> <a href="https://doi.org/10.1109/LRA.2023.3292617" data-i18n="demoCompliantControlPaper">object-compliant shape control</a> · <a href="https://doi.org/10.1109/TMECH.2023.3325934" data-i18n="demoProcrustesPaper">multiscale 3-D shape control</a></p>
                         </div>
                         <iframe src="shape-features-demo.html?mode=manipulate" class="demo-iframe" title="Manual Shape-Control Challenge" data-i18n-title="manipulateFrameTitle" id="manipulate-iframe" loading="lazy"></iframe>
@@ -396,10 +375,10 @@
                     <div id="demo-shape-compare" class="demo-panel">
                         <div class="demo-callout demo-callout-green">
                             <p class="demo-step-kicker"><span data-i18n="journeyStep">Step</span> 2 · <span data-i18n="journeyCompare">Compare</span></p>
-                            <h4 data-i18n="demoAnalysisTitle">How did you know which robot movement helped?</h4>
-                            <p data-i18n="demoAnalysisLead">The sculptor analogy makes the hidden comparison-and-correction loop from the first game explicit.</p>
-                            <p class="demo-mission"><strong data-i18n="demoTryThis">Try this:</strong> <span data-i18n="demoAnalysisMission">Remove material, compare again, and reverse a poor edit with Restore—exactly the repeated correction a controller needs.</span></p>
-                            <p class="demo-model-note" data-i18n="demoAnalysisModel">The score here uses simple area overlap. Real deformable-object control needs richer, correspondence-aware measures.</p>
+                            <h4 data-i18n="demoAnalysisTitle">Measuring shape similarity</h4>
+                            <p data-i18n="demoAnalysisLead">Any correction loop needs a scalar that states how far the current shape is from the target. This demonstration makes that measurement explicit.</p>
+                            <p class="demo-mission"><strong data-i18n="demoTryThis">Task:</strong> <span data-i18n="demoAnalysisMission">Remove material, measure again, and undo an edit that lowers the score: the compare-and-correct step a controller repeats.</span></p>
+                            <p class="demo-model-note" data-i18n="demoAnalysisModel">The score used here is a simple area overlap. Shape control on real deformable objects needs correspondence-aware metrics.</p>
                             <p class="demo-research-links"><span data-i18n="demoExploreResearch">Explore the research:</span> <a href="https://doi.org/10.1109/TASE.2025.3529180" data-i18n="demoSurfaceMappingPaper">time-consistent surface mapping</a> · <a href="https://doi.org/10.1016/j.robot.2025.105134" data-i18n="demoElasticMappingPaper">elastic contour mapping</a></p>
                         </div>
                         <iframe src="shape-comparison.html" class="demo-iframe" title="Shape Match Lab" data-i18n-title="shapeFrameTitle" id="shape-iframe" loading="lazy"></iframe>
@@ -408,21 +387,21 @@
                     <div id="demo-representations" class="demo-panel">
                         <div class="demo-callout demo-callout-neutral">
                             <p class="demo-step-kicker"><span data-i18n="journeyStep">Step</span> 3 · <span data-i18n="journeyRepresent">Represent</span></p>
-                            <h4 data-i18n="demoRepresentTitle">What information should “shape” contain?</h4>
-                            <p data-i18n="demoRepresentLead">Formalise the comparison using point positions, edge vectors or curvature—and see what each description deliberately ignores.</p>
-                            <p class="demo-mission"><strong data-i18n="demoTryThis">Try this:</strong> <span data-i18n="demoRepresentMission">Translate, rotate and bend the same object. Predict which of the three error signals will respond.</span></p>
-                            <p class="demo-model-note" data-i18n="demoRepresentModel">Invariance is a design choice: it removes nuisance motion, but also removes information the controller can observe and correct.</p>
+                            <h4 data-i18n="demoRepresentTitle">Shape representations and invariance</h4>
+                            <p data-i18n="demoRepresentLead">The same geometry can be described by point coordinates, edge vectors or discrete curvature. Each description defines a different error signal.</p>
+                            <p class="demo-mission"><strong data-i18n="demoTryThis">Task:</strong> <span data-i18n="demoRepresentMission">Translate, rotate and bend the object, and compare which of the three error signals responds.</span></p>
+                            <p class="demo-model-note" data-i18n="demoRepresentModel">Invariance is a design choice: it rejects nuisance motion, but also removes degrees of freedom the controller can observe and correct.</p>
                         </div>
                         <iframe src="shape-features-demo.html?mode=representations" class="demo-iframe" title="Three Ways to Represent Shape" data-i18n-title="representationsFrameTitle" id="representations-iframe" loading="lazy"></iframe>
                     </div>
 
                     <div id="demo-data-driven" class="demo-panel">
                         <div class="demo-callout demo-callout-neutral">
-                            <p class="demo-step-kicker"><span data-i18n="journeyStep">Step</span> 4 · <span data-i18n="journeyDataDriven">Data-driven</span></p>
-                            <h4 data-i18n="demoDataTitle">How does feedback become automatic control?</h4>
-                            <p data-i18n="demoDataLead">Return to the first robot task, now with an estimated shape Jacobian, a selectable representation and a closed control loop.</p>
-                            <p class="demo-mission"><strong data-i18n="demoTryThis">Try this:</strong> <span data-i18n="demoDataMission">Estimate the local model, run the controller for each representation, and inspect the commands and error signals.</span></p>
-                            <p class="demo-model-note" data-i18n="demoDataModel">The offline probing phase estimates how robot motion changes shape; the online phase uses that estimate to continually reduce the chosen error.</p>
+                            <p class="demo-step-kicker"><span data-i18n="journeyStep">Step</span> 4 · <span data-i18n="journeyDataDriven">Shape control</span></p>
+                            <h4 data-i18n="demoDataTitle">Data-driven shape control</h4>
+                            <p data-i18n="demoDataLead">The same manipulation task, now closed by an estimated shape Jacobian and a feedback law.</p>
+                            <p class="demo-mission"><strong data-i18n="demoTryThis">Task:</strong> <span data-i18n="demoDataMission">Identify the local model, run the controller under each representation, and compare the commands and error signals.</span></p>
+                            <p class="demo-model-note" data-i18n="demoDataModel">The offline phase estimates how gripper motion maps to shape change; the online phase applies that estimate as feedback and keeps updating it.</p>
                             <p class="demo-research-links"><span data-i18n="demoExploreResearch">Explore the research:</span> <a href="https://doi.org/10.1109/TMECH.2026.3715312" data-i18n="demoTrajectoryPaper">data-driven shape trajectory control</a></p>
                         </div>
                         <iframe src="shape-features-demo.html?mode=data-driven" class="demo-iframe" title="Data-Driven Shape Control" data-i18n-title="dataDrivenFrameTitle" id="data-driven-iframe" loading="lazy"></iframe>

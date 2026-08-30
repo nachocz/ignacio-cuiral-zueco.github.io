@@ -241,23 +241,6 @@
             font-size: 0.94rem;
         }
 
-        .tip-strip {
-            display: flex;
-            gap: 8px;
-            align-items: baseline;
-            margin-bottom: 14px;
-            padding: 10px 12px;
-            border-left: 3px solid var(--accent);
-            color: var(--muted);
-            background: var(--accent-soft);
-            font-size: 0.78rem;
-        }
-
-        .tip-strip strong {
-            flex: 0 0 auto;
-            color: var(--ink);
-        }
-
         .workspace {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -268,9 +251,7 @@
         .card {
             min-width: 0;
             overflow: hidden;
-            border: 1px solid var(--line);
-            border-radius: var(--radius);
-            background: var(--surface);
+            background: transparent;
         }
 
         .card-heading {
@@ -278,9 +259,8 @@
             gap: 12px;
             align-items: center;
             justify-content: space-between;
-            min-height: 46px;
-            padding: 11px 14px;
-            border-bottom: 1px solid var(--line);
+            min-height: 42px;
+            padding: 8px 2px;
         }
 
         .card-heading h2,
@@ -308,8 +288,7 @@
         }
 
         .canvas-wrap {
-            padding: 10px;
-            background: var(--surface-soft);
+            padding: 0;
         }
 
         canvas {
@@ -332,12 +311,13 @@
         }
 
         .plot-block {
-            padding: 0 10px 10px;
-            background: var(--surface-soft);
+            padding: 10px 0 0;
         }
 
         #errorCanvas {
             aspect-ratio: 8 / 3;
+            border: 0;
+            border-radius: 0;
         }
 
         .plot-note {
@@ -347,8 +327,7 @@
         }
 
         .tool-panel {
-            padding: 12px;
-            border-top: 1px solid var(--line);
+            padding: 12px 0 0;
         }
 
         .tool-segment {
@@ -356,8 +335,8 @@
             grid-template-columns: 1fr 1fr;
             gap: 3px;
             padding: 3px;
-            border: 1px solid var(--line);
-            border-radius: 10px;
+            border: 0;
+            border-radius: 8px;
             background: var(--surface-soft);
         }
 
@@ -424,7 +403,7 @@
 
         .action-row {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 8px;
             margin-top: 12px;
         }
@@ -474,18 +453,15 @@
             gap: 10px;
             align-items: center;
             margin-top: 14px;
-            padding: 12px 14px;
-            border: 1px solid var(--line);
-            border-radius: 10px;
+            padding: 11px 0 11px 14px;
+            border-left: 3px solid var(--line-strong);
             color: var(--ink-soft);
-            background: var(--surface-soft);
             font-size: 0.78rem;
         }
 
         .status[data-state="improving"],
         .status[data-state="matched"] {
-            border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
-            background: var(--accent-soft);
+            border-left-color: var(--accent);
         }
 
         .status-mark {
@@ -524,11 +500,8 @@
             gap: 18px;
             align-items: center;
             margin-top: 14px;
-            padding: 17px 18px;
-            border: 1px solid var(--line);
-            border-left: 4px solid var(--accent);
-            border-radius: var(--radius);
-            background: var(--accent-soft);
+            padding: 13px 0 13px 16px;
+            border-left: 3px solid var(--accent);
         }
 
         .takeaway-label {
@@ -555,9 +528,8 @@
 
         .learn-more {
             margin-top: 14px;
-            border: 1px solid var(--line);
-            border-radius: var(--radius);
-            background: var(--surface);
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
         }
 
         .learn-more summary {
@@ -620,12 +592,6 @@
         }
 
         @media (max-width: 430px) {
-            .tip-strip {
-                align-items: flex-start;
-                flex-direction: column;
-                gap: 2px;
-            }
-
             .action-row {
                 grid-template-columns: 1fr;
             }
@@ -661,14 +627,9 @@
                     <button id="lang-es" class="lang-btn" type="button" data-lang="es" aria-pressed="false">ES</button>
                 </div>
             </div>
-            <h1 data-i18n="title">Shape Match Lab</h1>
-            <p class="demo-intro" data-i18n="gameInstructions">A sculptor and a shape controller use the same loop: observe, compare with a target, adjust and repeat.</p>
+            <h1 data-i18n="title">Measuring shape similarity</h1>
+            <p class="demo-intro" data-i18n="gameInstructions">Sculpting and shape control share one loop: measure the difference from a target, apply a correction, measure again.</p>
         </header>
-
-        <div class="tip-strip">
-            <strong data-i18n="gameTip">A useful start:</strong>
-            <span data-i18n="gameTipText">Work gradually from the outer edges and watch the mismatch curve.</span>
-        </div>
 
         <section class="workspace" aria-label="Shape comparison workspace">
             <article class="card">
@@ -684,7 +645,7 @@
                 </div>
                 <div class="plot-block">
                     <canvas id="errorCanvas" width="400" height="150" role="img" aria-label="Shape mismatch history"></canvas>
-                    <p class="plot-note" data-i18n="shapeResidualNote">Match after each edit; higher is better.</p>
+                    <p class="plot-note" data-i18n="shapeResidualNote">Shape match after every edit. The dashed line marks the best score reached on this target.</p>
                 </div>
             </article>
 
@@ -714,7 +675,6 @@
 
                     <div class="action-row">
                         <button id="resetBlockBtn" class="button" type="button" data-i18n="resetBlockBtn">Reset block</button>
-                        <button id="hintBtn" class="button" type="button" data-i18n="hintBtn">Show hint</button>
                         <button id="newShapeBtn" class="button button-primary" type="button" data-i18n="newShapeBtn">New target</button>
                     </div>
                 </div>
@@ -723,7 +683,7 @@
 
         <div class="status" id="feedbackCard" data-state="start" role="status" aria-live="polite">
             <span class="status-mark" aria-hidden="true">↗</span>
-            <span class="status-copy"><strong id="feedbackTitle" data-i18n="feedbackStartTitle">Start outside the dashed outline</strong><span id="statusText" data-i18n="feedbackStartDesc">Remove material that clearly lies beyond the target, then refine the edge.</span></span>
+            <span class="status-copy"><strong id="feedbackTitle" data-i18n="feedbackStartTitle">Begin with the largest differences</strong><span id="statusText" data-i18n="feedbackStartDesc">Compare the two contours on the left, then remove material from the corresponding area on the right.</span></span>
             <span class="feedback-trend" id="feedbackTrend"></span>
         </div>
 
@@ -732,9 +692,9 @@
             <div class="learn-content">
                 <section>
                     <h3 data-i18n="interactionGuide">Interaction guide</h3>
-                    <p><strong data-i18n="goal">Objective:</strong> <span data-i18n="goalDesc">Sculpt the block so that its contour matches the target.</span></p>
+                    <p><strong data-i18n="goal">Objective:</strong> <span data-i18n="goalDesc">Remove material from the block on the right until its contour matches the target on the left.</span></p>
                     <p><strong data-i18n="sculpting">Sculpting:</strong> <span data-i18n="sculptingDesc">Drag over the block to remove or restore particles.</span></p>
-                    <p><strong data-i18n="feedback">Feedback:</strong> <span data-i18n="feedbackDesc">The overlay and score quantify how close the shapes are. Higher is better.</span></p>
+                    <p><strong data-i18n="feedback">Feedback:</strong> <span data-i18n="feedbackDesc">The green contour is the current shape. The score is the area overlap with the target, and the history records it after every edit.</span></p>
                 </section>
                 <section>
                     <h3 data-i18n="whyMatters">Research context</h3>
@@ -747,8 +707,8 @@
         <section class="lesson-takeaway">
             <div>
                 <span class="takeaway-label" data-i18n="takeawayLabel">Takeaway</span>
-                <strong data-i18n="takeawayTitle">Shape comparison turns a target into actionable feedback.</strong>
-                <p data-i18n="takeawayDesc">Observe the current shape, measure its difference from the target, adjust and compare again: this is the core control loop you used in the robot game.</p>
+                <strong data-i18n="takeawayTitle">A similarity measure is what makes a correction loop possible.</strong>
+                <p data-i18n="takeawayDesc">Measure the difference from the target, apply a correction, measure again. This is the loop the manipulators run in the other demonstrations, with the score replaced by a shape error.</p>
             </div>
             <button id="nextDemoBtn" class="button button-primary" type="button" data-i18n="nextDemoBtn">Next: represent shape →</button>
         </section>
@@ -766,54 +726,51 @@
                 newShapeBtn: 'New target',
                 interactionGuide: 'Interaction guide',
                 backToJourney: '← Back to the interactive journey',
-                title: 'Shape Match Lab',
-                gameInstructions: 'A sculptor and a shape controller use the same loop: observe, compare with a target, adjust and repeat.',
-                gameTip: 'A useful start:',
-                gameTipText: 'Start outside the dashed outline, work gradually, and watch whether the match score rises.',
+                title: 'Measuring shape similarity',
+                gameInstructions: 'Sculpting and shape control share one loop: measure the difference from a target, apply a correction, measure again.',
                 howToPlay: 'How it works',
                 goal: 'Goal:',
-                goalDesc: 'Shape the block on the right until its contour matches the target on the left.',
+                goalDesc: 'Remove material from the block on the right until its contour matches the target on the left.',
                 sculpting: 'Sculpting:',
                 sculptingDesc: 'Use Remove to cut particles away and Restore to add them back. A smaller tool helps near the boundary.',
                 feedback: 'Comments:',
-                feedbackDesc: 'The green contour is your current shape. The score and history show whether each edit helped; higher is better.',
+                feedbackDesc: 'The green contour is the current shape. The score is the area overlap with the target, and the history records it after every edit.',
                 whyMatters: 'Research context',
                 matterText1: 'People compare and refine shapes naturally; robots need an explicit, robust measure of the same difference.',
                 matterText2: 'Shape comparison gives a robot feedback about whether a manipulation is moving an object toward or away from its target.',
                 targetShapeLabel: 'Target and comparison',
-                shapeResidualNote: 'Match after each edit; higher is better.',
+                shapeResidualNote: 'Shape match after every edit. The dashed line marks the best score reached on this target.',
                 sculptingCanvasLabel: 'Sculpting workspace',
                 chiselBtn: 'Remove material',
                 clayBtn: 'Restore material',
                 resetBlockBtn: 'Reset block',
-                hintBtn: 'Show hint',
                 keyboardHelp: 'Keyboard: use the arrow keys to move the tool and press Space or Enter to apply it.',
-                initialStatusText: 'Sculpt the shape to match the target. The match history updates after each edit.',
+                initialStatusText: 'Remove material to match the target contour. The score is recorded after each edit.',
                 statusText: 'Sculpt the shape to match the target.',
-                feedbackStartTitle: 'Start outside the dashed outline',
-                feedbackStartDesc: 'Remove material that clearly lies beyond the target, then refine the edge.',
-                feedbackImprovingTitle: 'Good move — the shapes are getting closer',
-                feedbackImprovingDesc: 'Keep following the dashed contour and make smaller edits near the boundary.',
+                feedbackStartTitle: 'Begin with the largest differences',
+                feedbackStartDesc: 'Compare the two contours on the left, then remove material from the corresponding area on the right.',
+                feedbackImprovingTitle: 'Score improved',
+                feedbackImprovingDesc: 'Use the comparison view to locate the largest remaining mismatch and make smaller edits near that part of the boundary.',
                 feedbackWrongTitle: 'That edit moved away from the target',
                 feedbackWrongDesc: 'Switch to Restore if you removed too much, or try a different part of the contour.',
-                feedbackCloseTitle: 'Close — refine the boundary',
-                feedbackCloseDesc: 'Use a smaller tool and focus on the remaining gaps between the two contours.',
+                feedbackCloseTitle: 'Close to the target',
+                feedbackCloseDesc: 'Reduce the tool size and work on the largest remaining gaps in the comparison view.',
                 feedbackMatchedTitle: 'Shape matched',
-                feedbackMatchedDesc: 'The simplified overlap score now considers the two shapes a match.',
-                feedbackHintTitle: 'Hint: clear the four corners first',
-                feedbackHintDesc: 'The target is entirely inside the initial block, so the outer corners can be removed safely.',
+                feedbackMatchedDesc: 'The area-overlap score is above the match threshold.',
                 improvedBy: 'Improved by',
                 changedBy: 'Changed by',
                 bestLabel: 'Best',
                 takeawayLabel: 'Takeaway',
-                takeawayTitle: 'Shape comparison turns a target into actionable feedback.',
-                takeawayDesc: 'Observe the current shape, measure its difference from the target, adjust and compare again: this is the core control loop you used in the robot game.',
+                takeawayTitle: 'A similarity measure is what makes a correction loop possible.',
+                takeawayDesc: 'Measure the difference from the target, apply a correction, measure again. This is the loop the manipulators run in the other demonstrations, with the score replaced by a shape error.',
                 nextDemoBtn: 'Next: represent shape →',
                 legendTargetShape: 'Target shape',
                 legendCurrentShape: 'Current shape',
                 targetCanvasAria: 'Target shape overlaid with the current contour',
                 historyCanvasAria: 'History of the shape-match score; higher values mean a closer match',
-                sculptCanvasAria: 'Interactive sculpting workspace. Use the pointer, or arrow keys and Space or Enter.'
+                sculptCanvasAria: 'Interactive sculpting workspace. Use the pointer, or arrow keys and Space or Enter.',
+                matchAxisLabel: 'Shape match (%)',
+                editsAxisLabel: 'Edits'
             },
             es: {
                 languageAria: 'Idioma',
@@ -824,54 +781,51 @@
                 newShapeBtn: 'Nuevo objetivo',
                 interactionGuide: 'Guía de interacción',
                 backToJourney: '← Volver al recorrido interactivo',
-                title: 'Laboratorio de Coincidencia de Formas',
-                gameInstructions: 'Un escultor y un controlador de forma siguen el mismo bucle: observar, comparar con un objetivo, ajustar y repetir.',
-                gameTip: 'Un buen comienzo:',
-                gameTipText: 'Empieza fuera del contorno discontinuo, trabaja gradualmente y observa si aumenta la puntuación.',
+                title: 'Medida de similitud de forma',
+                gameInstructions: 'Esculpir y controlar la forma comparten un mismo lazo: medir la diferencia respecto a un objetivo, aplicar una corrección y volver a medir.',
                 howToPlay: 'Cómo funciona',
                 goal: 'Objetivo:',
-                goalDesc: 'Da forma al bloque de la derecha hasta que su contorno coincida con el objetivo de la izquierda.',
+                goalDesc: 'Retira material del bloque de la derecha hasta que su contorno coincida con el objetivo de la izquierda.',
                 sculpting: 'Esculpir:',
                 sculptingDesc: 'Usa Eliminar para retirar partículas y Restaurar para añadirlas de nuevo. Una herramienta pequeña ayuda cerca del borde.',
                 feedback: 'Comentarios:',
-                feedbackDesc: 'El contorno verde es tu forma actual. La puntuación y el historial muestran si cada edición ha ayudado; cuanto más altos, mejor.',
+                feedbackDesc: 'El contorno verde es la forma actual. La puntuación es el solape de área con el objetivo y el historial la registra tras cada edición.',
                 whyMatters: 'Contexto de investigación',
                 matterText1: 'Las personas comparan y refinan formas de manera natural; los robots necesitan una medida explícita y robusta de esa diferencia.',
                 matterText2: 'La comparación de formas indica al robot si una manipulación acerca o aleja el objeto de su objetivo.',
                 targetShapeLabel: 'Objetivo y comparación',
-                shapeResidualNote: 'Coincidencia después de cada edición; cuanto más alta, mejor.',
+                shapeResidualNote: 'Coincidencia de forma tras cada edición. La línea discontinua marca la mejor puntuación alcanzada en este objetivo.',
                 sculptingCanvasLabel: 'Espacio de escultura',
                 chiselBtn: 'Eliminar material',
                 clayBtn: 'Restaurar material',
                 resetBlockBtn: 'Reiniciar bloque',
-                hintBtn: 'Mostrar pista',
                 keyboardHelp: 'Teclado: usa las flechas para mover la herramienta y pulsa Espacio o Intro para aplicarla.',
-                initialStatusText: 'Esculpe la forma para que coincida con el objetivo. El historial se actualiza después de cada edición.',
+                initialStatusText: 'Retira material para igualar el contorno objetivo. La puntuación se registra tras cada edición.',
                 statusText: 'Esculpe la forma para que coincida con el objetivo.',
-                feedbackStartTitle: 'Empieza fuera del contorno discontinuo',
-                feedbackStartDesc: 'Elimina el material que queda claramente fuera del objetivo y refina después el borde.',
-                feedbackImprovingTitle: 'Buen movimiento: las formas se están acercando',
-                feedbackImprovingDesc: 'Sigue el contorno discontinuo y realiza ediciones más pequeñas cerca del borde.',
+                feedbackStartTitle: 'Empieza por las diferencias más grandes',
+                feedbackStartDesc: 'Compara los dos contornos de la izquierda y retira material de la zona correspondiente a la derecha.',
+                feedbackImprovingTitle: 'La puntuación ha mejorado',
+                feedbackImprovingDesc: 'Usa la vista de comparación para localizar el mayor desajuste restante y haz ediciones más pequeñas cerca de esa parte del contorno.',
                 feedbackWrongTitle: 'Esta edición se ha alejado del objetivo',
                 feedbackWrongDesc: 'Usa Restaurar si has eliminado demasiado o prueba en otra zona del contorno.',
-                feedbackCloseTitle: 'Estás cerca: refina el borde',
-                feedbackCloseDesc: 'Reduce el tamaño de la herramienta y céntrate en los huecos que quedan entre los contornos.',
+                feedbackCloseTitle: 'Cerca del objetivo',
+                feedbackCloseDesc: 'Reduce el tamaño de la herramienta y trabaja sobre los mayores huecos que queden en la vista de comparación.',
                 feedbackMatchedTitle: 'Forma conseguida',
-                feedbackMatchedDesc: 'La medida simplificada de solapamiento ya considera que ambas formas coinciden.',
-                feedbackHintTitle: 'Pista: elimina primero las cuatro esquinas',
-                feedbackHintDesc: 'El objetivo está completamente dentro del bloque inicial, por lo que puedes retirar las esquinas exteriores con seguridad.',
+                feedbackMatchedDesc: 'La puntuación de solape de área supera el umbral de coincidencia.',
                 improvedBy: 'Mejora',
                 changedBy: 'Cambio',
                 bestLabel: 'Mejor',
                 takeawayLabel: 'Idea clave',
-                takeawayTitle: 'La comparación de formas convierte un objetivo en realimentación útil.',
-                takeawayDesc: 'Observa la forma actual, mide su diferencia respecto al objetivo, ajusta y vuelve a comparar: este es el bucle de control esencial que utilizaste en el juego robótico.',
+                takeawayTitle: 'Una medida de similitud es lo que hace posible un lazo de corrección.',
+                takeawayDesc: 'Mide la diferencia respecto al objetivo, aplica una corrección y vuelve a medir. Es el lazo que ejecutan los manipuladores en las otras demostraciones, con la puntuación sustituida por un error de forma.',
                 nextDemoBtn: 'Siguiente: representar la forma →',
                 legendTargetShape: 'Forma objetivo',
                 legendCurrentShape: 'Forma actual',
                 targetCanvasAria: 'Forma objetivo superpuesta al contorno actual',
                 historyCanvasAria: 'Historial de la puntuación de coincidencia; los valores altos indican mayor similitud',
-                sculptCanvasAria: 'Espacio de escultura interactivo. Usa el puntero o las flechas y Espacio o Intro.'
+                sculptCanvasAria: 'Espacio de escultura interactivo. Usa el puntero o las flechas y Espacio o Intro.',
+                matchAxisLabel: 'Coincidencia de forma (%)',
+                editsAxisLabel: 'Ediciones'
             }
         };
 
@@ -1004,6 +958,7 @@
         let targetLoaded = false;
         let isSculpting = false;
         let residualHistory = [];
+        let residualSampleCount = 0;
         let lastResidual = null;
         let currentSculptShape = [];
         let pendingUpdate = false;
@@ -1509,42 +1464,116 @@
 
         function drawErrorPlot() {
             const palette = canvasPalette();
-            errorCtx.fillStyle = palette.background;
-            errorCtx.fillRect(0, 0, errorCanvas.width, errorCanvas.height);
+            const words = translations[currentLanguage];
+            const width = errorCanvas.width;
+            const height = errorCanvas.height;
+            const pad = { left: 56, right: 12, top: 10, bottom: 36 };
+            const plotW = width - pad.left - pad.right;
+            const plotH = height - pad.top - pad.bottom;
+            const xEnd = Math.max(9, residualSampleCount - 1);
+            const xStart = 0;
+            const firstStoredEdit = residualSampleCount - residualHistory.length;
+            const xOf = (edit) => pad.left + (edit - xStart) / (xEnd - xStart) * plotW;
+            const yOf = (match) => pad.top + plotH - match / 100 * plotH;
 
+            errorCtx.fillStyle = palette.background;
+            errorCtx.fillRect(0, 0, width, height);
             errorCtx.strokeStyle = palette.grid;
             errorCtx.lineWidth = 1;
             for (let i = 0; i <= 4; i++) {
-                const y = 20 + i * ((errorCanvas.height - 40) / 4);
+                const y = pad.top + i * plotH / 4;
                 errorCtx.beginPath();
-                errorCtx.moveTo(20, y);
-                errorCtx.lineTo(errorCanvas.width - 20, y);
+                errorCtx.moveTo(pad.left, y);
+                errorCtx.lineTo(pad.left + plotW, y);
                 errorCtx.stroke();
             }
 
-            const plotW = errorCanvas.width - 40;
-            const plotH = errorCanvas.height - 40;
-
             errorCtx.fillStyle = palette.text;
-            errorCtx.font = '12px Arial';
-            errorCtx.fillText(currentLanguage === 'es' ? 'Coincidencia (%)' : 'Match (%)', 24, 16);
+            errorCtx.font = '10px ui-monospace, monospace';
+            errorCtx.textAlign = 'right';
+            errorCtx.textBaseline = 'middle';
+            for (let i = 0; i <= 4; i++) {
+                const value = 100 - i * 25;
+                errorCtx.fillText(String(value), pad.left - 6, pad.top + i * plotH / 4);
+            }
+            errorCtx.textBaseline = 'top';
+            for (let i = 0; i <= 2; i++) {
+                const ratio = i / 2;
+                errorCtx.textAlign = i === 0 ? 'left' : i === 2 ? 'right' : 'center';
+                errorCtx.fillText(String(Math.round(xStart + ratio * (xEnd - xStart))), pad.left + ratio * plotW, pad.top + plotH + 4);
+            }
 
-            if (residualHistory.length < 2) return;
+            errorCtx.font = '600 10px system-ui, sans-serif';
+            errorCtx.textAlign = 'center';
+            errorCtx.fillText(words.editsAxisLabel, pad.left + plotW / 2, height - 13);
+            errorCtx.save();
+            errorCtx.translate(11, pad.top + plotH / 2);
+            errorCtx.rotate(-Math.PI / 2);
+            errorCtx.fillText(words.matchAxisLabel, 0, 0);
+            errorCtx.restore();
 
-            errorCtx.strokeStyle = palette.curve;
-            errorCtx.lineWidth = 2;
+            // best score reached on this target: the bar the next edit has to beat
+            if (residualHistory.length && bestMatch > 0) {
+                const yBest = yOf(bestMatch);
+                errorCtx.save();
+                errorCtx.strokeStyle = palette.target;
+                errorCtx.setLineDash([5, 4]);
+                errorCtx.lineWidth = 1.4;
+                errorCtx.beginPath();
+                errorCtx.moveTo(pad.left, yBest);
+                errorCtx.lineTo(pad.left + plotW, yBest);
+                errorCtx.stroke();
+                errorCtx.setLineDash([]);
+                errorCtx.fillStyle = palette.target;
+                errorCtx.font = '600 10px system-ui, sans-serif';
+                errorCtx.textAlign = 'left';
+                errorCtx.textBaseline = yBest < pad.top + 14 ? 'top' : 'bottom';
+                errorCtx.fillText(`${words.bestLabel} ${bestMatch.toFixed(0)}%`,
+                    pad.left + 4, yBest < pad.top + 14 ? yBest + 3 : yBest - 3);
+                errorCtx.restore();
+            }
+
+            if (!residualHistory.length) return;
+            errorCtx.save();
             errorCtx.beginPath();
-            residualHistory.forEach((v, i) => {
-                const x = 20 + (i / (residualHistory.length - 1)) * plotW;
-                const y = 20 + plotH - (matchPercentage(v) / 100) * plotH;
-                if (i === 0) {
+            errorCtx.rect(pad.left, pad.top, plotW, plotH);
+            errorCtx.clip();
+            errorCtx.strokeStyle = palette.curve;
+            errorCtx.lineWidth = 2.5;
+            errorCtx.lineJoin = 'round';
+            errorCtx.lineCap = 'round';
+            errorCtx.beginPath();
+            let started = false;
+            residualHistory.forEach((value, index) => {
+                const edit = firstStoredEdit + index;
+                if (edit < xStart) return;
+                const x = xOf(edit);
+                const y = yOf(matchPercentage(value));
+                if (!started) {
                     errorCtx.moveTo(x, y);
+                    started = true;
                 } else {
                     errorCtx.lineTo(x, y);
                 }
             });
             errorCtx.stroke();
+            errorCtx.restore();
 
+            const currentMatch = matchPercentage(residualHistory[residualHistory.length - 1]);
+            const xNow = xOf(residualSampleCount - 1);
+            const yNow = yOf(currentMatch);
+            errorCtx.save();
+            errorCtx.fillStyle = palette.curve;
+            errorCtx.beginPath();
+            errorCtx.arc(xNow, yNow, 3.2, 0, Math.PI * 2);
+            errorCtx.fill();
+            errorCtx.font = '700 11px system-ui, sans-serif';
+            errorCtx.textBaseline = 'middle';
+            const room = pad.left + plotW - xNow;
+            errorCtx.textAlign = room > 38 ? 'left' : 'right';
+            errorCtx.fillText(`${currentMatch.toFixed(0)}%`,
+                xNow + (room > 38 ? 7 : -7), yNow);
+            errorCtx.restore();
         }
 
         // Helper: Check if a grid cell is valid and alive
@@ -1679,16 +1708,6 @@
                 drawShape(sculptCtx, currentSculptShape, palette.contour, 2, false);
             }
 
-            // Keep the goal visible in the working canvas so visitors can compare
-            // and edit in the same place instead of repeatedly scanning left.
-            if (targetShape.length > 0) {
-                sculptCtx.save();
-                sculptCtx.globalAlpha = 0.92;
-                sculptCtx.setLineDash([7, 5]);
-                drawShape(sculptCtx, targetShape, palette.target, 3, false);
-                sculptCtx.restore();
-            }
-
             if (keyboardActive) {
                 sculptCtx.save();
                 sculptCtx.strokeStyle = palette.text;
@@ -1814,7 +1833,8 @@
                     : null;
                 lastResidual = computeAreaResidual(targetShape, currentSculptShape);
                 residualHistory.push(lastResidual);
-                if (residualHistory.length > 200) residualHistory.shift();
+                residualSampleCount += 1;
+                if (residualHistory.length > 600) residualHistory.shift();
                 updateFeedback(lastResidual, previousResidual);
             }
 
@@ -1858,6 +1878,7 @@
             }
 
             residualHistory = [];
+            residualSampleCount = 0;
             currentSculptShape = [];
             residualValue.value = '—';
             bestMatch = 0;
@@ -1935,19 +1956,6 @@
             targetShape = generateRandomShape(200, 200);
             targetLoaded = true;
             resetSculpt();
-        });
-
-        document.getElementById('hintBtn').addEventListener('click', () => {
-            const words = translations[currentLanguage];
-            feedbackCard.dataset.state = 'start';
-            feedbackCard.querySelector('.status-mark').textContent = '↘';
-            feedbackTitle.textContent = words.feedbackHintTitle;
-            statusText.textContent = words.feedbackHintDesc;
-            feedbackTrend.textContent = '';
-            keyboardCursor = { x: 78, y: 78 };
-            keyboardActive = true;
-            sculptCanvas.focus();
-            renderSculpt();
         });
 
         sculptCanvas.addEventListener('pointerdown', (event) => {

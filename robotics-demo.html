@@ -911,7 +911,9 @@
                 workspaceAria: 'Cable manipulation workspace',
                 feedbackAria: 'Performance feedback',
                 canvasAria: 'Two robot arms manipulating a cable toward a dashed target shape',
-                plotAria: 'History of cable alignment error after each move; lower values mean better alignment'
+                plotAria: 'History of cable alignment error after each move; lower values mean better alignment',
+                errorAxisLabel: 'Alignment error (px)',
+                movesAxisLabel: 'Moves'
             },
             es: {
                 languageAria: 'Idioma',
@@ -972,7 +974,9 @@
                 workspaceAria: 'Espacio de manipulación del cable',
                 feedbackAria: 'Información sobre el rendimiento',
                 canvasAria: 'Dos brazos robóticos manipulan un cable hacia una forma objetivo discontinua',
-                plotAria: 'Historial del error de alineación tras cada movimiento; los valores bajos indican mejor alineación'
+                plotAria: 'Historial del error de alineación tras cada movimiento; los valores bajos indican mejor alineación',
+                errorAxisLabel: 'Error de alineación (px)',
+                movesAxisLabel: 'Movimientos'
             }
         };
 
@@ -1115,7 +1119,10 @@
         
         // Error history for plotting
         let errorHistory = [];
+        let errorSampleCount = 0;
+        let errorAxisMax = 100;
         const maxHistoryLength = 240;
+        const errorPlotWindow = 40;
 
         // State
         let cable = [];
@@ -1954,33 +1961,30 @@
             const palette = canvasPalette();
             const plotWidth = errorPlot.width;
             const plotHeight = errorPlot.height;
-            const padding = 35;
-            const graphWidth = plotWidth - padding - 10;
-            const graphHeight = plotHeight - 2 * padding;
+            const words = translations[currentLanguage];
+            const pad = { left: 58, right: 12, top: 12, bottom: 40 };
+            const graphWidth = plotWidth - pad.left - pad.right;
+            const graphHeight = plotHeight - pad.top - pad.bottom;
+            const xEnd = Math.max(errorPlotWindow - 1, errorSampleCount - 1);
+            const xStart = xEnd - (errorPlotWindow - 1);
+            const firstStoredMove = errorSampleCount - errorHistory.length;
+            const xOf = (move) => pad.left + (move - xStart) / (xEnd - xStart) * graphWidth;
+            const yOf = (error) => pad.top + graphHeight - Math.min(error, errorAxisMax) / errorAxisMax * graphHeight;
             
             // Clear plot
             errorPlotCtx.fillStyle = palette.background;
             errorPlotCtx.fillRect(0, 0, plotWidth, plotHeight);
             
-            // Draw border
-            errorPlotCtx.strokeStyle = palette.grid;
-            errorPlotCtx.lineWidth = 1;
-            errorPlotCtx.strokeRect(padding, padding, graphWidth, graphHeight);
-            
             // Draw grid lines
             errorPlotCtx.strokeStyle = palette.grid;
             errorPlotCtx.lineWidth = 1;
             for (let i = 0; i <= 5; i++) {
-                const y = padding + (graphHeight / 5) * i;
+                const y = pad.top + (graphHeight / 5) * i;
                 errorPlotCtx.beginPath();
-                errorPlotCtx.moveTo(padding, y);
-                errorPlotCtx.lineTo(padding + graphWidth, y);
+                errorPlotCtx.moveTo(pad.left, y);
+                errorPlotCtx.lineTo(pad.left + graphWidth, y);
                 errorPlotCtx.stroke();
             }
-            
-            // Find max error for scaling
-            const maxError = Math.max(...errorHistory, 50);
-            const scale = graphHeight / maxError;
             
             // Draw error line
             if (errorHistory.length > 1) {
@@ -1989,47 +1993,70 @@
                 errorPlotCtx.lineCap = 'round';
                 errorPlotCtx.lineJoin = 'round';
                 
+                errorPlotCtx.save();
                 errorPlotCtx.beginPath();
+                errorPlotCtx.rect(pad.left, pad.top, graphWidth, graphHeight);
+                errorPlotCtx.clip();
+                errorPlotCtx.beginPath();
+                let started = false;
                 for (let i = 0; i < errorHistory.length; i++) {
-                    const x = padding + (i / (errorHistory.length - 1 || 1)) * graphWidth;
-                    const y = padding + graphHeight - (errorHistory[i] * scale);
-                    if (i === 0) {
+                    const move = firstStoredMove + i;
+                    if (move < xStart) continue;
+                    const x = xOf(move);
+                    const y = yOf(errorHistory[i]);
+                    if (!started) {
                         errorPlotCtx.moveTo(x, y);
+                        started = true;
                     } else {
                         errorPlotCtx.lineTo(x, y);
                     }
                 }
                 errorPlotCtx.stroke();
+                errorPlotCtx.restore();
             }
             
             // Draw axis labels
             errorPlotCtx.fillStyle = palette.text;
             errorPlotCtx.font = '11px sans-serif';
             
-            // Y-axis label with max value
-            errorPlotCtx.textAlign = 'right';
-            errorPlotCtx.fillText(`Error (px) - Max: ${maxError.toFixed(1)}`, padding - 5, 15);
-            
             // Y-axis scale values
             errorPlotCtx.font = '9px sans-serif';
             errorPlotCtx.textAlign = 'right';
+            errorPlotCtx.textBaseline = 'middle';
             for (let i = 0; i <= 5; i++) {
-                const y = padding + (graphHeight / 5) * i;
-                const value = maxError - (maxError / 5) * i;
-                errorPlotCtx.fillText(value.toFixed(0), padding - 5, y + 3);
+                const y = pad.top + (graphHeight / 5) * i;
+                const value = errorAxisMax - (errorAxisMax / 5) * i;
+                errorPlotCtx.fillText(value.toFixed(0), pad.left - 6, y);
             }
-            
-            // X-axis label
-            errorPlotCtx.font = '11px sans-serif';
+
+            errorPlotCtx.textBaseline = 'top';
+            for (let i = 0; i <= 2; i++) {
+                const ratio = i / 2;
+                errorPlotCtx.textAlign = i === 0 ? 'left' : i === 2 ? 'right' : 'center';
+                errorPlotCtx.fillText(String(Math.round(xStart + ratio * (xEnd - xStart))), pad.left + ratio * graphWidth, pad.top + graphHeight + 5);
+            }
+
+            errorPlotCtx.font = '600 10px sans-serif';
             errorPlotCtx.textAlign = 'center';
-            errorPlotCtx.fillText(currentLanguage === 'es' ? 'Movimientos →' : 'Moves →', plotWidth / 2, plotHeight - 5);
+            errorPlotCtx.fillText(words.movesAxisLabel, pad.left + graphWidth / 2, plotHeight - 13);
+            errorPlotCtx.save();
+            errorPlotCtx.translate(11, pad.top + graphHeight / 2);
+            errorPlotCtx.rotate(-Math.PI / 2);
+            errorPlotCtx.fillText(words.errorAxisLabel, 0, 0);
+            errorPlotCtx.restore();
         }
 
         function updateSimulation({ record = true, fromUser = false } = {}) {
             const equilibrium = solveCable();
             rmsError = computeRmsError();
             if (record) {
+                if (errorHistory.length === 0) {
+                    errorAxisMax = Math.ceil(Math.max(rmsError * 1.25, 50) / 25) * 25;
+                } else if (rmsError > errorAxisMax) {
+                    errorAxisMax = Math.ceil(rmsError * 1.1 / 25) * 25;
+                }
                 errorHistory.push(rmsError);
+                errorSampleCount += 1;
                 if (errorHistory.length > maxHistoryLength) errorHistory.shift();
             }
             errorDisplay.textContent = rmsError.toFixed(2);
@@ -2122,6 +2149,7 @@
             rodAtLimit = false;
             updateConstraintStatus();
             errorHistory.length = 0;
+            errorSampleCount = 0;
             resetChallengeStats();
             updateSimulation();
         }
@@ -2130,6 +2158,7 @@
         newTargetBtn.addEventListener('click', () => {
             generateTarget();
             errorHistory.length = 0;
+            errorSampleCount = 0;
             resetChallengeStats();
             updateSimulation();
         });

@@ -175,16 +175,44 @@
             display: none;
         }
 
+        [data-demo-mode="manipulate"] #advancedSignals,
+        [data-demo-mode="representations"] #advancedSignals {
+            display: block;
+        }
+
+        [data-demo-mode="manipulate"] .action-plot-card,
+        [data-demo-mode="representations"] .action-plot-card,
+        [data-demo-mode="manipulate"] .feature-plot-card {
+            display: none;
+        }
+
+        /* step 1 shows one panel: line it up under the scene, drop the legend
+           (a single series is already named by the panel title) */
+        [data-demo-mode="manipulate"] .plot-grid {
+            grid-template-columns: minmax(0, 1fr) 252px;
+        }
+
+        [data-demo-mode="manipulate"] .error-plot-card .plot-canvas {
+            height: 172px;
+        }
+
+        [data-demo-mode="manipulate"] #errorSeries {
+            display: none;
+        }
+
         .manual-score-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1px;
-            background: var(--line);
+            gap: 18px;
         }
 
         .manual-score-grid div {
-            padding: 13px 14px;
-            background: var(--surface);
+            padding: 10px 2px;
+        }
+
+        .manual-score-grid div + div {
+            padding-left: 16px;
+            border-left: 1px solid var(--line);
         }
 
         .manual-score-grid span,
@@ -206,13 +234,11 @@
         }
 
         .manual-coach {
-            padding: 12px 14px;
-            border-top: 1px solid var(--line);
+            padding: 10px 2px 2px;
         }
 
         .manual-controls {
-            padding: 11px 12px;
-            border-top: 1px solid var(--line);
+            padding: 8px 0 0;
         }
 
         .manual-gripper-select,
@@ -266,11 +292,10 @@
         }
 
         .control-loop {
-            margin: 12px 0;
-            padding: 16px;
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            background: var(--surface-soft);
+            margin: 20px 0;
+            padding: 18px 0;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
         }
 
         .control-loop-heading {
@@ -304,10 +329,8 @@
         }
 
         .loop-step {
-            padding: 11px;
-            border: 1px solid var(--line);
-            border-radius: 10px;
-            background: var(--surface);
+            padding: 3px 12px 5px;
+            border-left: 2px solid var(--line);
         }
 
         .loop-step span,
@@ -415,11 +438,8 @@
             gap: 16px;
             align-items: center;
             margin-bottom: 12px;
-            padding: 16px 18px;
-            border: 1px solid var(--line);
-            border-left: 4px solid var(--accent);
-            border-radius: 14px;
-            background: var(--accent-soft);
+            padding: 10px 0 10px 16px;
+            border-left: 3px solid var(--accent);
         }
 
         .experiment-guide h2 {
@@ -446,10 +466,7 @@
             grid-template-columns: auto minmax(0, 1fr);
             gap: 10px;
             align-items: center;
-            padding: 11px 13px;
-            border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line));
-            border-radius: 10px;
-            background: var(--surface);
+            padding: 0;
         }
 
         .prediction-mark {
@@ -481,9 +498,7 @@
         .card {
             min-width: 0;
             overflow: hidden;
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            background: var(--surface);
+            background: transparent;
         }
 
         .card-heading {
@@ -491,8 +506,7 @@
             gap: 12px;
             align-items: baseline;
             justify-content: space-between;
-            padding: 10px 13px;
-            border-bottom: 1px solid var(--line);
+            padding: 8px 2px;
         }
 
         .card-heading h2,
@@ -519,8 +533,7 @@
 
         .scene-wrap {
             position: relative;
-            padding: 10px;
-            background: var(--surface-soft);
+            padding: 0;
         }
 
         #sceneCanvas {
@@ -540,8 +553,7 @@
             gap: 13px;
             align-items: center;
             flex-wrap: wrap;
-            padding: 8px 13px;
-            border-top: 1px solid var(--line);
+            padding: 8px 2px;
             color: var(--muted);
             font-size: 0.67rem;
         }
@@ -576,8 +588,7 @@
             gap: 7px;
             align-items: center;
             flex-wrap: wrap;
-            padding: 10px 13px;
-            border-top: 1px solid var(--line);
+            padding: 7px 0 0;
         }
 
         .toolbar-divider {
@@ -651,8 +662,7 @@
 
         .rep-group {
             display: grid;
-            gap: 1px;
-            background: var(--line);
+            gap: 0;
         }
 
         .rep-btn {
@@ -663,7 +673,8 @@
             padding: 9px 12px;
             border: 0;
             border-left: 3px solid transparent;
-            background: var(--surface);
+            border-bottom: 1px solid var(--line);
+            background: transparent;
             text-align: left;
             cursor: pointer;
         }
@@ -717,8 +728,7 @@
 
         .rep-comparison-note {
             margin: 0;
-            padding: 8px 11px;
-            border-top: 1px solid var(--line);
+            padding: 9px 2px;
             color: var(--muted);
             font-size: 0.6rem;
             line-height: 1.4;
@@ -735,8 +745,7 @@
         .metrics {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1px;
-            background: var(--line);
+            gap: 12px;
         }
 
         .demo-shell.show-advanced .metrics {
@@ -744,8 +753,7 @@
         }
 
         .metric {
-            padding: 9px 10px;
-            background: var(--surface);
+            padding: 7px 2px;
         }
 
         .metric span {
@@ -807,8 +815,7 @@
             display: flex;
             gap: 8px;
             align-items: center;
-            padding: 9px 12px;
-            border-top: 1px solid var(--line);
+            padding: 9px 2px;
             color: var(--muted);
             font-size: 0.67rem;
         }
@@ -837,7 +844,33 @@
         /* ---------- plots ---------- */
 
         .plot-section {
-            margin-top: 12px;
+            margin-top: 10px;
+        }
+
+        .signals-heading {
+            display: flex;
+            gap: 18px;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            padding-top: 10px;
+            border-top: 1px solid var(--line);
+        }
+
+        .signals-heading h2,
+        .signals-heading p {
+            margin: 0;
+        }
+
+        .signals-heading h2 {
+            color: var(--ink);
+            font-size: 0.95rem;
+        }
+
+        .signals-heading p {
+            max-width: 660px;
+            color: var(--muted);
+            font-size: 0.7rem;
         }
 
         .advanced-only {
@@ -851,12 +884,12 @@
         .advanced-toggle-row {
             display: flex;
             justify-content: center;
-            margin-top: 12px;
+            margin-top: 6px;
         }
 
         .advanced-toggle {
-            min-height: 38px;
-            padding: 8px 14px;
+            min-height: 32px;
+            padding: 6px 13px;
             border: 1px solid var(--line-strong);
             border-radius: 999px;
             color: var(--ink-soft);
@@ -871,17 +904,31 @@
             background: var(--accent-soft);
         }
 
-        .plot-grid-3 {
+        /* every panel is the same small multiple, so the scene and the whole
+           signal row stay on screen together while the robots are dragged */
+        .plot-grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
+            gap: 10px;
+            align-items: start;
         }
 
-        .plot-grid-2 {
-            display: grid;
-            grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
-            gap: 12px;
-            margin-top: 12px;
+        .plot-grid .card-heading {
+            display: block;
+            min-height: 0;
+            padding: 8px 10px 6px;
+        }
+
+        .plot-grid .card-heading h3 {
+            overflow: hidden;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .plot-grid .plot-readout {
+            display: block;
+            font-size: 0.63rem;
         }
 
         .plot-canvas {
@@ -892,12 +939,10 @@
             cursor: crosshair;
         }
 
-        .plot-canvas.tall {
-            aspect-ratio: 16 / 7;
-        }
-
+        .plot-canvas.tall,
         .plot-canvas.short {
-            aspect-ratio: 16 / 8;
+            height: 116px;
+            aspect-ratio: auto;
         }
 
         .plot-readout {
@@ -914,10 +959,9 @@
 
         .series-table {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 2px 10px;
-            padding: 9px 13px 11px;
-            border-top: 1px solid var(--line);
+            grid-template-columns: repeat(auto-fit, minmax(78px, 1fr));
+            gap: 1px 8px;
+            padding: 6px 2px 3px;
         }
 
         .series-table.single {
@@ -958,9 +1002,8 @@
 
         .learn-more {
             margin-top: 12px;
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            background: var(--surface);
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
         }
 
         .learn-more summary {
@@ -973,15 +1016,13 @@
         .representation-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 1px;
+            gap: 24px;
             padding-top: 1px;
             border-top: 1px solid var(--line);
-            background: var(--line);
         }
 
         .representation-grid article {
-            padding: 13px 14px;
-            background: var(--surface);
+            padding: 13px 0;
         }
 
         .representation-grid h3 {
@@ -1009,11 +1050,8 @@
             gap: 18px;
             align-items: center;
             margin-top: 12px;
-            padding: 17px 18px;
-            border: 1px solid var(--line);
-            border-left: 4px solid var(--accent);
-            border-radius: 14px;
-            background: var(--accent-soft);
+            padding: 13px 0 13px 16px;
+            border-left: 3px solid var(--accent);
         }
 
         .takeaway-label {
@@ -1065,20 +1103,15 @@
                 padding: 15px;
             }
 
-            .plot-grid-3,
-            .plot-grid-2 {
-                grid-template-columns: 1fr;
+            /* keep the small multiples side by side for as long as they stay
+               readable - one panel per row makes the page taller than a phone */
+            .plot-grid {
+                grid-template-columns: repeat(auto-fit, minmax(164px, 1fr));
             }
 
-            /* stacked plots keep a fixed height instead of a wide aspect ratio,
-               otherwise a full-width panel is taller than the whole viewport */
-            .plot-canvas.tall {
-                height: 142px;
-                aspect-ratio: auto;
-            }
-
+            .plot-canvas.tall,
             .plot-canvas.short {
-                height: 168px;
+                height: 122px;
                 aspect-ratio: auto;
             }
 
@@ -1089,6 +1122,12 @@
             .experiment-guide,
             .lesson-takeaway {
                 grid-template-columns: 1fr;
+            }
+
+            .signals-heading {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 4px;
             }
         }
 
@@ -1121,7 +1160,7 @@
 <body>
     <main class="demo-shell">
         <header>
-            <a class="standalone-back" href="index.html#dissemination" data-i18n="backToJourney">← Back to the interactive journey</a>
+            <a class="standalone-back" href="index.html#dissemination" data-i18n="backToJourney">← Back to the demonstrations</a>
             <div class="demo-topline">
                 <p class="demo-kicker" data-i18n="demoKicker">Interactive research demo</p>
                 <div class="language-switcher" aria-label="Language">
@@ -1260,32 +1299,33 @@
         </div>
 
         <section class="plot-section advanced-only" id="advancedSignals">
-            <div class="plot-grid-3">
-                <article class="card">
+            <header class="signals-heading">
+                <h2 id="signalsTitle" data-i18n="signalsTitle">Signals inside the feedback loop</h2>
+                <p id="signalsDesc" data-i18n="signalsDesc">Each feature component keeps one scale across the full time window; the error panel compares all three representations on the same normalised axis.</p>
+            </header>
+            <div class="plot-grid">
+                <article class="card feature-plot-card">
                     <div class="card-heading">
                         <h3 data-i18n="featPointsTitle">Point coordinates</h3>
                         <span id="readoutPoints" class="plot-readout"></span>
                     </div>
                     <canvas id="plotPoints" class="plot-canvas tall" data-plot="points" role="img" aria-label="Time evolution of the point-coordinate feature components"></canvas>
                 </article>
-                <article class="card">
+                <article class="card feature-plot-card">
                     <div class="card-heading">
                         <h3 data-i18n="featEdgesTitle">Edge vectors</h3>
                         <span id="readoutEdges" class="plot-readout"></span>
                     </div>
                     <canvas id="plotEdges" class="plot-canvas tall" data-plot="edges" role="img" aria-label="Time evolution of the edge-vector feature components"></canvas>
                 </article>
-                <article class="card">
+                <article class="card feature-plot-card">
                     <div class="card-heading">
                         <h3 data-i18n="featCurvatureTitle">Curvature</h3>
                         <span id="readoutCurvature" class="plot-readout"></span>
                     </div>
                     <canvas id="plotCurvature" class="plot-canvas tall" data-plot="curvature" role="img" aria-label="Time evolution of the curvature feature components"></canvas>
                 </article>
-            </div>
-
-            <div class="plot-grid-2">
-                <article class="card">
+                <article class="card action-plot-card">
                     <div class="card-heading">
                         <h3 data-i18n="actionTitle">End-effector velocity u̇</h3>
                         <span id="readoutAction" class="plot-readout"></span>
@@ -1293,9 +1333,9 @@
                     <canvas id="plotAction" class="plot-canvas short" data-plot="action" role="img" aria-label="Time evolution of the six end-effector velocity components"></canvas>
                     <div id="actionSeries" class="series-table"></div>
                 </article>
-                <article class="card">
+                <article class="card error-plot-card">
                     <div class="card-heading">
-                        <h3 data-i18n="errorTitle">Normalised error ‖e‖ / ‖e₀‖</h3>
+                        <h3 id="errorPlotTitle" data-i18n="errorTitle">Normalised error ‖e‖ / ‖e₀‖</h3>
                         <span id="readoutError" class="plot-readout"></span>
                     </div>
                     <canvas id="plotError" class="plot-canvas short" data-plot="error" role="img" aria-label="Time evolution of the normalised shape error for the three representations"></canvas>
@@ -1333,25 +1373,25 @@
         const translations = {
             en: {
                 languageAria: 'Language',
-                backToJourney: '← Back to the interactive journey',
+                backToJourney: '← Back to the demonstrations',
                 demoKicker: 'Interactive research demo',
                 title: 'Data-Driven Shape Control',
                 intro: 'Estimate how robot motion changes shape, then use that local model to drive the object toward a target.',
-                manipulateTitle: 'Manual Shape-Control Challenge',
-                manipulateIntro: 'Move the two robot grippers and try to match the dashed target. You are the controller: observe, compare, correct and repeat.',
-                representationsTitle: 'Three Ways to Represent Shape',
-                representationsIntro: 'The same object can be described by point positions, edge vectors or curvature. Test what each representation notices—and what it ignores.',
-                dataDrivenTitle: 'Data-Driven Shape Control',
-                dataDrivenIntro: 'Return to the same robot task, now with an estimated shape Jacobian and a feedback controller that continually corrects the selected shape error.',
-                experimentEyebrow: 'Explore first',
-                experimentTitle: 'What should count as the same shape?',
-                experimentDesc: 'Predict what each representation will notice, then use Translate, Rotate and Bend to test your idea.',
-                manipulateExperimentEyebrow: 'First contact',
-                manipulateExperimentTitle: 'Can you solve the shape-control problem?',
-                manipulateExperimentDesc: 'Drag a gripper or its rotation ring. Try one change at a time and keep it only when the match improves.',
-                dataExperimentEyebrow: 'Close the loop',
-                dataExperimentTitle: 'From small probes to automatic correction',
-                dataExperimentDesc: 'Choose a shape representation, estimate its local Jacobian, then watch the controller turn error into robot motion.',
+                manipulateTitle: 'Manual shape servoing',
+                manipulateIntro: 'Two planar manipulators hold a deformable linear object at both ends. Move either gripper to bring the measured shape onto the dashed target.',
+                representationsTitle: 'Shape representations and invariance',
+                representationsIntro: 'The same geometry described three ways: point coordinates, edge vectors and discrete curvature. Each choice defines a different error signal and a different set of invariances.',
+                dataDrivenTitle: 'Data-driven shape control',
+                dataDrivenIntro: 'The same manipulation task, closed by a shape Jacobian estimated from data and a feedback law that drives the selected error to zero.',
+                experimentEyebrow: 'Experiment',
+                experimentTitle: 'Which motions does each representation see?',
+                experimentDesc: 'Apply a translation, a rotation and a bend, and compare the three error signals.',
+                manipulateExperimentEyebrow: 'Task',
+                manipulateExperimentTitle: 'Reduce the shape error by hand',
+                manipulateExperimentDesc: 'Drag a gripper or its rotation ring. Change one degree of freedom at a time and keep the change only when the error decreases.',
+                dataExperimentEyebrow: 'Procedure',
+                dataExperimentTitle: 'Identify the shape Jacobian, then close the loop',
+                dataExperimentDesc: 'Select a representation, excite each command in turn to estimate the local Jacobian, then run the feedback law and follow the error decay.',
                 predictionStartTitle: 'Start with Translate',
                 predictionStartDesc: 'Point coordinates should change. Edge vectors and curvature should stay nearly unchanged.',
                 predictionTranslateTitle: 'Translation reveals position',
@@ -1401,8 +1441,26 @@
                 featPointsTitle: 'Point coordinates',
                 featEdgesTitle: 'Edge vectors',
                 featCurvatureTitle: 'Curvature',
-                actionTitle: 'End-effector velocity u̇',
-                errorTitle: 'Normalised error ‖e‖ / ‖e₀‖',
+                actionTitle: 'Robot command u̇',
+                errorTitle: 'Normalised error',
+                signalsTitle: 'Signals inside the feedback loop',
+                signalsDesc: 'Each feature component keeps one scale across the full time window; the error panel compares all three representations on the same normalised axis.',
+                manipulateSignalsTitle: 'Shape error over time',
+                manipulateSignalsDesc: 'The shape error is the distance between the measured points and their targets, expressed as a percentage of the error at reset. The task is to bring the trace into the band at the bottom.',
+                representationsSignalsTitle: 'Invariance in the error signals',
+                representationsSignalsDesc: 'A flat trace under a given motion means the representation is invariant to it. Point coordinates respond to every motion, edge vectors to rotation and bending, curvature to bending alone.',
+                dataSignalsTitle: 'Signals inside the feedback loop',
+                dataSignalsDesc: 'Feature components, commanded end-effector rates and normalised error share one 10-second window, so the identification transient and the correction phase line up in time.',
+                timeAxisLabel: 'Time (s)',
+                pointsAxisLabel: 'Position (m)',
+                edgesAxisLabel: 'Edge component (m)',
+                curvatureAxisLabel: 'Turning angle (rad)',
+                actionAxisLabel: 'Command rate (m/s, rad/s)',
+                errorAxisLabel: 'Normalised error (–)',
+                manualErrorAxisLabel: 'Shape error (%)',
+                manualErrorTitle: 'Shape error',
+                manualErrorSeries: 'Shape error',
+                manualTargetBand: 'match threshold',
                 statusIdle: 'Idle — choose a representation, then estimate and control.',
                 statusProbing: 'Probing command',
                 statusLearned: 'Ĵ estimated from the probing data.',
@@ -1462,15 +1520,15 @@
                 takeawayLabel: 'Takeaway',
                 takeawayTitle: 'The representation decides what the robot tries to correct.',
                 takeawayDesc: 'Points preserve pose and shape, edges ignore translation, and curvature isolates bending. The “best” representation depends on the task.',
-                manipulateTakeawayTitle: 'Shape control is a repeated observe–compare–correct loop.',
-                manipulateTakeawayDesc: 'A movement of either robot affects the whole object. You solved the task by using shape error as feedback.',
-                representationsTakeawayTitle: 'A shape representation decides which differences matter.',
-                representationsTakeawayDesc: 'Points preserve pose and shape, edges ignore translation, and curvature isolates bending. Invariance removes both nuisance motion and controllable information.',
-                dataTakeawayTitle: 'Data-driven control replaces manual trial-and-error with an estimated local model.',
-                dataTakeawayDesc: 'The representation defines the error, the estimated Jacobian links robot motion to that error, and the feedback law repeatedly corrects it.',
-                nextCompare: 'Next: understand comparison →',
-                nextDataDriven: 'Next: data-driven control →',
-                finishJourney: 'Finish: explore the research →',
+                manipulateTakeawayTitle: 'Shape control is a measure-compare-correct loop.',
+                manipulateTakeawayDesc: 'Each gripper command acts on the whole object through the mechanics of the rod. Closing that loop by hand is the procedure a controller automates.',
+                representationsTakeawayTitle: 'The representation determines which differences are observable.',
+                representationsTakeawayDesc: 'Point coordinates retain pose and shape, edge vectors discard translation, and curvature discards rigid-body motion entirely. Every invariance rejects a disturbance and removes a controllable direction with it.',
+                dataTakeawayTitle: 'An estimated local model replaces manual trial and error.',
+                dataTakeawayDesc: 'The representation defines the error, the estimated Jacobian maps end-effector motion to that error, and the feedback law inverts it at every step.',
+                nextCompare: 'Next: measuring shape similarity →',
+                nextDataDriven: 'Next: data-driven shape control →',
+                finishJourney: 'Read the related research →',
                 sceneCanvasLabel: 'Two planar robot arms holding a deformable object, with the target shape shown as a dashed curve',
                 pointsPlotLabel: 'Time evolution of the point-coordinate feature components',
                 edgesPlotLabel: 'Time evolution of the edge-vector feature components',
@@ -1488,25 +1546,25 @@
             },
             es: {
                 languageAria: 'Idioma',
-                backToJourney: '← Volver al recorrido interactivo',
+                backToJourney: '← Volver a las demostraciones',
                 demoKicker: 'Demostración interactiva',
                 title: 'Control de Forma Basado en Datos',
                 intro: 'Estima cómo el movimiento del robot cambia la forma y utiliza después ese modelo local para llevar el objeto hacia un objetivo.',
-                manipulateTitle: 'Reto Manual de Control de Forma',
-                manipulateIntro: 'Mueve las pinzas de los dos robots e intenta coincidir con el objetivo discontinuo. Tú eres el controlador: observa, compara, corrige y repite.',
-                representationsTitle: 'Tres Formas de Representar la Forma',
-                representationsIntro: 'El mismo objeto puede describirse mediante posiciones de puntos, vectores de arista o curvatura. Comprueba qué detecta cada representación y qué ignora.',
-                dataDrivenTitle: 'Control de Forma Basado en Datos',
-                dataDrivenIntro: 'Vuelve a la misma tarea robótica, ahora con un jacobiano de forma estimado y un controlador realimentado que corrige continuamente el error seleccionado.',
-                experimentEyebrow: 'Explora primero',
-                experimentTitle: '¿Qué debería contar como la misma forma?',
-                experimentDesc: 'Predice qué detectará cada representación y usa Trasladar, Rotar y Flexionar para comprobar tu idea.',
-                manipulateExperimentEyebrow: 'Primer contacto',
-                manipulateExperimentTitle: '¿Puedes resolver el problema de control de forma?',
-                manipulateExperimentDesc: 'Arrastra una pinza o su anillo de giro. Prueba un cambio cada vez y consérvalo solo si mejora la coincidencia.',
-                dataExperimentEyebrow: 'Cierra el bucle',
-                dataExperimentTitle: 'De pequeñas exploraciones a la corrección automática',
-                dataExperimentDesc: 'Elige una representación, estima su jacobiano local y observa cómo el controlador convierte el error en movimiento del robot.',
+                manipulateTitle: 'Servoing de forma manual',
+                manipulateIntro: 'Dos manipuladores planos sujetan un objeto lineal deformable por ambos extremos. Mueve cualquiera de las pinzas para llevar la forma medida hasta el objetivo discontinuo.',
+                representationsTitle: 'Representaciones de forma e invariancia',
+                representationsIntro: 'La misma geometría descrita de tres maneras: coordenadas de puntos, vectores de arista y curvatura discreta. Cada elección define una señal de error distinta y un conjunto distinto de invariancias.',
+                dataDrivenTitle: 'Control de forma basado en datos',
+                dataDrivenIntro: 'La misma tarea de manipulación, cerrada con un jacobiano de forma estimado a partir de datos y una ley de realimentación que lleva a cero el error seleccionado.',
+                experimentEyebrow: 'Experimento',
+                experimentTitle: '¿Qué movimientos percibe cada representación?',
+                experimentDesc: 'Aplica una traslación, una rotación y una flexión, y compara las tres señales de error.',
+                manipulateExperimentEyebrow: 'Tarea',
+                manipulateExperimentTitle: 'Reduce a mano el error de forma',
+                manipulateExperimentDesc: 'Arrastra una pinza o su anillo de giro. Cambia un grado de libertad cada vez y conserva el cambio solo si el error disminuye.',
+                dataExperimentEyebrow: 'Procedimiento',
+                dataExperimentTitle: 'Identifica el jacobiano de forma y cierra el lazo',
+                dataExperimentDesc: 'Selecciona una representación, excita cada comando por turnos para estimar el jacobiano local y ejecuta después la ley de realimentación siguiendo la caída del error.',
                 predictionStartTitle: 'Empieza por Trasladar',
                 predictionStartDesc: 'Las coordenadas de puntos deberían cambiar; los vectores de arista y la curvatura deberían permanecer casi iguales.',
                 predictionTranslateTitle: 'La traslación revela la posición',
@@ -1556,8 +1614,26 @@
                 featPointsTitle: 'Coordenadas de puntos',
                 featEdgesTitle: 'Vectores de arista',
                 featCurvatureTitle: 'Curvatura',
-                actionTitle: 'Velocidad del efector u̇',
-                errorTitle: 'Error normalizado ‖e‖ / ‖e₀‖',
+                actionTitle: 'Comando del robot u̇',
+                errorTitle: 'Error normalizado',
+                signalsTitle: 'Señales dentro del bucle de control',
+                signalsDesc: 'Cada componente mantiene una escala durante toda la ventana temporal; el panel de error compara las tres representaciones en el mismo eje normalizado.',
+                manipulateSignalsTitle: 'Error de forma en el tiempo',
+                manipulateSignalsDesc: 'El error de forma es la distancia entre los puntos medidos y sus objetivos, expresada como porcentaje del error inicial. La tarea consiste en llevar la traza hasta la banda inferior.',
+                representationsSignalsTitle: 'Invariancia en las señales de error',
+                representationsSignalsDesc: 'Una traza plana ante un movimiento indica que la representación es invariante a él. Las coordenadas de puntos responden a todo movimiento; los vectores de arista, a rotación y flexión; la curvatura, solo a la flexión.',
+                dataSignalsTitle: 'Señales dentro del lazo de realimentación',
+                dataSignalsDesc: 'Las componentes de características, las velocidades comandadas del efector y el error normalizado comparten una ventana de 10 segundos, de modo que el transitorio de identificación y la fase de corrección quedan alineados en el tiempo.',
+                timeAxisLabel: 'Tiempo (s)',
+                pointsAxisLabel: 'Posición (m)',
+                edgesAxisLabel: 'Componente de arista (m)',
+                curvatureAxisLabel: 'Ángulo de giro (rad)',
+                actionAxisLabel: 'Tasa de comando (m/s, rad/s)',
+                errorAxisLabel: 'Error normalizado (–)',
+                manualErrorAxisLabel: 'Error de forma (%)',
+                manualErrorTitle: 'Error de forma',
+                manualErrorSeries: 'Error de forma',
+                manualTargetBand: 'umbral de coincidencia',
                 statusIdle: 'En espera — elige una representación y activa la estimación y el control.',
                 statusProbing: 'Explorando el comando',
                 statusLearned: 'Ĵ estimado con los datos de exploración.',
@@ -1617,15 +1693,15 @@
                 takeawayLabel: 'Idea clave',
                 takeawayTitle: 'La representación decide qué intenta corregir el robot.',
                 takeawayDesc: 'Los puntos conservan pose y forma, las aristas ignoran la traslación y la curvatura aísla la flexión. La «mejor» representación depende de la tarea.',
-                manipulateTakeawayTitle: 'El control de forma es un bucle repetido de observar, comparar y corregir.',
-                manipulateTakeawayDesc: 'El movimiento de cualquiera de los robots afecta al objeto completo. Has resuelto la tarea utilizando el error de forma como realimentación.',
-                representationsTakeawayTitle: 'Una representación decide qué diferencias de forma importan.',
-                representationsTakeawayDesc: 'Los puntos conservan pose y forma, las aristas ignoran la traslación y la curvatura aísla la flexión. La invariancia elimina tanto movimientos irrelevantes como información controlable.',
-                dataTakeawayTitle: 'El control basado en datos sustituye el ensayo y error manual por un modelo local estimado.',
-                dataTakeawayDesc: 'La representación define el error, el jacobiano estimado relaciona el movimiento del robot con ese error y la ley de control lo corrige repetidamente.',
-                nextCompare: 'Siguiente: comprender la comparación →',
-                nextDataDriven: 'Siguiente: control basado en datos →',
-                finishJourney: 'Final: explora la investigación →',
+                manipulateTakeawayTitle: 'El control de forma es un lazo de medir, comparar y corregir.',
+                manipulateTakeawayDesc: 'Cada comando de pinza actúa sobre todo el objeto a través de la mecánica de la varilla. Cerrar ese lazo a mano es el procedimiento que automatiza un controlador.',
+                representationsTakeawayTitle: 'La representación determina qué diferencias son observables.',
+                representationsTakeawayDesc: 'Las coordenadas de puntos conservan pose y forma, los vectores de arista descartan la traslación y la curvatura descarta por completo el movimiento rígido. Cada invariancia rechaza una perturbación y elimina con ella una dirección controlable.',
+                dataTakeawayTitle: 'Un modelo local estimado sustituye al ensayo y error manual.',
+                dataTakeawayDesc: 'La representación define el error, el jacobiano estimado relaciona el movimiento del efector con ese error y la ley de realimentación lo invierte en cada paso.',
+                nextCompare: 'Siguiente: medida de similitud de forma →',
+                nextDataDriven: 'Siguiente: control de forma basado en datos →',
+                finishJourney: 'Lee la investigación relacionada →',
                 sceneCanvasLabel: 'Dos brazos robóticos planos sujetan un objeto deformable, con la forma objetivo mostrada como una curva discontinua',
                 pointsPlotLabel: 'Evolución temporal de las componentes de coordenadas de puntos',
                 edgesPlotLabel: 'Evolución temporal de las componentes de vectores de arista',
@@ -1674,11 +1750,24 @@
             x1: [0.36, 0.80], y1: [-0.22, 0.24], a1: [-0.85, 0.85]
         };
 
+        // an external disturbance may push the object outside the servo box;
+        // both arms still reach every pose in this envelope
+        const DISTURB_LIMITS = {
+            x0: [-1.00, -0.20], y0: [-0.36, 0.38], a0: [-1.00, 1.00],
+            x1: [0.20, 1.00], y1: [-0.36, 0.38], a1: [-1.00, 1.00]
+        };
+
         const HOME = { x0: -0.58, y0: 0.00, a0: 0.28, x1: 0.58, y1: 0.00, a1: -0.28 };
         const GOAL = { x0: -0.74, y0: -0.16, a0: 0.70, x1: 0.44, y1: 0.20, a1: 0.05 };
 
         const REPS = ['points', 'edges', 'curvature'];
         const REP_TAGS = ['pts', 'edg', 'κ'];
+        // Step 1 is a single-task demo: one error curve, in the same percentage
+        // the on-screen score uses, so "drive this to zero" needs no decoding.
+        const ERROR_SERIES = demoMode === 'manipulate' ? ['points'] : REPS;
+        const MANUAL_ERROR = demoMode === 'manipulate';
+        const MANUAL_TARGET_BAND = 8;
+        const matchFromError = (normalised) => 100 * Math.exp(-1.5 * Math.min(normalised, 3));
         const DIMS = { points: 2 * N_NODES, edges: 2 * (N_NODES - 1), curvature: N_NODES - 2 };
 
         // ------------------------------------------------------------------
@@ -1717,9 +1806,10 @@
         function effective() {
             const out = {};
             const g = gesture ? gestureDelta() : null;
+            const box = g ? DISTURB_LIMITS : LIMITS;
             for (const k of KEYS) {
-                let v = base[k] + probeOffset[k] + (g ? g[k] : 0);
-                out[k] = clamp(v, LIMITS[k][0], LIMITS[k][1]);
+                const v = base[k] + probeOffset[k] + (g ? g[k] : 0);
+                out[k] = clamp(v, box[k][0], box[k][1]);
             }
             return out;
         }
@@ -2371,10 +2461,10 @@
             const d = zeroOffset();
             if (type === 'rigid') {
                 const a = Math.sin(TAU * phase) * amp;
-                d.x0 = d.x1 = 0.36 * a;
-                d.y0 = d.y1 = 0.18 * a;
+                d.x0 = d.x1 = 0.42 * a;
+                d.y0 = d.y1 = 0.24 * a;
             } else if (type === 'rotate') {
-                const th = 0.55 * amp * Math.sin(TAU * phase);
+                const th = 0.78 * amp * Math.sin(TAU * phase);
                 const cx = (ref.x0 + ref.x1) / 2;
                 const cy = (ref.y0 + ref.y1) / 2;
                 const c = Math.cos(th);
@@ -2389,10 +2479,10 @@
                 d.a1 = th;
             } else {
                 const a = Math.sin(2 * TAU * phase) * amp;
-                d.y0 = 0.17 * a;
-                d.y1 = -0.17 * a;
-                d.a0 = 0.6 * a;
-                d.a1 = 0.6 * a;
+                d.y0 = 0.30 * a;
+                d.y1 = -0.30 * a;
+                d.a0 = 0.85 * a;
+                d.a1 = 0.85 * a;
             }
             return d;
         }
@@ -2408,7 +2498,7 @@
                     for (const k of KEYS) {
                         const v = ref[k] + d[k];
                         pose[k] = v;
-                        if (v < LIMITS[k][0] - 1e-9 || v > LIMITS[k][1] + 1e-9) { ok = false; break; }
+                        if (v < DISTURB_LIMITS[k][0] - 1e-9 || v > DISTURB_LIMITS[k][1] + 1e-9) { ok = false; break; }
                     }
                     if (ok && !rodFeasible(pose)) ok = false;
                 }
@@ -2653,8 +2743,12 @@
             // feature overlay
             const hue = p.rep[representation];
             if (representation === 'points') {
+                // thin arrow from each measured point to where it should end up:
+                // the task itself, drawn on the object
+                const linkAlpha = MANUAL_ERROR ? 0.8 : 0.45;
+                const linkWidth = MANUAL_ERROR ? 1.5 : 1.3;
                 pts.forEach((pt, i) => {
-                    arrow(ctx, pt, goalPts[i], alpha(hue, 0.45), 1.3, 5);
+                    arrow(ctx, pt, goalPts[i], alpha(hue, linkAlpha), linkWidth, MANUAL_ERROR ? 6 : 5);
                 });
                 pts.forEach((pt, i) => {
                     disc(ctx, pt, 0.024 * scale, hue, p.surface, 1.6);
@@ -2727,7 +2821,14 @@
         // ------------------------------------------------------------------
         // plots
         // ------------------------------------------------------------------
-        const PAD = { l: 36, r: 30, t: 8, b: 15 };
+        const PAD = { l: 46, r: 22, t: 8, b: 32 };
+        const PLOT_RANGES = {
+            points: [-1.05, 1.05],
+            edges: [-0.24, 0.24],
+            curvature: [-1.6, 1.6],
+            action: [-1.6, 1.6],
+            error: MANUAL_ERROR ? [0, 100] : [0, 2.5]
+        };
         const plots = {};
         let cursor = null;
 
@@ -2740,7 +2841,8 @@
                     kind: 'feature',
                     rep,
                     dim,
-                    scale: null
+                    range: PLOT_RANGES[rep],
+                    axisKey: `${rep}AxisLabel`
                 };
             }
             plots.action = {
@@ -2748,27 +2850,31 @@
                 readout: document.getElementById('readoutAction'),
                 kind: 'action',
                 dim: 6,
-                scale: null
+                range: PLOT_RANGES.action,
+                axisKey: 'actionAxisLabel'
             };
             plots.error = {
                 canvas: document.getElementById('plotError'),
                 readout: document.getElementById('readoutError'),
                 kind: 'error',
-                dim: 3,
-                scale: null
+                dim: ERROR_SERIES.length,
+                range: PLOT_RANGES.error,
+                axisKey: MANUAL_ERROR ? 'manualErrorAxisLabel' : 'errorAxisLabel'
             };
         }
 
         function seriesValue(plot, sample, i) {
             if (plot.kind === 'feature') return sample.f[plot.rep][i];
             if (plot.kind === 'action') return sample.u[i];
-            return sample.e[REPS[i]] / errorScale[REPS[i]];
+            const rep = ERROR_SERIES[i];
+            const normalised = sample.e[rep] / errorScale[rep];
+            return MANUAL_ERROR ? 100 - matchFromError(normalised) : normalised;
         }
 
         function seriesColor(plot, i, p) {
             if (plot.kind === 'feature') return rampColor(plot.rep, i, plot.dim, p);
             if (plot.kind === 'action') return p.action[i];
-            return p.rep[REPS[i]];
+            return p.rep[ERROR_SERIES[i]];
         }
 
         function drawPlot(plot) {
@@ -2786,41 +2892,18 @@
             const y1 = h - PAD.b;
             if (x1 <= x0 || y1 <= y0) return;
 
-            // vertical range
-            let lo = Infinity;
-            let hi = -Infinity;
-            for (const sample of history) {
-                for (let i = 0; i < plot.dim; i++) {
-                    const v = seriesValue(plot, sample, i);
-                    if (v < lo) lo = v;
-                    if (v > hi) hi = v;
-                }
-            }
-            if (plot.kind === 'feature') {
-                const t = goalFeatures[plot.rep];
-                for (const v of t) { if (v < lo) lo = v; if (v > hi) hi = v; }
-            }
-            if (!Number.isFinite(lo)) { lo = -1; hi = 1; }
-            if (plot.kind === 'error') { lo = Math.min(lo, 0); hi = Math.max(hi, 1); }
-            if (plot.kind === 'action') { const m = Math.max(Math.abs(lo), Math.abs(hi), 0.05); lo = -m; hi = m; }
-            const span = Math.max(hi - lo, 1e-3);
-            lo -= span * 0.09;
-            hi += span * 0.09;
-            if (plot.kind === 'error') lo = 0;
-            if (!plot.scale) plot.scale = { lo, hi };
-            plot.scale.lo += (lo - plot.scale.lo) * 0.14;
-            plot.scale.hi += (hi - plot.scale.hi) * 0.14;
-            const sLo = plot.scale.lo;
-            const sHi = plot.scale.hi;
-            const yOf = (v) => y1 - (v - sLo) / Math.max(sHi - sLo, 1e-6) * (y1 - y0);
+            // Stable semantic ranges make changes comparable instead of allowing
+            // every new sample to visually rescale the chart.
+            const [sLo, sHi] = plot.range;
+            const yOf = (v) => clamp(y1 - (v - sLo) / (sHi - sLo) * (y1 - y0), y0, y1);
             const xOf = (i) => x0 + (HIST <= 1 ? 1 : i / (HIST - 1)) * (x1 - x0);
 
             // grid
             ctx.save();
             ctx.strokeStyle = p.grid;
             ctx.lineWidth = 1;
-            for (let k = 0; k <= 3; k++) {
-                const y = y0 + (y1 - y0) * k / 3;
+            for (let k = 0; k <= 4; k++) {
+                const y = y0 + (y1 - y0) * k / 4;
                 ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
             }
             if (sLo < 0 && sHi > 0) {
@@ -2829,6 +2912,32 @@
                 ctx.beginPath(); ctx.moveTo(x0, yz); ctx.lineTo(x1, yz); ctx.stroke();
             }
             ctx.restore();
+
+            if (plot.kind === 'error') {
+                ctx.save();
+                const baseline = yOf(MANUAL_ERROR ? MANUAL_TARGET_BAND : 1);
+                if (MANUAL_ERROR) {
+                    ctx.fillStyle = alpha(p.accent, 0.14);
+                    ctx.fillRect(x0, baseline, x1 - x0, y1 - baseline);
+                    ctx.strokeStyle = alpha(p.accent, 0.75);
+                } else {
+                    ctx.strokeStyle = alpha(p.textStrong, 0.28);
+                }
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.moveTo(x0, baseline);
+                ctx.lineTo(x1, baseline);
+                ctx.stroke();
+                if (MANUAL_ERROR) {
+                    ctx.setLineDash([]);
+                    ctx.font = '600 9px system-ui, sans-serif';
+                    ctx.fillStyle = p.accent;
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText(dict().manualTargetBand, x0 + 4, baseline - 3);
+                }
+                ctx.restore();
+            }
 
             // target ticks for the feature panels
             if (plot.kind === 'feature') {
@@ -2878,7 +2987,7 @@
                     ctx.fill();
                 }
                 // direct labels on the error panel
-                if (plot.kind === 'error') {
+                if (plot.kind === 'error' && plot.dim > 1) {
                     ctx.font = '600 9.5px system-ui, sans-serif';
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
@@ -2894,19 +3003,37 @@
             }
             ctx.restore();
 
-            // axis labels
+            // Explicit axes and units. All panels use the same rolling time window.
             ctx.save();
-            ctx.font = '9.5px ui-monospace, SFMono-Regular, Menlo, monospace';
+            ctx.font = '9px ui-monospace, SFMono-Regular, Menlo, monospace';
             ctx.fillStyle = p.text;
             ctx.textAlign = 'right';
             ctx.textBaseline = 'middle';
-            ctx.fillText(fmtAxis(sHi), x0 - 5, y0 + 4);
-            ctx.fillText(fmtAxis(sLo), x0 - 5, y1 - 4);
-            ctx.textAlign = 'left';
+            const ticks = (y1 - y0) < 92 ? 2 : 4;
+            for (let k = 0; k <= ticks; k++) {
+                const y = y0 + (y1 - y0) * k / ticks;
+                const value = sHi - (sHi - sLo) * k / ticks;
+                ctx.fillText(fmtAxis(value), x0 - 6, y);
+            }
+
+            const windowSeconds = (HIST - 1) * SAMPLE_MS / 1000;
             ctx.textBaseline = 'top';
-            ctx.fillText(`−${((HIST * SAMPLE_MS) / 1000).toFixed(0)}s`, x0, y1 + 2);
-            ctx.textAlign = 'right';
-            ctx.fillText(dict().nowLabel, x1, y1 + 2);
+            for (let k = 0; k <= 2; k++) {
+                const ratio = k / 2;
+                const value = -(1 - ratio) * windowSeconds;
+                ctx.textAlign = k === 0 ? 'left' : k === 2 ? 'right' : 'center';
+                ctx.fillText(Math.abs(value) < 0.05 ? '0' : `−${Math.abs(value).toFixed(0)}`, x0 + ratio * (x1 - x0), y1 + 4);
+            }
+
+            ctx.font = '600 9px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(dict().timeAxisLabel, (x0 + x1) / 2, h - 12);
+            ctx.save();
+            ctx.translate(10, (y0 + y1) / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.textBaseline = 'top';
+            ctx.fillText(dict()[plot.axisKey], 0, 0);
+            ctx.restore();
             ctx.restore();
 
             // shared crosshair
@@ -2951,16 +3078,20 @@
             }
             const speed = Math.hypot(...sample.u);
             plots.action.readout.innerHTML = `‖u̇‖ <b>${speed.toFixed(3)}</b>`;
-            plots.error.readout.innerHTML = REPS
-                .map(r => `${(sample.e[r] / errorScale[r]).toFixed(2)}`)
-                .join(' · ');
+            plots.error.readout.innerHTML = MANUAL_ERROR
+                ? `<b>${(100 - matchFromError(sample.e.points / errorScale.points)).toFixed(0)}%</b>`
+                : ERROR_SERIES.map(r => `${(sample.e[r] / errorScale[r]).toFixed(2)}`).join(' · ');
             for (let i = 0; i < 6; i++) {
                 const cell = document.getElementById('actVal' + i);
                 if (cell) cell.textContent = fmtValue(sample.u[i]);
             }
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < ERROR_SERIES.length; i++) {
                 const cell = document.getElementById('errVal' + i);
-                if (cell) cell.textContent = sample.e[REPS[i]].toFixed(3);
+                if (!cell) continue;
+                const rep = ERROR_SERIES[i];
+                cell.textContent = MANUAL_ERROR
+                    ? `${(100 - matchFromError(sample.e[rep] / errorScale[rep])).toFixed(0)}%`
+                    : (sample.e[rep] / errorScale[rep]).toFixed(2);
             }
         }
 
@@ -2979,10 +3110,12 @@
             }
             const err = document.getElementById('errorSeries');
             err.replaceChildren();
-            REPS.forEach((rep, i) => {
+            ERROR_SERIES.forEach((rep, i) => {
                 const item = document.createElement('span');
                 item.className = 'series-item';
-                const label = rep === 'points' ? words.pointCoordinates : rep === 'edges' ? words.edgeVectors : words.curvature;
+                const label = MANUAL_ERROR
+                    ? words.manualErrorSeries
+                    : rep === 'points' ? words.pointCoordinates : rep === 'edges' ? words.edgeVectors : words.curvature;
                 item.innerHTML =
                     `<i class="series-chip" style="background:${p.rep[rep]}"></i><em>${label}</em><b id="errVal${i}">0.000</b>`;
                 err.appendChild(item);
@@ -3050,8 +3183,7 @@
 
         function currentManualMatch() {
             const features = allFeatures(effective());
-            const normalisedError = errorNorm(features, 'points') / Math.max(errorScale.points, 1e-6);
-            return 100 * Math.exp(-1.5 * Math.min(normalisedError, 3));
+            return matchFromError(errorNorm(features, 'points') / Math.max(errorScale.points, 1e-6));
         }
 
         function renderManualChallenge() {
@@ -3125,16 +3257,19 @@
                 manipulate: {
                     title: 'manipulateTitle', intro: 'manipulateIntro', eyebrow: 'manipulateExperimentEyebrow',
                     experiment: 'manipulateExperimentTitle', desc: 'manipulateExperimentDesc',
+                    signals: 'manipulateSignalsTitle', signalsDesc: 'manipulateSignalsDesc',
                     takeaway: 'manipulateTakeawayTitle', takeawayDesc: 'manipulateTakeawayDesc', next: 'nextCompare'
                 },
                 representations: {
                     title: 'representationsTitle', intro: 'representationsIntro', eyebrow: 'experimentEyebrow',
                     experiment: 'experimentTitle', desc: 'experimentDesc',
+                    signals: 'representationsSignalsTitle', signalsDesc: 'representationsSignalsDesc',
                     takeaway: 'representationsTakeawayTitle', takeawayDesc: 'representationsTakeawayDesc', next: 'nextDataDriven'
                 },
                 'data-driven': {
                     title: 'dataDrivenTitle', intro: 'dataDrivenIntro', eyebrow: 'dataExperimentEyebrow',
                     experiment: 'dataExperimentTitle', desc: 'dataExperimentDesc',
+                    signals: 'dataSignalsTitle', signalsDesc: 'dataSignalsDesc',
                     takeaway: 'dataTakeawayTitle', takeawayDesc: 'dataTakeawayDesc', next: 'finishJourney'
                 }
             }[demoMode];
@@ -3143,6 +3278,10 @@
             document.querySelector('[data-i18n="experimentEyebrow"]').textContent = words[modeKeys.eyebrow];
             document.getElementById('experimentTitle').textContent = words[modeKeys.experiment];
             document.querySelector('[data-i18n="experimentDesc"]').textContent = words[modeKeys.desc];
+            document.getElementById('signalsTitle').textContent = words[modeKeys.signals];
+            document.getElementById('errorPlotTitle').textContent =
+                MANUAL_ERROR ? words.manualErrorTitle : words.errorTitle;
+            document.getElementById('signalsDesc').textContent = words[modeKeys.signalsDesc];
             document.getElementById('takeawayTitle').textContent = words[modeKeys.takeaway];
             document.getElementById('takeawayDesc').textContent = words[modeKeys.takeawayDesc];
             const next = document.getElementById('nextJourneyBtn');
@@ -3372,6 +3511,30 @@
         // ------------------------------------------------------------------
         let lastFrame = performance.now();
 
+        // A frame inside a hidden tab panel is never rendered, so the animation
+        // callback armed at start-up is never delivered and nothing re-arms it:
+        // the demo the visitor opens second would stay frozen for good. The loop
+        // therefore carries a generation token and a timer-driven watchdog, which
+        // keeps running when animation callbacks do not.
+        let loopId = 0;
+        let lastTick = performance.now();
+
+        function startLoop() {
+            const id = ++loopId;
+            const step = (now) => {
+                if (id !== loopId) return;          // superseded by a later restart
+                lastTick = now;
+                frame(now);
+                requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        }
+
+        function watchdog() {
+            if (document.hidden) return;
+            if (performance.now() - lastTick > 600) startLoop();
+        }
+
         function frame(now) {
             const dt = Math.min((now - lastFrame) / 1000, 0.1);
             lastFrame = now;
@@ -3395,7 +3558,6 @@
                 }
                 drawScene();
             }
-            requestAnimationFrame(frame);
         }
 
         // ------------------------------------------------------------------
@@ -3544,20 +3706,17 @@
         const observer = new ResizeObserver(() => reportHeight());
         observer.observe(document.querySelector('.demo-shell'));
 
-        if ('IntersectionObserver' in window) {
-            new IntersectionObserver((entries) => {
-                visible = entries.some(entry => entry.isIntersecting);
-            }, { rootMargin: '120px' }).observe(document.querySelector('.demo-shell'));
-        }
+        // rendering is already suspended by the browser while this frame is in a
+        // hidden tab panel, so the loop only has to skip work for a hidden tab
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden) visible = false;
-            else visible = true;
+            visible = !document.hidden;
         });
 
         refreshErrorScale();
         resetManualChallenge();
         applyTranslations();
-        requestAnimationFrame(frame);
+        startLoop();
+        setInterval(watchdog, 500);
         reportHeight();
     })();
     </script>
