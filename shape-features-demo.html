@@ -3518,6 +3518,7 @@
         // keeps running when animation callbacks do not.
         let loopId = 0;
         let lastTick = performance.now();
+        let wasLaidOut = false;
 
         function startLoop() {
             const id = ++loopId;
@@ -3530,9 +3531,36 @@
             requestAnimationFrame(step);
         }
 
+        // Everything the signal panels depend on - the sample clock, the rolling
+        // history, the canvas backing sizes - goes stale while the demo sits in a
+        // hidden tab panel. Start the traces from scratch when it comes back
+        // rather than stitching a gap into them.
+        function resumeSignals() {
+            const now = performance.now();
+            history.length = 0;
+            lastSample = now;
+            lastFrame = now;
+            lastTick = now;
+            velocity = new Array(6).fill(0);
+            lastState = effective();
+            for (const key of Object.keys(plots)) drawPlot(plots[key]);
+            drawScene();
+        }
+
         function watchdog() {
             if (document.hidden) return;
-            if (performance.now() - lastTick > 600) startLoop();
+            // zero while this frame is inside a hidden panel, so a rising edge
+            // marks the moment the visitor switched back to this demo
+            const laidOut = scene.clientWidth > 0 && scene.clientHeight > 0;
+            if (laidOut && !wasLaidOut) resumeSignals();
+            wasLaidOut = laidOut;
+            if (!laidOut) return;
+            if (performance.now() - lastTick > 400) {
+                // animation callbacks are not being delivered to this frame;
+                // drive one from the timer and re-arm
+                frame(performance.now());
+                startLoop();
+            }
         }
 
         function frame(now) {
