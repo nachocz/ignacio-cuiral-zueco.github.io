@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Primary Meta Tags -->
-    <title>2-Robot Cable Manipulation Demo | Ignacio Cuiral-Zueco</title>
-    <meta name="title" content="2-Robot Cable Manipulation Demo | Ignacio Cuiral-Zueco">
-    <meta name="description" content="Interactive demo of cooperative cable manipulation by two robots. Part of research on deformable object control by Ignacio Cuiral-Zueco.">
+    <title>Two-Robot Cable Challenge | Ignacio Cuiral-Zueco</title>
+    <meta name="title" content="Two-Robot Cable Challenge | Ignacio Cuiral-Zueco">
+    <meta name="description" content="An interactive challenge about coordinated robot manipulation of flexible objects.">
     <meta name="author" content="Ignacio Cuiral-Zueco">
     <meta name="keywords" content="robotics demo, cable manipulation, robot coordination, deformable objects, interactive demo">
     
@@ -126,6 +126,7 @@
         .is-embedded body {
             min-height: 0;
             padding: 0;
+            overflow: hidden;
             background: transparent;
         }
 
@@ -136,6 +137,23 @@
             border: 0;
             border-radius: 0;
             box-shadow: none;
+        }
+
+        .standalone-back {
+            display: inline-flex;
+            margin-bottom: 13px;
+            color: var(--accent-strong);
+            font-size: 0.72rem;
+            font-weight: 750;
+            text-decoration: none;
+        }
+
+        .standalone-back:hover {
+            text-decoration: underline;
+        }
+
+        .is-embedded .demo-heading {
+            display: none;
         }
 
         .demo-heading {
@@ -312,6 +330,39 @@
             font-size: 0.75rem;
         }
 
+        .challenge-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            margin-top: 13px;
+            overflow: hidden;
+            border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+            border-radius: 9px;
+            background: color-mix(in srgb, var(--accent) 18%, transparent);
+        }
+
+        .challenge-stat {
+            padding: 9px 10px;
+            background: color-mix(in srgb, var(--surface) 84%, transparent);
+        }
+
+        .challenge-stat span,
+        .challenge-stat strong {
+            display: block;
+        }
+
+        .challenge-stat span {
+            color: var(--muted);
+            font-size: 0.65rem;
+        }
+
+        .challenge-stat strong {
+            margin-top: 2px;
+            color: var(--ink);
+            font-size: 0.86rem;
+            font-variant-numeric: tabular-nums;
+        }
+
         .constraint-state {
             display: flex;
             gap: 8px;
@@ -360,6 +411,51 @@
             display: flex;
             gap: 8px;
             align-items: center;
+        }
+
+        .coach-strip {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 10px;
+            align-items: center;
+            margin: 14px 14px 0;
+            padding: 11px 13px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--surface-soft);
+        }
+
+        .coach-strip[data-state="improving"],
+        .coach-strip[data-state="success"] {
+            border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+            background: var(--accent-soft);
+        }
+
+        .coach-mark {
+            display: grid;
+            width: 30px;
+            height: 30px;
+            place-items: center;
+            border-radius: 50%;
+            color: var(--accent-strong);
+            background: var(--surface);
+            font-weight: 850;
+        }
+
+        .coach-copy strong,
+        .coach-copy span {
+            display: block;
+        }
+
+        .coach-copy strong {
+            margin-bottom: 2px;
+            color: var(--ink);
+            font-size: 0.78rem;
+        }
+
+        .coach-copy span {
+            color: var(--muted);
+            font-size: 0.72rem;
         }
 
         .button {
@@ -432,6 +528,18 @@
 
         .robot-group-right .robot-label::before {
             background: var(--brown);
+        }
+
+        .slider-row {
+            padding: 5px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            transition: border-color 150ms ease, background-color 150ms ease;
+        }
+
+        .slider-row.active {
+            border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+            background: var(--accent-soft);
         }
 
         .slider-row + .slider-row {
@@ -510,6 +618,41 @@
             color: var(--ink);
         }
 
+        .lesson-takeaway {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 18px;
+            align-items: center;
+            margin-top: 14px;
+            padding: 17px 18px;
+            border: 1px solid var(--line);
+            border-left: 4px solid var(--accent);
+            border-radius: var(--radius);
+            background: var(--accent-soft);
+        }
+
+        .takeaway-label {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--accent-strong);
+            font-size: 0.66rem;
+            font-weight: 850;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
+        .lesson-takeaway strong {
+            display: block;
+            color: var(--ink);
+            font-size: 0.9rem;
+        }
+
+        .lesson-takeaway p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 0.75rem;
+        }
+
         @media (max-width: 760px) {
             body {
                 padding: 10px;
@@ -552,6 +695,10 @@
                 flex-direction: column;
             }
 
+            .lesson-takeaway {
+                grid-template-columns: 1fr;
+            }
+
             .button {
                 width: 100%;
             }
@@ -570,6 +717,7 @@
 <body>
     <main class="demo-shell">
         <header class="demo-heading">
+            <a class="standalone-back" href="index.html#dissemination" data-i18n="backToJourney">← Back to the interactive journey</a>
             <div class="demo-topline">
                 <p class="demo-kicker" data-i18n="demoKicker">Interactive research demo</p>
                 <div class="language-switcher" aria-label="Language">
@@ -577,8 +725,8 @@
                     <button id="lang-es" class="lang-btn" type="button" data-lang="es" aria-pressed="false">ES</button>
                 </div>
             </div>
-            <h1 data-i18n="title">Robot Cable Manipulation</h1>
-            <p class="demo-intro" data-i18n="controllerTitle">Move both robot arms to guide the blue cable toward the dashed target shape.</p>
+            <h1 data-i18n="title">Two-Robot Cable Challenge</h1>
+            <p class="demo-intro" data-i18n="controllerTitle">Shape one flexible cable with four robot joints. Small local movements can change the whole object.</p>
         </header>
 
         <section class="workspace" aria-label="Cable manipulation workspace">
@@ -598,6 +746,10 @@
                     <div class="metric-value">
                         <span id="errorDisplay">0.00</span>
                         <span class="metric-unit">px</span>
+                    </div>
+                    <div class="challenge-stats">
+                        <div class="challenge-stat"><span data-i18n="movesLabel">Moves</span><strong id="movesDisplay">0</strong></div>
+                        <div class="challenge-stat"><span data-i18n="progressLabel">Improvement</span><strong id="progressDisplay">0%</strong></div>
                     </div>
                     <div id="constraintState" class="constraint-state" data-limit="false">
                         <span data-i18n="rodModelLabel">Discrete Kirchhoff rod</span>
@@ -620,8 +772,15 @@
                 <h2 id="robot-controls-title" data-i18n="controlPanelTitle">Control the robot joints</h2>
                 <div class="control-actions">
                     <button id="resetPoseBtn" class="button" type="button" data-i18n="resetPoseBtn">Reset pose</button>
+                    <button id="hintBtn" class="button" type="button" data-i18n="hintBtn">Hint</button>
+                    <button id="autopilotBtn" class="button" type="button" data-i18n="autopilotBtn">Show solution</button>
                     <button id="newTargetBtn" class="button button-primary" type="button" data-i18n="newTargetBtn">New target</button>
                 </div>
+            </div>
+
+            <div id="coachStrip" class="coach-strip" data-state="start" role="status" aria-live="polite">
+                <span class="coach-mark" aria-hidden="true">↗</span>
+                <span class="coach-copy"><strong id="coachTitle" data-i18n="coachStartTitle">Change one joint at a time</strong><span id="coachText" data-i18n="coachStartDesc">Make a small move and use the error to decide whether to continue or reverse it.</span></span>
             </div>
 
             <div class="robot-controls">
@@ -630,14 +789,14 @@
                     <div class="slider-row">
                         <div class="slider-meta">
                             <label for="theta1Slider" data-i18n="joint1">Joint 1</label>
-                            <output id="theta1Value" for="theta1Slider">−1.60</output>
+                            <output id="theta1Value" for="theta1Slider">−92°</output>
                         </div>
                         <input type="range" id="theta1Slider" min="-2" max="0.5" step="0.05" value="-1.6">
                     </div>
                     <div class="slider-row">
                         <div class="slider-meta">
                             <label for="theta2Slider" data-i18n="joint2">Joint 2</label>
-                            <output id="theta2Value" for="theta2Slider">1.00</output>
+                            <output id="theta2Value" for="theta2Slider">57°</output>
                         </div>
                         <input type="range" id="theta2Slider" min="-2" max="2" step="0.05" value="1">
                     </div>
@@ -648,14 +807,14 @@
                     <div class="slider-row">
                         <div class="slider-meta">
                             <label for="theta3Slider" data-i18n="joint1">Joint 1</label>
-                            <output id="theta3Value" for="theta3Slider">4.10</output>
+                            <output id="theta3Value" for="theta3Slider">235°</output>
                         </div>
                         <input type="range" id="theta3Slider" min="-2.5" max="4.5" step="0.05" value="4.1">
                     </div>
                     <div class="slider-row">
                         <div class="slider-meta">
                             <label for="theta4Slider" data-i18n="joint2">Joint 2</label>
-                            <output id="theta4Value" for="theta4Slider">−0.70</output>
+                            <output id="theta4Value" for="theta4Slider">−40°</output>
                         </div>
                         <input type="range" id="theta4Slider" min="-2" max="2" step="0.05" value="-0.7">
                     </div>
@@ -679,76 +838,141 @@
                 </section>
             </div>
         </details>
+
+        <section class="lesson-takeaway">
+            <div>
+                <span class="takeaway-label" data-i18n="takeawayLabel">Takeaway</span>
+                <strong data-i18n="takeawayTitle">Flexible-object control couples every action to the whole shape.</strong>
+                <p data-i18n="takeawayDesc">You used visual feedback and trial-and-error. An autonomous controller must discover the same action-to-shape relationship and update it as the object changes.</p>
+            </div>
+            <button id="nextDemoBtn" class="button button-primary" type="button" data-i18n="nextDemoBtn">Next: understand comparison →</button>
+        </section>
     </main>
 
     <script>
         // i18n Translations Object
         const translations = {
             en: {
+                languageAria: 'Language',
                 demoKicker: 'Interactive research demo',
+                backToJourney: '← Back to the interactive journey',
                 workspaceTitle: 'Manipulation workspace',
                 liveSimulation: 'Quasi-static equilibrium',
                 controlPanelTitle: 'Control the robot joints',
                 resetPoseBtn: 'Reset pose',
+                hintBtn: 'Hint',
+                autopilotBtn: 'Show solution',
                 interactionGuide: 'Interaction guide',
                 rodModelLabel: 'Discrete Kirchhoff rod',
                 flexibleState: 'Equilibrium',
                 straightLimitState: 'Straight limit',
-                title: 'Robot Cable Manipulation',
-                controllerTitle: 'Move both robot arms to guide the blue cable toward the dashed target shape.',
+                title: 'Two-Robot Cable Challenge',
+                controllerTitle: 'Shape one flexible cable with four robot joints. Small local movements can change the whole object.',
                 howToPlay: 'How it works',
                 goal: 'Objective:',
-                goalDesc: 'Adjust the robot joints so that the cable acquires the target shape (dashed green line)',
+                goalDesc: 'Adjust the joints until the cable follows the dashed target.',
                 controls: 'Controls:',
-                controlsDesc: 'Use the sliders to change the angles of each joint. The blue robot (left) and brown robot (right) control the cable together',
+                controlsDesc: 'Each slider rotates one joint. Both robots act on the same cable, so every change is coupled.',
                 feedback: 'Feedback:',
-                feedbackDesc: 'The error graph indicates how close you are to the target (the lower, the better). Use the "New Target Shape" button to get a new target shape',
-                whyMatters: 'Why does this matter?',
-                matterText1: 'Manipulating soft objects (cables, ropes, fabrics) is a big challenge in robotics. These materials frequently appear in real-world applications such as domestic manipulation (clothes, food), agriculture (plants, fruits), manufacturing (fabrics, foams), and more.',
-                note: 'Note:',
-                matterText2: 'Not all target shapes are achievable with this setup: material limits, robot movement constraints, grasping points... all condition the possible achievable shapes. Determining which shapes can be achieved with a given object and manipulation capabilities is still an open research problem',
+                feedbackDesc: 'The current error and its history show whether your change helped. Lower is better.',
+                whyMatters: 'Research context',
+                matterText1: 'Manipulating cables, cloth and other flexible objects is a central robotics challenge in homes, agriculture and manufacturing.',
+                note: 'Limit:',
+                matterText2: 'Some targets are unreachable because of material, grasp and robot constraints. Characterising that reachable set remains an open problem.',
                 leftRobot: 'Left Robot (Blue)',
                 rightRobot: 'Right Robot (Brown)',
                 joint1: 'Joint 1',
                 joint2: 'Joint 2',
                 newTargetBtn: 'New target',
-                errorPlotLabel: 'Alignment error over time',
+                errorPlotLabel: 'Alignment error after each move',
                 cableAlignmentError: 'Current alignment error',
+                movesLabel: 'Moves',
+                progressLabel: 'Improvement',
+                coachStartTitle: 'Change one joint at a time',
+                coachStartDesc: 'Make a small move and use the error to decide whether to continue or reverse it.',
+                coachImprovingTitle: 'Good move — the cable is closer',
+                coachImprovingDesc: 'Continue carefully in this direction or test another joint with a small change.',
+                coachWrongTitle: 'The error increased',
+                coachWrongDesc: 'Reverse this movement, then test a different joint or direction.',
+                coachCloseTitle: 'Close — use smaller movements',
+                coachCloseDesc: 'Fine adjustments now matter more than large changes.',
+                coachSuccessTitle: 'Target reached',
+                coachSuccessDesc: 'You found a robot pose whose cable closely follows the target.',
+                coachHintTitle: 'Strategy: run a controlled experiment',
+                coachHintDesc: 'Move one slider by only one or two steps. Keep the change only if the error falls.',
+                coachSolutionTitle: 'A feasible solution pose',
+                coachSolutionDesc: 'The simulator knew this pose when it generated the target. A real controller must discover it from feedback.',
+                takeawayLabel: 'Takeaway',
+                takeawayTitle: 'Flexible-object control couples every action to the whole shape.',
+                takeawayDesc: 'You used visual feedback and trial-and-error. An autonomous controller must discover the same action-to-shape relationship and update it as the object changes.',
+                nextDemoBtn: 'Next: understand comparison →',
                 legendTargetShape: 'Target shape',
-                legendCurrentShape: 'Current shape'
+                legendCurrentShape: 'Current shape',
+                workspaceAria: 'Cable manipulation workspace',
+                feedbackAria: 'Performance feedback',
+                canvasAria: 'Two robot arms manipulating a cable toward a dashed target shape',
+                plotAria: 'History of cable alignment error after each move; lower values mean better alignment'
             },
             es: {
+                languageAria: 'Idioma',
                 demoKicker: 'Demostración interactiva',
+                backToJourney: '← Volver al recorrido interactivo',
                 workspaceTitle: 'Espacio de manipulación',
                 liveSimulation: 'Equilibrio cuasiestático',
                 controlPanelTitle: 'Controla las articulaciones',
                 resetPoseBtn: 'Restablecer postura',
+                hintBtn: 'Pista',
+                autopilotBtn: 'Mostrar solución',
                 interactionGuide: 'Guía de interacción',
                 rodModelLabel: 'Varilla discreta de Kirchhoff',
                 flexibleState: 'Equilibrio',
                 straightLimitState: 'Límite recto',
-                title: 'Manipulación Robótica de un Cable',
-                controllerTitle: 'Mueve ambos brazos para guiar el cable azul hacia la forma objetivo discontinua.',
+                title: 'Reto del Cable con Dos Robots',
+                controllerTitle: 'Da forma a un cable flexible con cuatro articulaciones. Un pequeño movimiento local puede cambiar todo el objeto.',
                 howToPlay: 'Cómo funciona',
                 goal: 'Objetivo:',
-                goalDesc: 'Ajusta las articulaciones de los robots para que el cable adopte la forma objetivo (línea verde discontinua)',
+                goalDesc: 'Ajusta las articulaciones hasta que el cable siga el objetivo discontinuo.',
                 controls: 'Controles:',
-                controlsDesc: 'Usa los deslizadores para cambiar los ángulos de cada articulación. El robot azul (izquierda) y el marrón (derecha) controlan el cable conjuntamente',
+                controlsDesc: 'Cada deslizador gira una articulación. Ambos robots actúan sobre el mismo cable, por lo que todos los cambios están acoplados.',
                 feedback: 'Retroalimentación:',
-                feedbackDesc: 'La gráfica de error indica cómo de cerca estás del objetivo (cuanto más bajo, mejor). Usa el botón "Nueva Forma Objetivo" para obtener una nueva forma objetivo',
-                whyMatters: '¿Por qué es esto importante?',
-                matterText1: 'Manipular objetos blandos (cables, cuerdas, tejidos) es un reto clave en robótica. Estos materiales aparecen constantemente en aplicaciones reales como manipulación doméstica (ropa, comida), agricultura (plantas, frutas), fabricación (telas, espumas), etc.',
-                note: 'Nota:',
-                matterText2: 'No todas las formas objetivo son alcanzables dado un objeto y una configuración para su manipulación: los límites del material, del movimiento de los robots, los puntos de agarre... todo condiciona las posibles formas alcanzables. Determinar y caracterizar qué formas se pueden conseguir con un objeto y unas capacidades de actuación dadas sigue siendo un problema abierto de investigación',
+                feedbackDesc: 'El error actual y su historial muestran si el cambio ha ayudado. Cuanto más bajo, mejor.',
+                whyMatters: 'Contexto de investigación',
+                matterText1: 'Manipular cables, tejidos y otros objetos flexibles es un reto central de la robótica en hogares, agricultura y fabricación.',
+                note: 'Límite:',
+                matterText2: 'Algunos objetivos son inalcanzables por las restricciones del material, el agarre y los robots. Caracterizar ese conjunto alcanzable sigue siendo un problema abierto.',
                 leftRobot: 'Robot Izquierdo (Azul)',
                 rightRobot: 'Robot Derecho (Marrón)',
                 joint1: 'Articulación 1',
                 joint2: 'Articulación 2',
                 newTargetBtn: 'Nuevo objetivo',
-                errorPlotLabel: 'Error de alineación en el tiempo',
+                errorPlotLabel: 'Error de alineación después de cada movimiento',
                 cableAlignmentError: 'Error de alineación actual',
+                movesLabel: 'Movimientos',
+                progressLabel: 'Mejora',
+                coachStartTitle: 'Cambia una articulación cada vez',
+                coachStartDesc: 'Haz un movimiento pequeño y utiliza el error para decidir si debes continuar o invertirlo.',
+                coachImprovingTitle: 'Buen movimiento: el cable está más cerca',
+                coachImprovingDesc: 'Continúa con cuidado en esta dirección o prueba otra articulación con un cambio pequeño.',
+                coachWrongTitle: 'El error ha aumentado',
+                coachWrongDesc: 'Invierte este movimiento y prueba otra articulación o dirección.',
+                coachCloseTitle: 'Estás cerca: utiliza movimientos pequeños',
+                coachCloseDesc: 'Los ajustes finos son ahora más útiles que los cambios grandes.',
+                coachSuccessTitle: 'Objetivo alcanzado',
+                coachSuccessDesc: 'Has encontrado una postura cuyo cable sigue de cerca la forma objetivo.',
+                coachHintTitle: 'Estrategia: realiza un experimento controlado',
+                coachHintDesc: 'Mueve un deslizador solo uno o dos pasos. Conserva el cambio únicamente si el error disminuye.',
+                coachSolutionTitle: 'Una postura solución factible',
+                coachSolutionDesc: 'El simulador conocía esta postura al generar el objetivo. Un controlador real debe descubrirla a partir de la realimentación.',
+                takeawayLabel: 'Idea clave',
+                takeawayTitle: 'En un objeto flexible, cada acción afecta a la forma completa.',
+                takeawayDesc: 'Has utilizado realimentación visual y ensayo y error. Un controlador autónomo debe descubrir la misma relación entre acción y forma y actualizarla cuando cambia el objeto.',
+                nextDemoBtn: 'Siguiente: comprender la comparación →',
                 legendTargetShape: 'Forma objetivo',
-                legendCurrentShape: 'Forma actual'
+                legendCurrentShape: 'Forma actual',
+                workspaceAria: 'Espacio de manipulación del cable',
+                feedbackAria: 'Información sobre el rendimiento',
+                canvasAria: 'Dos brazos robóticos manipulan un cable hacia una forma objetivo discontinua',
+                plotAria: 'Historial del error de alineación tras cada movimiento; los valores bajos indican mejor alineación'
             }
         };
 
@@ -778,7 +1002,13 @@
                 }
             });
             document.documentElement.lang = currentLanguage;
+            document.querySelector('.language-switcher').setAttribute('aria-label', t.languageAria);
+            document.querySelector('.workspace').setAttribute('aria-label', t.workspaceAria);
+            document.querySelector('.metrics-column').setAttribute('aria-label', t.feedbackAria);
+            document.getElementById('roboticsCanvas').setAttribute('aria-label', t.canvasAria);
+            document.getElementById('errorPlot').setAttribute('aria-label', t.plotAria);
             updateConstraintStatus();
+            renderCoach();
         }
 
         function updateLanguageButtons() {
@@ -804,7 +1034,7 @@
 
         function reportHeight() {
             if (!isEmbedded) return;
-            const height = document.documentElement.scrollHeight;
+            const height = Math.ceil(document.querySelector('.demo-shell').getBoundingClientRect().height);
             if (Math.abs(height - lastReportedHeight) < 2) return;
             lastReportedHeight = height;
             window.parent.postMessage({
@@ -877,6 +1107,11 @@
         const errorPlotCtx = errorPlot.getContext('2d');
         const errorDisplay = document.getElementById('errorDisplay');
         const newTargetBtn = document.getElementById('newTargetBtn');
+        const movesDisplay = document.getElementById('movesDisplay');
+        const progressDisplay = document.getElementById('progressDisplay');
+        const coachStrip = document.getElementById('coachStrip');
+        const coachTitle = document.getElementById('coachTitle');
+        const coachText = document.getElementById('coachText');
         
         // Error history for plotting
         let errorHistory = [];
@@ -905,6 +1140,68 @@
         
         let rmsError = 0;
         let rodAtLimit = false;
+        let activeJointIndex = -1;
+        let moveCount = 0;
+        let initialError = null;
+        let previousError = null;
+        let bestError = Infinity;
+        let coachTitleKey = 'coachStartTitle';
+        let coachTextKey = 'coachStartDesc';
+        let coachState = 'start';
+        let coachMark = '↗';
+        const SUCCESS_ERROR = 28;
+        const CLOSE_ERROR = 55;
+
+        function formatAngle(value) {
+            return `${Math.round(value * 180 / Math.PI)}°`;
+        }
+
+        function renderCoach() {
+            const words = translations[currentLanguage];
+            coachStrip.dataset.state = coachState;
+            coachStrip.querySelector('.coach-mark').textContent = coachMark;
+            coachTitle.textContent = words[coachTitleKey];
+            coachText.textContent = words[coachTextKey];
+        }
+
+        function setCoach(titleKey, textKey, state = 'start', mark = '↗') {
+            coachTitleKey = titleKey;
+            coachTextKey = textKey;
+            coachState = state;
+            coachMark = mark;
+            renderCoach();
+        }
+
+        function resetChallengeStats() {
+            moveCount = 0;
+            initialError = null;
+            previousError = null;
+            bestError = Infinity;
+            movesDisplay.textContent = '0';
+            progressDisplay.textContent = '0%';
+            setCoach('coachStartTitle', 'coachStartDesc');
+        }
+
+        function updateChallengeFeedback(fromUser) {
+            if (!Number.isFinite(initialError)) initialError = Math.max(rmsError, 1);
+            const before = previousError;
+            if (fromUser) moveCount += 1;
+            bestError = Math.min(bestError, rmsError);
+            const progress = Math.max(0, Math.min(100, (initialError - rmsError) / initialError * 100));
+            movesDisplay.textContent = String(moveCount);
+            progressDisplay.textContent = `${Math.round(progress)}%`;
+
+            if (rmsError <= SUCCESS_ERROR) {
+                setCoach('coachSuccessTitle', 'coachSuccessDesc', 'success', '✓');
+            } else if (rmsError <= CLOSE_ERROR) {
+                setCoach('coachCloseTitle', 'coachCloseDesc', 'improving', '◎');
+            } else if (fromUser && Number.isFinite(before) && rmsError < before - 0.2) {
+                setCoach('coachImprovingTitle', 'coachImprovingDesc', 'improving', '↓');
+            } else if (fromUser && Number.isFinite(before) && rmsError > before + 0.2) {
+                setCoach('coachWrongTitle', 'coachWrongDesc', 'wrong', '↶');
+            }
+            previousError = rmsError;
+        }
 
         function armPose(base, angle1, angle2) {
             const joint = [
@@ -1248,7 +1545,7 @@
             for (let attempt = 0; attempt < 80 && !feasible; attempt++) {
                 theta1_ghost = -Math.random() * Math.PI / 2;
                 theta2_ghost = -Math.PI / 2 + Math.random() * Math.PI;
-                theta3_ghost = Math.PI + Math.random() * Math.PI / 2;
+                theta3_ghost = Math.PI + Math.random() * (4.45 - Math.PI);
                 theta4_ghost = -Math.PI / 2 + Math.random() * Math.PI;
                 feasible = rodPoseFeasible(theta1_ghost, theta2_ghost, theta3_ghost, theta4_ghost);
             }
@@ -1601,6 +1898,23 @@
                 ctx.strokeRect(0, -jawWidth2 / 2, jawLength2, jawWidth2);
                 ctx.restore();
             }
+
+            if (activeJointIndex >= 0) {
+                const activePoints = [ee1.j0, ee1.j1, ee2.j0, ee2.j1];
+                const activePoint = activePoints[activeJointIndex];
+                ctx.save();
+                ctx.strokeStyle = palette.target;
+                ctx.fillStyle = palette.target;
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 4]);
+                ctx.beginPath();
+                ctx.arc(activePoint[0], activePoint[1], 18, 0, Math.PI * 2);
+                ctx.globalAlpha = 0.12;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+                ctx.stroke();
+                ctx.restore();
+            }
             
             // Draw legend in top-left corner
             const legendX = 10;
@@ -1708,10 +2022,10 @@
             // X-axis label
             errorPlotCtx.font = '11px sans-serif';
             errorPlotCtx.textAlign = 'center';
-            errorPlotCtx.fillText(currentLanguage === 'es' ? 'Tiempo →' : 'Time →', plotWidth / 2, plotHeight - 5);
+            errorPlotCtx.fillText(currentLanguage === 'es' ? 'Movimientos →' : 'Moves →', plotWidth / 2, plotHeight - 5);
         }
 
-        function updateSimulation({ record = true } = {}) {
+        function updateSimulation({ record = true, fromUser = false } = {}) {
             const equilibrium = solveCable();
             rmsError = computeRmsError();
             if (record) {
@@ -1719,6 +2033,7 @@
                 if (errorHistory.length > maxHistoryLength) errorHistory.shift();
             }
             errorDisplay.textContent = rmsError.toFixed(2);
+            updateChallengeFeedback(fromUser);
             render();
             renderErrorPlot();
             return equilibrium;
@@ -1753,7 +2068,17 @@
             constraintStatus.textContent = translations[currentLanguage][key];
         }
 
-        jointControls.forEach(({ slider, output, read, update }) => {
+        jointControls.forEach(({ slider, output, read, update }, index) => {
+            slider.addEventListener('focus', () => {
+                activeJointIndex = index;
+                slider.closest('.slider-row')?.classList.add('active');
+                render();
+            });
+            slider.addEventListener('blur', () => {
+                activeJointIndex = -1;
+                slider.closest('.slider-row')?.classList.remove('active');
+                render();
+            });
             slider.addEventListener('input', () => {
                 const requested = Number.parseFloat(slider.value);
                 const previous = read();
@@ -1780,9 +2105,9 @@
                 }
 
                 slider.value = accepted;
-                output.value = accepted.toFixed(2);
+                output.value = formatAngle(accepted);
                 updateConstraintStatus();
-                if (!batchUpdating) updateSimulation();
+                if (!batchUpdating) updateSimulation({ fromUser: true });
             });
         });
 
@@ -1797,6 +2122,7 @@
             rodAtLimit = false;
             updateConstraintStatus();
             errorHistory.length = 0;
+            resetChallengeStats();
             updateSimulation();
         }
 
@@ -1804,12 +2130,66 @@
         newTargetBtn.addEventListener('click', () => {
             generateTarget();
             errorHistory.length = 0;
+            resetChallengeStats();
             updateSimulation();
+        });
+
+        document.getElementById('hintBtn').addEventListener('click', () => {
+            setCoach('coachHintTitle', 'coachHintDesc', 'start', '↔');
+            theta1Slider.focus();
+        });
+
+        document.getElementById('autopilotBtn').addEventListener('click', () => {
+            const button = document.getElementById('autopilotBtn');
+            const start = jointControls.map(({ read }) => read());
+            const goal = [theta1_ghost, theta2_ghost, theta3_ghost, theta4_ghost];
+            const startedAt = performance.now();
+            const duration = 900;
+            button.disabled = true;
+            batchUpdating = true;
+
+            function animateSolution(now) {
+                const linear = Math.min(1, (now - startedAt) / duration);
+                const eased = 1 - Math.pow(1 - linear, 3);
+                jointControls.forEach(({ slider, output, update }, index) => {
+                    const value = start[index] + (goal[index] - start[index]) * eased;
+                    update(value);
+                    slider.value = value;
+                    output.value = formatAngle(value);
+                });
+                rodAtLimit = false;
+                updateConstraintStatus();
+                updateSimulation({ record: false });
+                if (linear < 1) {
+                    requestAnimationFrame(animateSolution);
+                    return;
+                }
+                batchUpdating = false;
+                button.disabled = false;
+                errorHistory.push(rmsError);
+                renderErrorPlot();
+                setCoach('coachSolutionTitle', 'coachSolutionDesc', 'success', '✓');
+            }
+
+            requestAnimationFrame(animateSolution);
+        });
+
+        document.getElementById('nextDemoBtn').addEventListener('click', () => {
+            if (isEmbedded) {
+                window.parent.postMessage(
+                    { type: 'demoNavigate', target: 'demo-shape-compare' },
+                    window.location.protocol === 'file:' ? '*' : window.location.origin
+                );
+            } else {
+                window.location.href = 'shape-comparison.html';
+            }
         });
 
         // Initialize once. Further equilibrium solves are driven only by input.
         initCable();
         generateTarget();
+        resetChallengeStats();
+        jointControls.forEach(({ output, read }) => { output.value = formatAngle(read()); });
         updateSimulation();
     </script>
 </body>

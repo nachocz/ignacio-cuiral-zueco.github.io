@@ -7,7 +7,7 @@
     const sectionPanels = [...document.querySelectorAll('.section-panel')];
     const demoTabs = [...document.querySelectorAll('.demo-tab-btn')];
     const demoPanels = [...document.querySelectorAll('.demo-panel')];
-    const demoFrameIds = ['robotics-iframe', 'shape-iframe', 'features-iframe'];
+    const demoFrameIds = ['manipulate-iframe', 'shape-iframe', 'representations-iframe', 'data-driven-iframe'];
     const themeToggle = document.getElementById('theme-toggle');
     const themeColor = document.querySelector('meta[name="theme-color"]');
 
@@ -40,6 +40,16 @@
         document.querySelectorAll('[data-i18n]').forEach((element) => {
             const value = dictionary[element.dataset.i18n];
             if (typeof value === 'string') element.textContent = value;
+        });
+
+        document.querySelectorAll('[data-i18n-aria-label]').forEach((element) => {
+            const value = dictionary[element.getAttribute('data-i18n-aria-label')];
+            if (typeof value === 'string') element.setAttribute('aria-label', value);
+        });
+
+        document.querySelectorAll('[data-i18n-title]').forEach((element) => {
+            const value = dictionary[element.getAttribute('data-i18n-title')];
+            if (typeof value === 'string') element.setAttribute('title', value);
         });
 
         document.documentElement.lang = currentLanguage;
@@ -194,6 +204,11 @@
         activateDemo(demoTabs[nextIndex].dataset.target);
     }
 
+    function openDemoJourney() {
+        const firstItem = document.querySelector('#panel-dissemination .dissemination-item');
+        if (firstItem) setAccordionState(firstItem, true);
+    }
+
     function setAccordionState(item, expanded) {
         const button = item.querySelector('.dissemination-header');
         const content = item.querySelector('.dissemination-content');
@@ -204,7 +219,10 @@
 
     function initializeNavigation() {
         sectionTabs.forEach((tab) => {
-            tab.addEventListener('click', () => activateSection(tab.dataset.target, { scroll: true }));
+            tab.addEventListener('click', () => {
+                activateSection(tab.dataset.target, { scroll: true });
+                if (tab.dataset.target === 'panel-dissemination') openDemoJourney();
+            });
             tab.addEventListener('keydown', handleSectionKeydown);
         });
 
@@ -216,14 +234,14 @@
 
         document.querySelector('.inline-tab-link')?.addEventListener('click', () => {
             activateSection('panel-dissemination', { scroll: true });
-            const firstItem = document.querySelector('#panel-dissemination .dissemination-item');
-            if (firstItem) setAccordionState(firstItem, true);
+            openDemoJourney();
         });
     }
 
     function initializeDemoTabs() {
         demoTabs.forEach((tab, index) => {
             const targetId = tab.dataset.target;
+            tab.id = `demo-tab-${index + 1}`;
             tab.setAttribute('role', 'tab');
             tab.setAttribute('aria-controls', targetId);
             tab.setAttribute('aria-selected', String(index === 0));
@@ -233,11 +251,13 @@
         });
 
         document.querySelectorAll('.demo-tabs').forEach((tabList) => {
-            tabList.setAttribute('aria-label', 'Interactive demos');
+            tabList.setAttribute('aria-label', currentTranslations().interactiveDemosAria);
         });
 
         demoPanels.forEach((panel, index) => {
             panel.setAttribute('role', 'tabpanel');
+            panel.setAttribute('aria-labelledby', demoTabs[index]?.id || '');
+            panel.tabIndex = 0;
             panel.hidden = index !== 0;
         });
     }
@@ -278,15 +298,26 @@
         });
 
         window.addEventListener('message', (event) => {
-            if (event.data?.type !== 'demoHeight' || !Number.isFinite(event.data.height)) return;
-
             const frame = demoFrameIds
                 .map((id) => document.getElementById(id))
                 .find((candidate) => candidate?.contentWindow === event.source);
             if (!frame) return;
 
-            const nextHeight = Math.min(Math.max(Math.ceil(event.data.height), 560), 2600);
-            frame.style.height = `${nextHeight}px`;
+            if (event.data?.type === 'demoHeight' && Number.isFinite(event.data.height)) {
+                const contentHeight = Math.min(Math.max(Math.ceil(event.data.height), 560), 6000);
+                const frameChrome = Math.max(frame.offsetHeight - frame.clientHeight, 0);
+                frame.style.height = `${contentHeight + frameChrome}px`;
+            }
+
+            if (event.data?.type === 'demoNavigate') {
+                const targetId = event.data.target;
+                if (!demoPanels.some((panel) => panel.id === targetId)) return;
+                activateSection('panel-dissemination', { updateHistory: false, scroll: false });
+                openDemoJourney();
+                activateDemo(targetId);
+                demoTabs.find((tab) => tab.dataset.target === targetId)?.focus({ preventScroll: true });
+                document.querySelector('.demo-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         });
     }
 
@@ -305,6 +336,7 @@
         initializeNavigation();
         initializeDemoTabs();
         initializeAccordions();
+        if (panelIdFromHash() === 'panel-dissemination') openDemoJourney();
         initializeMedia();
         initializeFooter();
         applyTranslations();

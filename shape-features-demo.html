@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data-Driven Shape Control | Ignacio Cuiral-Zueco</title>
-    <meta name="description" content="Two robot arms manipulate a deformable linear object while a data-driven controller learns the local shape Jacobian. Live plots of feature evolution, commanded actions and error.">
+    <meta name="description" content="Interactive lessons on manual deformable-object manipulation, shape representations and data-driven shape control.">
     <script>
         (() => {
             const savedTheme = localStorage.getItem('theme');
             const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
             document.documentElement.dataset.theme = savedTheme || systemTheme;
             document.documentElement.classList.toggle('is-embedded', window.self !== window.top);
+            const requestedMode = new URLSearchParams(window.location.search).get('mode');
+            const validModes = ['manipulate', 'representations', 'data-driven'];
+            document.documentElement.dataset.demoMode = validModes.includes(requestedMode) ? requestedMode : 'data-driven';
         })();
     </script>
     <style>
@@ -109,6 +112,7 @@
         .is-embedded body {
             min-height: 0;
             padding: 0;
+            overflow: hidden;
             background: transparent;
         }
 
@@ -119,6 +123,226 @@
             border: 0;
             border-radius: 0;
             box-shadow: none;
+        }
+
+        .standalone-back {
+            display: inline-flex;
+            margin-bottom: 13px;
+            color: var(--accent-strong);
+            font-size: 0.72rem;
+            font-weight: 750;
+            text-decoration: none;
+        }
+
+        .standalone-back:hover {
+            text-decoration: underline;
+        }
+
+        .is-embedded header:first-child {
+            display: none;
+        }
+
+        .mode-manipulate-only,
+        .mode-data-only {
+            display: none;
+        }
+
+        [data-demo-mode="manipulate"] .mode-manipulate-only,
+        [data-demo-mode="data-driven"] .mode-data-only {
+            display: block;
+        }
+
+        [data-demo-mode="manipulate"] .representation-card,
+        [data-demo-mode="manipulate"] .representation-details,
+        [data-demo-mode="manipulate"] .advanced-toggle-row,
+        [data-demo-mode="manipulate"] .automatic-control,
+        [data-demo-mode="manipulate"] .disturbance-control,
+        [data-demo-mode="representations"] .advanced-toggle-row,
+        [data-demo-mode="representations"] .automatic-control,
+        [data-demo-mode="representations"] .target-control {
+            display: none;
+        }
+
+        [data-demo-mode="manipulate"] .prediction-card {
+            display: none;
+        }
+
+        [data-demo-mode="manipulate"] .experiment-guide {
+            grid-template-columns: 1fr;
+        }
+
+        [data-demo-mode="representations"] .status-line {
+            display: none;
+        }
+
+        .manual-score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--line);
+        }
+
+        .manual-score-grid div {
+            padding: 13px 14px;
+            background: var(--surface);
+        }
+
+        .manual-score-grid span,
+        .manual-score-grid output {
+            display: block;
+        }
+
+        .manual-score-grid span {
+            color: var(--muted);
+            font-size: 0.62rem;
+        }
+
+        .manual-score-grid output {
+            margin-top: 3px;
+            color: var(--accent-strong);
+            font-size: 1.2rem;
+            font-weight: 780;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .manual-coach {
+            padding: 12px 14px;
+            border-top: 1px solid var(--line);
+        }
+
+        .manual-controls {
+            padding: 11px 12px;
+            border-top: 1px solid var(--line);
+        }
+
+        .manual-gripper-select,
+        .manual-nudge-grid {
+            display: grid;
+            gap: 6px;
+        }
+
+        .manual-gripper-select {
+            grid-template-columns: 1fr 1fr;
+            margin-bottom: 8px;
+        }
+
+        .manual-nudge-grid {
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+
+        .manual-control-btn {
+            min-height: 32px;
+            padding: 5px 7px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            color: var(--ink-soft);
+            background: var(--surface-soft);
+            font-size: 0.66rem;
+            font-weight: 720;
+            cursor: pointer;
+        }
+
+        .manual-control-btn[aria-pressed="true"] {
+            color: #102019;
+            border-color: var(--accent);
+            background: var(--accent);
+        }
+
+        .manual-coach strong,
+        .manual-coach span {
+            display: block;
+        }
+
+        .manual-coach strong {
+            margin-bottom: 3px;
+            color: var(--ink);
+            font-size: 0.74rem;
+        }
+
+        .manual-coach span {
+            color: var(--muted);
+            font-size: 0.65rem;
+            line-height: 1.4;
+        }
+
+        .control-loop {
+            margin: 12px 0;
+            padding: 16px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--surface-soft);
+        }
+
+        .control-loop-heading {
+            display: flex;
+            gap: 14px;
+            align-items: end;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .control-loop-heading h2,
+        .control-loop-heading p {
+            margin: 0;
+        }
+
+        .control-loop-heading h2 {
+            color: var(--ink);
+            font-size: 0.95rem;
+        }
+
+        .control-loop-heading p {
+            max-width: 620px;
+            color: var(--muted);
+            font-size: 0.7rem;
+        }
+
+        .control-loop-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .loop-step {
+            padding: 11px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--surface);
+        }
+
+        .loop-step span,
+        .loop-step strong,
+        .loop-step small,
+        .loop-step code {
+            display: block;
+        }
+
+        .loop-step span {
+            margin-bottom: 5px;
+            color: var(--accent-strong);
+            font-size: 0.58rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .loop-step strong {
+            color: var(--ink);
+            font-size: 0.72rem;
+        }
+
+        .loop-step small {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 0.62rem;
+            line-height: 1.4;
+        }
+
+        .loop-step code {
+            margin-top: 8px;
+            color: var(--ink-soft);
+            font-family: "Cascadia Code", Consolas, monospace;
+            font-size: 0.66rem;
         }
 
         .demo-topline {
@@ -183,6 +407,75 @@
             margin-bottom: 16px;
             color: var(--muted);
             font-size: 0.92rem;
+        }
+
+        .experiment-guide {
+            display: grid;
+            grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 16px 18px;
+            border: 1px solid var(--line);
+            border-left: 4px solid var(--accent);
+            border-radius: 14px;
+            background: var(--accent-soft);
+        }
+
+        .experiment-guide h2 {
+            margin: 3px 0 5px;
+            font-size: 1rem;
+        }
+
+        .experiment-guide p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.76rem;
+        }
+
+        .guide-eyebrow {
+            color: var(--accent-strong) !important;
+            font-size: 0.64rem !important;
+            font-weight: 850;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
+        .prediction-card {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 10px;
+            align-items: center;
+            padding: 11px 13px;
+            border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line));
+            border-radius: 10px;
+            background: var(--surface);
+        }
+
+        .prediction-mark {
+            display: grid;
+            width: 30px;
+            height: 30px;
+            place-items: center;
+            border-radius: 50%;
+            color: var(--accent-strong);
+            background: var(--accent-soft);
+            font-weight: 850;
+        }
+
+        .prediction-copy strong,
+        .prediction-copy span {
+            display: block;
+        }
+
+        .prediction-copy strong {
+            margin-bottom: 2px;
+            font-size: 0.75rem;
+        }
+
+        .prediction-copy span {
+            color: var(--muted);
+            font-size: 0.68rem;
         }
 
         .card {
@@ -364,7 +657,7 @@
 
         .rep-btn {
             display: grid;
-            grid-template-columns: 10px minmax(0, 1fr);
+            grid-template-columns: 10px minmax(0, 1fr) auto;
             gap: 9px;
             align-items: center;
             padding: 9px 12px;
@@ -410,11 +703,44 @@
             line-height: 1.35;
         }
 
+        .rep-reading {
+            min-width: 54px;
+            color: var(--muted);
+            font-size: 0.58rem;
+            text-align: right;
+        }
+
+        .rep-reading span,
+        .rep-reading output {
+            display: block;
+        }
+
+        .rep-comparison-note {
+            margin: 0;
+            padding: 8px 11px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 0.6rem;
+            line-height: 1.4;
+        }
+
+        .rep-reading output {
+            margin-top: 2px;
+            color: var(--ink);
+            font-size: 0.72rem;
+            font-weight: 750;
+            font-variant-numeric: tabular-nums;
+        }
+
         .metrics {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 1fr;
             gap: 1px;
             background: var(--line);
+        }
+
+        .demo-shell.show-advanced .metrics {
+            grid-template-columns: repeat(3, 1fr);
         }
 
         .metric {
@@ -512,6 +838,37 @@
 
         .plot-section {
             margin-top: 12px;
+        }
+
+        .advanced-only {
+            display: none;
+        }
+
+        .demo-shell.show-advanced .advanced-only {
+            display: block;
+        }
+
+        .advanced-toggle-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .advanced-toggle {
+            min-height: 38px;
+            padding: 8px 14px;
+            border: 1px solid var(--line-strong);
+            border-radius: 999px;
+            color: var(--ink-soft);
+            background: var(--surface);
+            font-size: 0.72rem;
+            font-weight: 750;
+            cursor: pointer;
+        }
+
+        .advanced-toggle:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
         }
 
         .plot-grid-3 {
@@ -638,12 +995,62 @@
             font-size: 0.69rem;
         }
 
+        .representation-grid code {
+            display: block;
+            margin-top: 8px;
+            color: var(--accent-strong);
+            font-family: "Cascadia Code", Consolas, monospace;
+            font-size: 0.66rem;
+        }
+
+        .lesson-takeaway {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 18px;
+            align-items: center;
+            margin-top: 12px;
+            padding: 17px 18px;
+            border: 1px solid var(--line);
+            border-left: 4px solid var(--accent);
+            border-radius: 14px;
+            background: var(--accent-soft);
+        }
+
+        .takeaway-label {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--accent-strong);
+            font-size: 0.64rem;
+            font-weight: 850;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
+        .lesson-takeaway strong {
+            display: block;
+            font-size: 0.86rem;
+        }
+
+        .lesson-takeaway p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 0.7rem;
+        }
+
+        .button-link {
+            text-decoration: none;
+        }
+
         @media (max-width: 960px) {
             .stage {
                 grid-template-columns: 1fr;
             }
 
             .rail {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .control-loop-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
@@ -678,10 +1085,24 @@
             .representation-grid {
                 grid-template-columns: 1fr;
             }
+
+            .experiment-guide,
+            .lesson-takeaway {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 640px) {
             .rail {
+                grid-template-columns: 1fr;
+            }
+
+            .control-loop-heading {
+                align-items: start;
+                flex-direction: column;
+            }
+
+            .control-loop-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -700,6 +1121,7 @@
 <body>
     <main class="demo-shell">
         <header>
+            <a class="standalone-back" href="index.html#dissemination" data-i18n="backToJourney">← Back to the interactive journey</a>
             <div class="demo-topline">
                 <p class="demo-kicker" data-i18n="demoKicker">Interactive research demo</p>
                 <div class="language-switcher" aria-label="Language">
@@ -707,9 +1129,34 @@
                     <button class="lang-btn" type="button" data-lang="es" aria-pressed="false">ES</button>
                 </div>
             </div>
-            <h1 data-i18n="title">Shape Features &amp; Data-Driven Control</h1>
-            <p class="demo-intro" data-i18n="intro">Two robot arms hold a deformable linear object — a discrete Kirchhoff rod, clamped at both ends, re-solved to quasi-static equilibrium every frame. The controller never sees that model: it probes the system, learns the local shape Jacobian from the observed response, and servos on whichever feature vector you select.</p>
+            <h1 data-i18n="title">Data-Driven Shape Control</h1>
+            <p class="demo-intro" data-i18n="intro">Estimate how robot motion changes shape, then use that local model to drive the object toward a target.</p>
         </header>
+
+        <section class="experiment-guide" aria-labelledby="experimentTitle">
+            <div>
+                <p class="guide-eyebrow" data-i18n="experimentEyebrow">Explore first</p>
+                <h2 id="experimentTitle" data-i18n="experimentTitle">What should count as the same shape?</h2>
+                <p data-i18n="experimentDesc">Predict what each representation will notice, then use Translate, Rotate and Bend to test your idea.</p>
+            </div>
+            <div class="prediction-card" id="predictionCard" data-state="start" role="status" aria-live="polite">
+                <span class="prediction-mark" aria-hidden="true">?</span>
+                <span class="prediction-copy"><strong id="predictionTitle" data-i18n="predictionStartTitle">Start with Translate</strong><span id="predictionText" data-i18n="predictionStartDesc">Point coordinates should change. Edge vectors and curvature should stay nearly unchanged.</span></span>
+            </div>
+        </section>
+
+        <section class="control-loop mode-data-only" aria-labelledby="controlLoopTitle">
+            <div class="control-loop-heading">
+                <h2 id="controlLoopTitle" data-i18n="controlLoopTitle">The complete data-driven control loop</h2>
+                <p data-i18n="controlLoopDesc">An offline identification phase supplies the local input–shape relation; the online phase repeatedly measures error and corrects it.</p>
+            </div>
+            <div class="control-loop-grid">
+                <div class="loop-step"><span data-i18n="phaseOffline">Offline phase</span><strong data-i18n="loopProbeTitle">1. Probe the object</strong><small data-i18n="loopProbeDesc">Apply small robot commands and observe the resulting shape change.</small><code>Δu → Δs</code></div>
+                <div class="loop-step"><span data-i18n="phaseOffline">Offline phase</span><strong data-i18n="loopEstimateTitle">2. Estimate the Jacobian</strong><small data-i18n="loopEstimateDesc">Fit the local mapping from robot motion to feature motion.</small><code>Ĵ ≈ Δs / Δu</code></div>
+                <div class="loop-step"><span data-i18n="phaseOnline">Online phase</span><strong data-i18n="loopCompareTitle">3. Measure shape error</strong><small data-i18n="loopCompareDesc">Compare the current and target feature vectors.</small><code>e = s* − s</code></div>
+                <div class="loop-step"><span data-i18n="phaseOnline">Online phase</span><strong data-i18n="loopControlTitle">4. Correct and repeat</strong><small data-i18n="loopControlDesc">Convert that error into a robot command, observe again and update.</small><code>u̇ = λ Ĵ† e</code></div>
+            </div>
+        </section>
 
         <section class="stage">
             <article class="card">
@@ -727,20 +1174,43 @@
                     <span class="legend-item" style="color: var(--muted)"><span data-i18n="rodModel">Discrete Kirchhoff rod · 24 segments</span></span>
                 </div>
                 <div class="toolbar">
-                    <button id="playBtn" class="button button-primary" type="button" aria-pressed="false"><span class="glyph" aria-hidden="true">▶</span><span id="playLabel" data-i18n="playBtn">Play</span></button>
-                    <button id="probeBtn" class="button" type="button" data-i18n="probeBtn">Probe &amp; learn Ĵ</button>
-                    <button id="targetBtn" class="button" type="button" data-i18n="targetBtn">New target</button>
+                    <button id="playBtn" class="button button-primary automatic-control" type="button" aria-pressed="false"><span class="glyph" aria-hidden="true">▶</span><span id="playLabel" data-i18n="playBtn">Estimate &amp; control</span></button>
+                    <button id="probeBtn" class="button automatic-control" type="button" data-i18n="probeBtn">Estimate model only</button>
+                    <button id="targetBtn" class="button target-control" type="button" data-i18n="targetBtn">New target</button>
                     <button id="resetBtn" class="button" type="button" data-i18n="resetBtn">Reset</button>
-                    <span class="toolbar-divider" aria-hidden="true"></span>
-                    <span class="toolbar-label" data-i18n="disturbLabel">Move the object:</span>
-                    <button id="rigidBtn" class="button" type="button" data-i18n="rigidBtn">Translate</button>
-                    <button id="rotateBtn" class="button" type="button" data-i18n="rotateBtn">Rotate</button>
-                    <button id="waveBtn" class="button" type="button" data-i18n="waveBtn">Wave</button>
+                    <span class="toolbar-divider disturbance-control" aria-hidden="true"></span>
+                    <span class="toolbar-label disturbance-control" data-i18n="disturbLabel">Move the object:</span>
+                    <button id="rigidBtn" class="button disturbance-control" type="button" data-i18n="rigidBtn">Translate</button>
+                    <button id="rotateBtn" class="button disturbance-control" type="button" data-i18n="rotateBtn">Rotate</button>
+                    <button id="waveBtn" class="button disturbance-control" type="button" data-i18n="waveBtn">Bend</button>
                 </div>
             </article>
 
             <aside class="rail">
-                <article class="card">
+                <article class="card manual-score-card mode-manipulate-only">
+                    <div class="card-heading"><h3 data-i18n="manualScoreTitle">Manual challenge</h3></div>
+                    <div class="manual-score-grid">
+                        <div><span data-i18n="manualMatchLabel">Shape match</span><output id="manualMatch">0%</output></div>
+                        <div><span data-i18n="manualMovesLabel">Moves</span><output id="manualMoves">0</output></div>
+                    </div>
+                    <div class="manual-controls">
+                        <div class="manual-gripper-select" role="group" aria-label="Gripper to move">
+                            <button class="manual-control-btn" type="button" data-manual-side="0" aria-pressed="true" data-i18n="leftGripper">Left gripper</button>
+                            <button class="manual-control-btn" type="button" data-manual-side="1" aria-pressed="false" data-i18n="rightGripper">Right gripper</button>
+                        </div>
+                        <div class="manual-nudge-grid" role="group" aria-label="Move selected gripper">
+                            <button class="manual-control-btn" type="button" data-manual-nudge="left" aria-label="Move left">←</button>
+                            <button class="manual-control-btn" type="button" data-manual-nudge="right" aria-label="Move right">→</button>
+                            <button class="manual-control-btn" type="button" data-manual-nudge="up" aria-label="Move up">↑</button>
+                            <button class="manual-control-btn" type="button" data-manual-nudge="down" aria-label="Move down">↓</button>
+                            <button class="manual-control-btn" type="button" data-manual-nudge="rotate-left" aria-label="Rotate counter-clockwise">↶</button>
+                            <button class="manual-control-btn" type="button" data-manual-nudge="rotate-right" aria-label="Rotate clockwise">↷</button>
+                        </div>
+                    </div>
+                    <div class="manual-coach" role="status" aria-live="polite"><strong id="manualCoachTitle" data-i18n="manualCoachStartTitle">Move one gripper at a time</strong><span id="manualCoachText" data-i18n="manualCoachStartDesc">Drag a circular gripper point to translate it, or its small ring handle to rotate it.</span></div>
+                </article>
+
+                <article class="card representation-card">
                     <div class="card-heading">
                         <h3 data-i18n="repTitle">Controlled feature vector</h3>
                     </div>
@@ -748,20 +1218,24 @@
                         <button class="rep-btn" type="button" data-representation="points" aria-pressed="true" style="color: var(--rep-points)">
                             <i class="rep-dot" aria-hidden="true"></i>
                             <span class="rep-text"><strong data-i18n="pointCoordinates">Point coordinates</strong><span data-i18n="pointsNote">18-D · pose and shape</span></span>
+                            <span class="rep-reading"><span data-i18n="currentError">Current error</span><output id="repErrorPoints">0.820</output></span>
                         </button>
                         <button class="rep-btn" type="button" data-representation="edges" aria-pressed="false" style="color: var(--rep-edges)">
                             <i class="rep-dot" aria-hidden="true"></i>
                             <span class="rep-text"><strong data-i18n="edgeVectors">Edge vectors</strong><span data-i18n="edgesNote">16-D · translation-invariant</span></span>
+                            <span class="rep-reading"><span data-i18n="currentError">Current error</span><output id="repErrorEdges">0.198</output></span>
                         </button>
                         <button class="rep-btn" type="button" data-representation="curvature" aria-pressed="false" style="color: var(--rep-curvature)">
                             <i class="rep-dot" aria-hidden="true"></i>
                             <span class="rep-text"><strong data-i18n="curvature">Curvature</strong><span data-i18n="curvatureNote">7-D · rigid-motion-invariant</span></span>
+                            <span class="rep-reading"><span data-i18n="currentError">Current error</span><output id="repErrorCurvature">0.193</output></span>
                         </button>
                     </div>
+                    <p class="rep-comparison-note" data-i18n="repComparisonNote">Compare each signal with itself before and after a movement; the three rows use different units and scales.</p>
                     <div class="metrics">
                         <div class="metric"><span data-i18n="errorNorm">‖e‖</span><strong id="errorNorm">0.000</strong></div>
-                        <div class="metric"><span data-i18n="modelRank">Rank</span><strong id="modelRank">—</strong></div>
-                        <div class="metric"><span data-i18n="conditioning">Cond</span><strong id="conditionNumber">—</strong></div>
+                        <div class="metric advanced-only"><span data-i18n="modelRank">Rank</span><strong id="modelRank">—</strong></div>
+                        <div class="metric advanced-only"><span data-i18n="conditioning">Condition</span><strong id="conditionNumber">—</strong></div>
                     </div>
                     <div class="status-line">
                         <i id="statusDot" class="status-dot" aria-hidden="true"></i>
@@ -769,9 +1243,9 @@
                     </div>
                 </article>
 
-                <article class="card">
+                <article class="card advanced-only">
                     <div class="card-heading">
-                        <h3 data-i18n="jacobianTitle">Learned Jacobian Ĵ</h3>
+                        <h3 data-i18n="jacobianTitle">Estimated shape Jacobian Ĵ</h3>
                         <span id="jacobianNote" class="card-note">6 × 18</span>
                     </div>
                     <div id="jacobianContent" class="jacobian-content">
@@ -781,7 +1255,11 @@
             </aside>
         </section>
 
-        <section class="plot-section">
+        <div class="advanced-toggle-row">
+            <button id="advancedToggle" class="advanced-toggle" type="button" aria-expanded="false" data-i18n="showAdvanced">Show advanced model &amp; signals</button>
+        </div>
+
+        <section class="plot-section advanced-only" id="advancedSignals">
             <div class="plot-grid-3">
                 <article class="card">
                     <div class="card-heading">
@@ -826,14 +1304,23 @@
             </div>
         </section>
 
-        <details class="learn-more">
+        <details class="learn-more representation-details" open>
             <summary data-i18n="learnMore">What changes between representations?</summary>
             <div class="representation-grid">
-                <article><h3 data-i18n="pointsHeading">Point coordinates</h3><p data-i18n="pointsDesc">Keep position, orientation and shape. Best for placement, but any rigid motion shows up as error.</p></article>
-                <article><h3 data-i18n="edgesHeading">Edge vectors</h3><p data-i18n="edgesDesc">Remove translation while keeping orientation and local direction changes. Translating the object leaves this error untouched.</p></article>
-                <article><h3 data-i18n="curvatureHeading">Curvature</h3><p data-i18n="curvatureDesc">Remove translation and rotation, isolating intrinsic bending. Shape converges, but pose becomes unobservable and uncontrolled.</p></article>
+                <article><h3 data-i18n="pointsHeading">Point coordinates</h3><p data-i18n="pointsDesc">Keep position, orientation and shape. Best for placement, but any rigid motion shows up as error.</p><code>eₚ = p* − p</code></article>
+                <article><h3 data-i18n="edgesHeading">Edge vectors</h3><p data-i18n="edgesDesc">Remove translation while keeping orientation and local direction changes. Translating the object leaves this error untouched.</p><code>e_d = d* − d</code></article>
+                <article><h3 data-i18n="curvatureHeading">Curvature</h3><p data-i18n="curvatureDesc">Remove translation and rotation, isolating intrinsic bending. Shape converges, but pose becomes unobservable and uncontrolled.</p><code>eκ = κ* − κ</code></article>
             </div>
         </details>
+
+        <section class="lesson-takeaway">
+            <div>
+                <span class="takeaway-label" data-i18n="takeawayLabel">Takeaway</span>
+                <strong id="takeawayTitle" data-i18n="takeawayTitle">The representation decides what the robot tries to correct.</strong>
+                <p id="takeawayDesc" data-i18n="takeawayDesc">Points preserve pose and shape, edges ignore translation, and curvature isolates bending. The “best” representation depends on the task.</p>
+            </div>
+            <a id="nextJourneyBtn" class="button button-primary button-link" href="index.html#research" target="_top" data-i18n="finishJourney">Finish: explore the research →</a>
+        </section>
     </main>
 
     <script>
@@ -845,42 +1332,78 @@
         // ------------------------------------------------------------------
         const translations = {
             en: {
+                languageAria: 'Language',
+                backToJourney: '← Back to the interactive journey',
                 demoKicker: 'Interactive research demo',
-                title: 'Shape Features & Data-Driven Control',
-                intro: 'Two robot arms hold a deformable linear object — a discrete Kirchhoff rod, clamped at both ends, re-solved to quasi-static equilibrium every frame. The controller never sees that model: it probes the system, learns the local shape Jacobian from the observed response, and servos on whichever feature vector you select.',
+                title: 'Data-Driven Shape Control',
+                intro: 'Estimate how robot motion changes shape, then use that local model to drive the object toward a target.',
+                manipulateTitle: 'Manual Shape-Control Challenge',
+                manipulateIntro: 'Move the two robot grippers and try to match the dashed target. You are the controller: observe, compare, correct and repeat.',
+                representationsTitle: 'Three Ways to Represent Shape',
+                representationsIntro: 'The same object can be described by point positions, edge vectors or curvature. Test what each representation notices—and what it ignores.',
+                dataDrivenTitle: 'Data-Driven Shape Control',
+                dataDrivenIntro: 'Return to the same robot task, now with an estimated shape Jacobian and a feedback controller that continually corrects the selected shape error.',
+                experimentEyebrow: 'Explore first',
+                experimentTitle: 'What should count as the same shape?',
+                experimentDesc: 'Predict what each representation will notice, then use Translate, Rotate and Bend to test your idea.',
+                manipulateExperimentEyebrow: 'First contact',
+                manipulateExperimentTitle: 'Can you solve the shape-control problem?',
+                manipulateExperimentDesc: 'Drag a gripper or its rotation ring. Try one change at a time and keep it only when the match improves.',
+                dataExperimentEyebrow: 'Close the loop',
+                dataExperimentTitle: 'From small probes to automatic correction',
+                dataExperimentDesc: 'Choose a shape representation, estimate its local Jacobian, then watch the controller turn error into robot motion.',
+                predictionStartTitle: 'Start with Translate',
+                predictionStartDesc: 'Point coordinates should change. Edge vectors and curvature should stay nearly unchanged.',
+                predictionTranslateTitle: 'Translation reveals position',
+                predictionTranslateDesc: 'Only point coordinates should react strongly: edges and curvature describe the shape without its absolute position.',
+                predictionRotateTitle: 'Rotation reveals orientation',
+                predictionRotateDesc: 'Points and edge vectors should react. Curvature should barely change because the bending itself is the same.',
+                predictionWaveTitle: 'Bending changes every representation',
+                predictionWaveDesc: 'The wave changes the object’s intrinsic shape, so points, edges and curvature should all respond.',
+                dataPhaseStartTitle: 'Begin with the offline phase',
+                dataPhaseStartDesc: 'Estimate the local shape Jacobian before asking the controller to move toward the target.',
+                dataPhaseEstimateTitle: 'Estimating the input–shape relation',
+                dataPhaseEstimateDesc: 'Each small probe supplies one column of Ĵ by relating a robot command to the measured feature change.',
+                dataPhaseControlTitle: 'Online feedback is active',
+                dataPhaseControlDesc: 'The controller repeatedly measures error, computes u̇ = λ Ĵ†e and applies the next correction.',
+                dataPhaseReadyTitle: 'Local model ready',
+                dataPhaseReadyDesc: 'Ĵ is now estimated. Start control, or inspect the matrix and signals below before continuing.',
                 sceneTitle: 'Robots, object and target',
                 sceneHint: 'Drag a gripper, its ring handle, or the object itself.',
                 legendObject: 'Object',
                 legendTarget: 'Target shape',
                 legendFeatures: 'Measured features',
                 rodModel: 'Discrete Kirchhoff rod · 24 segments',
-                playBtn: 'Play',
-                pauseBtn: 'Pause',
-                probeBtn: 'Probe & learn Ĵ',
+                playBtn: 'Estimate & control',
+                pauseBtn: 'Pause control',
+                probeBtn: 'Estimate model only',
                 targetBtn: 'New target',
                 resetBtn: 'Reset',
                 disturbLabel: 'Move the object:',
                 rigidBtn: 'Translate',
                 rotateBtn: 'Rotate',
-                waveBtn: 'Wave',
+                waveBtn: 'Bend',
                 repTitle: 'Controlled feature vector',
+                representationAria: 'Shape representation',
+                repComparisonNote: 'Compare each signal with itself before and after a movement; the three rows use different units and scales.',
                 pointCoordinates: 'Point coordinates',
                 pointsNote: '18-D · pose and shape',
                 edgeVectors: 'Edge vectors',
                 edgesNote: '16-D · translation-invariant',
                 curvature: 'Curvature',
                 curvatureNote: '7-D · rigid-motion-invariant',
-                errorNorm: '‖e‖',
+                currentError: 'Current error',
+                errorNorm: 'Selected error',
                 modelRank: 'Rank',
-                conditioning: 'Cond',
-                jacobianTitle: 'Learned Jacobian Ĵ',
+                conditioning: 'Condition',
+                jacobianTitle: 'Estimated shape Jacobian Ĵ',
                 emptyModel: 'No model yet. Probing applies a small motion on each of the six commands and measures the feature response.',
                 featPointsTitle: 'Point coordinates',
                 featEdgesTitle: 'Edge vectors',
                 featCurvatureTitle: 'Curvature',
                 actionTitle: 'End-effector velocity u̇',
                 errorTitle: 'Normalised error ‖e‖ / ‖e₀‖',
-                statusIdle: 'Idle — press Play to probe and servo.',
+                statusIdle: 'Idle — choose a representation, then estimate and control.',
                 statusProbing: 'Probing command',
                 statusLearned: 'Ĵ estimated from the probing data.',
                 statusRunning: 'Controller running',
@@ -899,6 +1422,61 @@
                 edgesDesc: 'Remove translation while keeping orientation and local direction changes. Translating the object leaves this error untouched.',
                 curvatureHeading: 'Curvature',
                 curvatureDesc: 'Remove translation and rotation, isolating intrinsic bending. Shape converges, but pose becomes unobservable and uncontrolled.',
+                showAdvanced: 'Show advanced model & signals',
+                hideAdvanced: 'Hide advanced model & signals',
+                controlLoopTitle: 'The complete data-driven control loop',
+                controlLoopDesc: 'An offline identification phase supplies the local input–shape relation; the online phase repeatedly measures error and corrects it.',
+                phaseOffline: 'Offline phase',
+                phaseOnline: 'Online phase',
+                loopProbeTitle: '1. Probe the object',
+                loopProbeDesc: 'Apply small robot commands and observe the resulting shape change.',
+                loopEstimateTitle: '2. Estimate the Jacobian',
+                loopEstimateDesc: 'Fit the local mapping from robot motion to feature motion.',
+                loopCompareTitle: '3. Measure shape error',
+                loopCompareDesc: 'Compare the current and target feature vectors.',
+                loopControlTitle: '4. Correct and repeat',
+                loopControlDesc: 'Convert that error into a robot command, observe again and update.',
+                manualScoreTitle: 'Manual challenge',
+                manualMatchLabel: 'Shape match',
+                manualMovesLabel: 'Moves',
+                leftGripper: 'Left gripper',
+                rightGripper: 'Right gripper',
+                gripperGroupAria: 'Gripper to move',
+                nudgeGroupAria: 'Move selected gripper',
+                moveLeftAria: 'Move left',
+                moveRightAria: 'Move right',
+                moveUpAria: 'Move up',
+                moveDownAria: 'Move down',
+                rotateLeftAria: 'Rotate counter-clockwise',
+                rotateRightAria: 'Rotate clockwise',
+                manualCoachStartTitle: 'Move one gripper at a time',
+                manualCoachStartDesc: 'Drag a circular gripper point to translate it, or its small ring handle to rotate it.',
+                manualCoachImprovingTitle: 'Good move—the shape is closer',
+                manualCoachImprovingDesc: 'Continue with a small adjustment, or test the other gripper.',
+                manualCoachWrongTitle: 'That movement increased the error',
+                manualCoachWrongDesc: 'Reverse the change and try another direction or gripper.',
+                manualCoachCloseTitle: 'Close—make smaller corrections',
+                manualCoachCloseDesc: 'The remaining difference is small, so fine gripper motions will help most.',
+                manualCoachSuccessTitle: 'Target matched',
+                manualCoachSuccessDesc: 'You closed the loop manually by observing, comparing and correcting.',
+                takeawayLabel: 'Takeaway',
+                takeawayTitle: 'The representation decides what the robot tries to correct.',
+                takeawayDesc: 'Points preserve pose and shape, edges ignore translation, and curvature isolates bending. The “best” representation depends on the task.',
+                manipulateTakeawayTitle: 'Shape control is a repeated observe–compare–correct loop.',
+                manipulateTakeawayDesc: 'A movement of either robot affects the whole object. You solved the task by using shape error as feedback.',
+                representationsTakeawayTitle: 'A shape representation decides which differences matter.',
+                representationsTakeawayDesc: 'Points preserve pose and shape, edges ignore translation, and curvature isolates bending. Invariance removes both nuisance motion and controllable information.',
+                dataTakeawayTitle: 'Data-driven control replaces manual trial-and-error with an estimated local model.',
+                dataTakeawayDesc: 'The representation defines the error, the estimated Jacobian links robot motion to that error, and the feedback law repeatedly corrects it.',
+                nextCompare: 'Next: understand comparison →',
+                nextDataDriven: 'Next: data-driven control →',
+                finishJourney: 'Finish: explore the research →',
+                sceneCanvasLabel: 'Two planar robot arms holding a deformable object, with the target shape shown as a dashed curve',
+                pointsPlotLabel: 'Time evolution of the point-coordinate feature components',
+                edgesPlotLabel: 'Time evolution of the edge-vector feature components',
+                curvaturePlotLabel: 'Time evolution of the curvature feature components',
+                actionPlotLabel: 'Time evolution of the six robot velocity commands',
+                errorPlotLabel: 'Time evolution of shape error for all three representations',
                 cmdXL: 'x left',
                 cmdYL: 'y left',
                 cmdTL: 'θ left',
@@ -909,42 +1487,78 @@
                 dimLabel: 'dim'
             },
             es: {
+                languageAria: 'Idioma',
+                backToJourney: '← Volver al recorrido interactivo',
                 demoKicker: 'Demostración interactiva',
-                title: 'Características de Forma y Control Basado en Datos',
-                intro: 'Dos brazos robóticos sujetan un objeto lineal deformable: una varilla discreta de Kirchhoff, empotrada en ambos extremos, cuyo equilibrio cuasiestático se recalcula en cada fotograma. El controlador no conoce ese modelo: explora el sistema, aprende el jacobiano local de forma a partir de la respuesta observada y controla el vector de características que elijas.',
+                title: 'Control de Forma Basado en Datos',
+                intro: 'Estima cómo el movimiento del robot cambia la forma y utiliza después ese modelo local para llevar el objeto hacia un objetivo.',
+                manipulateTitle: 'Reto Manual de Control de Forma',
+                manipulateIntro: 'Mueve las pinzas de los dos robots e intenta coincidir con el objetivo discontinuo. Tú eres el controlador: observa, compara, corrige y repite.',
+                representationsTitle: 'Tres Formas de Representar la Forma',
+                representationsIntro: 'El mismo objeto puede describirse mediante posiciones de puntos, vectores de arista o curvatura. Comprueba qué detecta cada representación y qué ignora.',
+                dataDrivenTitle: 'Control de Forma Basado en Datos',
+                dataDrivenIntro: 'Vuelve a la misma tarea robótica, ahora con un jacobiano de forma estimado y un controlador realimentado que corrige continuamente el error seleccionado.',
+                experimentEyebrow: 'Explora primero',
+                experimentTitle: '¿Qué debería contar como la misma forma?',
+                experimentDesc: 'Predice qué detectará cada representación y usa Trasladar, Rotar y Flexionar para comprobar tu idea.',
+                manipulateExperimentEyebrow: 'Primer contacto',
+                manipulateExperimentTitle: '¿Puedes resolver el problema de control de forma?',
+                manipulateExperimentDesc: 'Arrastra una pinza o su anillo de giro. Prueba un cambio cada vez y consérvalo solo si mejora la coincidencia.',
+                dataExperimentEyebrow: 'Cierra el bucle',
+                dataExperimentTitle: 'De pequeñas exploraciones a la corrección automática',
+                dataExperimentDesc: 'Elige una representación, estima su jacobiano local y observa cómo el controlador convierte el error en movimiento del robot.',
+                predictionStartTitle: 'Empieza por Trasladar',
+                predictionStartDesc: 'Las coordenadas de puntos deberían cambiar; los vectores de arista y la curvatura deberían permanecer casi iguales.',
+                predictionTranslateTitle: 'La traslación revela la posición',
+                predictionTranslateDesc: 'Solo las coordenadas de puntos deberían reaccionar con fuerza: aristas y curvatura describen la forma sin su posición absoluta.',
+                predictionRotateTitle: 'La rotación revela la orientación',
+                predictionRotateDesc: 'Los puntos y las aristas deberían reaccionar. La curvatura apenas debería cambiar porque la flexión es la misma.',
+                predictionWaveTitle: 'La flexión cambia todas las representaciones',
+                predictionWaveDesc: 'La onda altera la forma intrínseca del objeto, así que puntos, aristas y curvatura deberían responder.',
+                dataPhaseStartTitle: 'Empieza por la fase fuera de línea',
+                dataPhaseStartDesc: 'Estima el jacobiano local de forma antes de pedir al controlador que avance hacia el objetivo.',
+                dataPhaseEstimateTitle: 'Estimando la relación entrada–forma',
+                dataPhaseEstimateDesc: 'Cada pequeña exploración aporta una columna de Ĵ al relacionar un comando con el cambio medido en las características.',
+                dataPhaseControlTitle: 'La realimentación en línea está activa',
+                dataPhaseControlDesc: 'El controlador mide el error, calcula u̇ = λ Ĵ†e y aplica la siguiente corrección de forma repetida.',
+                dataPhaseReadyTitle: 'Modelo local preparado',
+                dataPhaseReadyDesc: 'Ĵ ya está estimado. Activa el control o inspecciona antes la matriz y las señales inferiores.',
                 sceneTitle: 'Robots, objeto y objetivo',
                 sceneHint: 'Arrastra una pinza, su anillo de giro o el propio objeto.',
                 legendObject: 'Objeto',
                 legendTarget: 'Forma objetivo',
                 legendFeatures: 'Características medidas',
                 rodModel: 'Varilla discreta de Kirchhoff · 24 segmentos',
-                playBtn: 'Reproducir',
-                pauseBtn: 'Pausar',
-                probeBtn: 'Explorar y aprender Ĵ',
+                playBtn: 'Estimar y controlar',
+                pauseBtn: 'Pausar el control',
+                probeBtn: 'Solo estimar el modelo',
                 targetBtn: 'Nuevo objetivo',
                 resetBtn: 'Reiniciar',
                 disturbLabel: 'Mueve el objeto:',
                 rigidBtn: 'Trasladar',
                 rotateBtn: 'Rotar',
-                waveBtn: 'Ondear',
+                waveBtn: 'Flexionar',
                 repTitle: 'Vector de características controlado',
+                representationAria: 'Representación de la forma',
+                repComparisonNote: 'Compara cada señal consigo misma antes y después de un movimiento; las tres filas utilizan unidades y escalas distintas.',
                 pointCoordinates: 'Coordenadas de puntos',
                 pointsNote: '18-D · pose y forma',
                 edgeVectors: 'Vectores de arista',
                 edgesNote: '16-D · invariante a traslación',
                 curvature: 'Curvatura',
                 curvatureNote: '7-D · invariante a movimiento rígido',
-                errorNorm: '‖e‖',
+                currentError: 'Error actual',
+                errorNorm: 'Error seleccionado',
                 modelRank: 'Rango',
-                conditioning: 'Cond',
-                jacobianTitle: 'Jacobiano aprendido Ĵ',
+                conditioning: 'Condición',
+                jacobianTitle: 'Jacobiano de forma estimado Ĵ',
                 emptyModel: 'Aún no hay modelo. La exploración aplica un pequeño movimiento en cada uno de los seis comandos y mide la respuesta de las características.',
                 featPointsTitle: 'Coordenadas de puntos',
                 featEdgesTitle: 'Vectores de arista',
                 featCurvatureTitle: 'Curvatura',
                 actionTitle: 'Velocidad del efector u̇',
                 errorTitle: 'Error normalizado ‖e‖ / ‖e₀‖',
-                statusIdle: 'En espera — pulsa Reproducir para explorar y controlar.',
+                statusIdle: 'En espera — elige una representación y activa la estimación y el control.',
                 statusProbing: 'Explorando el comando',
                 statusLearned: 'Ĵ estimado con los datos de exploración.',
                 statusRunning: 'Controlador en marcha',
@@ -963,6 +1577,61 @@
                 edgesDesc: 'Eliminan la traslación y conservan la orientación y los cambios locales de dirección. Trasladar el objeto no altera este error.',
                 curvatureHeading: 'Curvatura',
                 curvatureDesc: 'Elimina traslación y rotación para aislar la flexión intrínseca. La forma converge, pero la pose deja de ser observable y queda sin controlar.',
+                showAdvanced: 'Mostrar modelo y señales avanzadas',
+                hideAdvanced: 'Ocultar modelo y señales avanzadas',
+                controlLoopTitle: 'El bucle completo de control basado en datos',
+                controlLoopDesc: 'Una fase de identificación fuera de línea proporciona la relación local entrada–forma; la fase en línea mide y corrige repetidamente el error.',
+                phaseOffline: 'Fase fuera de línea',
+                phaseOnline: 'Fase en línea',
+                loopProbeTitle: '1. Explorar el objeto',
+                loopProbeDesc: 'Aplica pequeños comandos al robot y observa el cambio de forma resultante.',
+                loopEstimateTitle: '2. Estimar el jacobiano',
+                loopEstimateDesc: 'Ajusta el mapeo local entre movimiento del robot y movimiento de las características.',
+                loopCompareTitle: '3. Medir el error de forma',
+                loopCompareDesc: 'Compara los vectores de características actual y objetivo.',
+                loopControlTitle: '4. Corregir y repetir',
+                loopControlDesc: 'Convierte el error en un comando, vuelve a observar y actualiza.',
+                manualScoreTitle: 'Reto manual',
+                manualMatchLabel: 'Coincidencia de forma',
+                manualMovesLabel: 'Movimientos',
+                leftGripper: 'Pinza izquierda',
+                rightGripper: 'Pinza derecha',
+                gripperGroupAria: 'Pinza que se va a mover',
+                nudgeGroupAria: 'Mover la pinza seleccionada',
+                moveLeftAria: 'Mover hacia la izquierda',
+                moveRightAria: 'Mover hacia la derecha',
+                moveUpAria: 'Mover hacia arriba',
+                moveDownAria: 'Mover hacia abajo',
+                rotateLeftAria: 'Girar en sentido antihorario',
+                rotateRightAria: 'Girar en sentido horario',
+                manualCoachStartTitle: 'Mueve una pinza cada vez',
+                manualCoachStartDesc: 'Arrastra el punto circular de una pinza para trasladarla o su pequeño anillo para girarla.',
+                manualCoachImprovingTitle: 'Buen movimiento: la forma está más cerca',
+                manualCoachImprovingDesc: 'Continúa con un ajuste pequeño o prueba la otra pinza.',
+                manualCoachWrongTitle: 'Ese movimiento ha aumentado el error',
+                manualCoachWrongDesc: 'Invierte el cambio y prueba otra dirección o pinza.',
+                manualCoachCloseTitle: 'Estás cerca: haz correcciones pequeñas',
+                manualCoachCloseDesc: 'La diferencia restante es pequeña; ahora ayudan más los movimientos finos.',
+                manualCoachSuccessTitle: 'Objetivo alcanzado',
+                manualCoachSuccessDesc: 'Has cerrado el bucle manualmente: observar, comparar y corregir.',
+                takeawayLabel: 'Idea clave',
+                takeawayTitle: 'La representación decide qué intenta corregir el robot.',
+                takeawayDesc: 'Los puntos conservan pose y forma, las aristas ignoran la traslación y la curvatura aísla la flexión. La «mejor» representación depende de la tarea.',
+                manipulateTakeawayTitle: 'El control de forma es un bucle repetido de observar, comparar y corregir.',
+                manipulateTakeawayDesc: 'El movimiento de cualquiera de los robots afecta al objeto completo. Has resuelto la tarea utilizando el error de forma como realimentación.',
+                representationsTakeawayTitle: 'Una representación decide qué diferencias de forma importan.',
+                representationsTakeawayDesc: 'Los puntos conservan pose y forma, las aristas ignoran la traslación y la curvatura aísla la flexión. La invariancia elimina tanto movimientos irrelevantes como información controlable.',
+                dataTakeawayTitle: 'El control basado en datos sustituye el ensayo y error manual por un modelo local estimado.',
+                dataTakeawayDesc: 'La representación define el error, el jacobiano estimado relaciona el movimiento del robot con ese error y la ley de control lo corrige repetidamente.',
+                nextCompare: 'Siguiente: comprender la comparación →',
+                nextDataDriven: 'Siguiente: control basado en datos →',
+                finishJourney: 'Final: explora la investigación →',
+                sceneCanvasLabel: 'Dos brazos robóticos planos sujetan un objeto deformable, con la forma objetivo mostrada como una curva discontinua',
+                pointsPlotLabel: 'Evolución temporal de las componentes de coordenadas de puntos',
+                edgesPlotLabel: 'Evolución temporal de las componentes de vectores de arista',
+                curvaturePlotLabel: 'Evolución temporal de las componentes de curvatura',
+                actionPlotLabel: 'Evolución temporal de los seis comandos de velocidad del robot',
+                errorPlotLabel: 'Evolución temporal del error de forma para las tres representaciones',
                 cmdXL: 'x izq.',
                 cmdYL: 'y izq.',
                 cmdTL: 'θ izq.',
@@ -975,6 +1644,7 @@
         };
 
         const isEmbedded = window.self !== window.top;
+        const demoMode = document.documentElement.dataset.demoMode || 'data-driven';
         let lang = localStorage.getItem('language') || 'en';
         const dict = () => translations[lang] || translations.en;
 
@@ -1027,6 +1697,14 @@
         let drag = null;
         let resumeAfterProbe = false;
         let visible = true;
+        let predictionState = 'Start';
+        let dataPhase = 'Start';
+        let advancedVisible = demoMode === 'data-driven';
+        let manualSide = 0;
+        let manualMoves = 0;
+        let manualPreviousMatch = 0;
+        let manualCoachTitleKey = 'manualCoachStartTitle';
+        let manualCoachTextKey = 'manualCoachStartDesc';
 
         const probeOffset = { x0: 0, y0: 0, a0: 0, x1: 0, y1: 0, a1: 0 };
         const zeroOffset = () => ({ x0: 0, y0: 0, a0: 0, x1: 0, y1: 0, a1: 0 });
@@ -1550,6 +2228,7 @@
 
         function startProbe(thenRun) {
             gesture = null;
+            dataPhase = 'Estimate';
             resumeAfterProbe = !!thenRun;
             running = false;
             // t0 is stamped on the first animation frame, not on the click, so the
@@ -1602,6 +2281,9 @@
                 running = true;
                 steps = 0;
                 statusKey = 'statusRunning';
+                dataPhase = 'Control';
+            } else {
+                dataPhase = 'Ready';
             }
             renderJacobian();
             syncControls();
@@ -1745,6 +2427,8 @@
             if (probe) return;
             const ref = { ...base };
             gesture = { type, t0: performance.now(), ref, amp: feasibleAmplitude(type, ref) };
+            predictionState = type === 'rigid' ? 'Translate' : type === 'rotate' ? 'Rotate' : 'Wave';
+            renderPrediction();
             statusKey = 'statusDisturb';
             syncControls();
         }
@@ -2364,6 +3048,146 @@
         const playBtn = document.getElementById('playBtn');
         const probeBtn = document.getElementById('probeBtn');
 
+        function currentManualMatch() {
+            const features = allFeatures(effective());
+            const normalisedError = errorNorm(features, 'points') / Math.max(errorScale.points, 1e-6);
+            return 100 * Math.exp(-1.5 * Math.min(normalisedError, 3));
+        }
+
+        function renderManualChallenge() {
+            const words = dict();
+            const match = currentManualMatch();
+            document.getElementById('manualMatch').value = `${Math.round(match)}%`;
+            document.getElementById('manualMoves').value = String(manualMoves);
+            document.getElementById('manualCoachTitle').textContent = words[manualCoachTitleKey];
+            document.getElementById('manualCoachText').textContent = words[manualCoachTextKey];
+            document.querySelectorAll('[data-manual-side]').forEach(button => {
+                button.setAttribute('aria-pressed', String(Number(button.dataset.manualSide) === manualSide));
+            });
+        }
+
+        function resetManualChallenge() {
+            manualSide = 0;
+            manualMoves = 0;
+            manualPreviousMatch = currentManualMatch();
+            manualCoachTitleKey = 'manualCoachStartTitle';
+            manualCoachTextKey = 'manualCoachStartDesc';
+            renderManualChallenge();
+        }
+
+        function recordManualMove() {
+            const match = currentManualMatch();
+            const delta = match - manualPreviousMatch;
+            manualMoves += 1;
+            if (match >= 92) {
+                manualCoachTitleKey = 'manualCoachSuccessTitle';
+                manualCoachTextKey = 'manualCoachSuccessDesc';
+            } else if (match >= 76) {
+                manualCoachTitleKey = 'manualCoachCloseTitle';
+                manualCoachTextKey = 'manualCoachCloseDesc';
+            } else if (delta > 0.4) {
+                manualCoachTitleKey = 'manualCoachImprovingTitle';
+                manualCoachTextKey = 'manualCoachImprovingDesc';
+            } else if (delta < -0.4) {
+                manualCoachTitleKey = 'manualCoachWrongTitle';
+                manualCoachTextKey = 'manualCoachWrongDesc';
+            }
+            manualPreviousMatch = match;
+            renderManualChallenge();
+        }
+
+        function nudgeManualGripper(action) {
+            if (demoMode !== 'manipulate') return;
+            const previous = { ...base };
+            const xKey = manualSide === 0 ? 'x0' : 'x1';
+            const yKey = manualSide === 0 ? 'y0' : 'y1';
+            const angleKey = manualSide === 0 ? 'a0' : 'a1';
+            if (action === 'left') base[xKey] -= 0.035;
+            if (action === 'right') base[xKey] += 0.035;
+            if (action === 'up') base[yKey] += 0.035;
+            if (action === 'down') base[yKey] -= 0.035;
+            if (action === 'rotate-left') base[angleKey] += 0.075;
+            if (action === 'rotate-right') base[angleKey] -= 0.075;
+            base[xKey] = clamp(base[xKey], LIMITS[xKey][0], LIMITS[xKey][1]);
+            base[yKey] = clamp(base[yKey], LIMITS[yKey][0], LIMITS[yKey][1]);
+            base[angleKey] = clamp(base[angleKey], LIMITS[angleKey][0], LIMITS[angleKey][1]);
+            if (!rodFeasible(base) || KEYS.every(key => Math.abs(base[key] - previous[key]) < 1e-6)) {
+                base = previous;
+                return;
+            }
+            statusKey = 'statusManual';
+            recordManualMove();
+        }
+
+        function applyModeCopy() {
+            const words = dict();
+            const modeKeys = {
+                manipulate: {
+                    title: 'manipulateTitle', intro: 'manipulateIntro', eyebrow: 'manipulateExperimentEyebrow',
+                    experiment: 'manipulateExperimentTitle', desc: 'manipulateExperimentDesc',
+                    takeaway: 'manipulateTakeawayTitle', takeawayDesc: 'manipulateTakeawayDesc', next: 'nextCompare'
+                },
+                representations: {
+                    title: 'representationsTitle', intro: 'representationsIntro', eyebrow: 'experimentEyebrow',
+                    experiment: 'experimentTitle', desc: 'experimentDesc',
+                    takeaway: 'representationsTakeawayTitle', takeawayDesc: 'representationsTakeawayDesc', next: 'nextDataDriven'
+                },
+                'data-driven': {
+                    title: 'dataDrivenTitle', intro: 'dataDrivenIntro', eyebrow: 'dataExperimentEyebrow',
+                    experiment: 'dataExperimentTitle', desc: 'dataExperimentDesc',
+                    takeaway: 'dataTakeawayTitle', takeawayDesc: 'dataTakeawayDesc', next: 'finishJourney'
+                }
+            }[demoMode];
+            document.querySelector('h1[data-i18n="title"]').textContent = words[modeKeys.title];
+            document.querySelector('[data-i18n="intro"]').textContent = words[modeKeys.intro];
+            document.querySelector('[data-i18n="experimentEyebrow"]').textContent = words[modeKeys.eyebrow];
+            document.getElementById('experimentTitle').textContent = words[modeKeys.experiment];
+            document.querySelector('[data-i18n="experimentDesc"]').textContent = words[modeKeys.desc];
+            document.getElementById('takeawayTitle').textContent = words[modeKeys.takeaway];
+            document.getElementById('takeawayDesc').textContent = words[modeKeys.takeawayDesc];
+            const next = document.getElementById('nextJourneyBtn');
+            next.textContent = words[modeKeys.next];
+            next.href = demoMode === 'manipulate'
+                ? 'shape-comparison.html'
+                : demoMode === 'representations'
+                    ? 'shape-features-demo.html?mode=data-driven'
+                    : 'index.html#research';
+            document.title = `${words[modeKeys.title]} | Ignacio Cuiral-Zueco`;
+        }
+
+        function renderPrediction() {
+            const words = dict();
+            const card = document.getElementById('predictionCard');
+            if (demoMode === 'data-driven') {
+                const marks = { Start: '1', Estimate: 'Ĵ', Ready: '✓', Control: '↻' };
+                card.dataset.state = dataPhase.toLowerCase();
+                card.querySelector('.prediction-mark').textContent = marks[dataPhase];
+                document.getElementById('predictionTitle').textContent = words[`dataPhase${dataPhase}Title`];
+                document.getElementById('predictionText').textContent = words[`dataPhase${dataPhase}Desc`];
+                return;
+            }
+            const marks = { Start: '?', Translate: '↔', Rotate: '↻', Wave: '∿' };
+            card.dataset.state = predictionState.toLowerCase();
+            card.querySelector('.prediction-mark').textContent = marks[predictionState];
+            document.getElementById('predictionTitle').textContent = words[`prediction${predictionState}Title`];
+            document.getElementById('predictionText').textContent = words[`prediction${predictionState}Desc`];
+        }
+
+        function updateRepresentationErrors() {
+            const latest = history[history.length - 1];
+            if (!latest) return;
+            document.getElementById('repErrorPoints').value = latest.e.points.toFixed(3);
+            document.getElementById('repErrorEdges').value = latest.e.edges.toFixed(3);
+            document.getElementById('repErrorCurvature').value = latest.e.curvature.toFixed(3);
+        }
+
+        function updateAdvancedToggle() {
+            const button = document.getElementById('advancedToggle');
+            document.querySelector('.demo-shell').classList.toggle('show-advanced', advancedVisible);
+            button.setAttribute('aria-expanded', String(advancedVisible));
+            button.textContent = dict()[advancedVisible ? 'hideAdvanced' : 'showAdvanced'];
+        }
+
         function syncControls() {
             const words = dict();
             playBtn.setAttribute('aria-pressed', String(running));
@@ -2379,8 +3203,11 @@
             document.getElementById('statusText').textContent = text;
             document.getElementById('errorNorm').textContent =
                 history.length ? history[history.length - 1].e[representation].toFixed(3) : '0.000';
+            updateRepresentationErrors();
             const legend = document.getElementById('legendFeature');
             legend.style.color = `var(--rep-${representation})`;
+            renderPrediction();
+            if (demoMode === 'manipulate') renderManualChallenge();
         }
 
         function setRepresentation(rep) {
@@ -2391,6 +3218,7 @@
             converged = false;
             steps = 0;
             statusKey = 'statusIdle';
+            dataPhase = 'Start';
             document.querySelectorAll('[data-representation]').forEach(btn => {
                 btn.setAttribute('aria-pressed', String(btn.dataset.representation === rep));
             });
@@ -2403,12 +3231,14 @@
             if (running) {
                 running = false;
                 statusKey = 'statusPaused';
+                dataPhase = 'Ready';
             } else if (!jacobian) {
                 startProbe(true);
             } else {
                 if (converged) { converged = false; steps = 0; }
                 running = true;
                 statusKey = 'statusRunning';
+                dataPhase = 'Control';
             }
             syncControls();
         }
@@ -2429,11 +3259,15 @@
             steps = 0;
             converged = false;
             statusKey = 'statusIdle';
+            predictionState = 'Start';
+            dataPhase = 'Start';
             history.length = 0;
             velocity = new Array(6).fill(0);
             for (const key of Object.keys(plots)) plots[key].scale = null;
             refreshErrorScale();
+            resetManualChallenge();
             renderJacobian();
+            renderPrediction();
             syncControls();
         }
 
@@ -2475,6 +3309,7 @@
             event.preventDefault();
             scene.setPointerCapture(event.pointerId);
             drag = { ...hit, wx, wy, start: { ...base } };
+            if (hit.side >= 0) manualSide = hit.side;
             running = false;
             gesture = null;
             statusKey = 'statusManual';
@@ -2511,10 +3346,12 @@
 
         const endDrag = (event) => {
             if (!drag) return;
+            const changed = KEYS.some(key => Math.abs(base[key] - drag.start[key]) > 1e-4);
             drag = null;
             if (scene.hasPointerCapture && event.pointerId !== undefined && scene.hasPointerCapture(event.pointerId)) {
                 scene.releasePointerCapture(event.pointerId);
             }
+            if (demoMode === 'manipulate' && changed) recordManualMove();
         };
         scene.addEventListener('pointerup', endDrag);
         scene.addEventListener('pointercancel', endDrag);
@@ -2548,6 +3385,8 @@
                     lastSample = now;
                     for (const key of Object.keys(plots)) drawPlot(plots[key]);
                     updateReadouts();
+                    updateRepresentationErrors();
+                    if (demoMode === 'manipulate') renderManualChallenge();
                     if (running || probe) syncControls();
                     else {
                         document.getElementById('errorNorm').textContent =
@@ -2569,11 +3408,32 @@
                 if (value) el.textContent = value;
             });
             document.documentElement.lang = lang;
+            document.querySelector('.language-switcher').setAttribute('aria-label', words.languageAria);
+            document.querySelector('.rep-group').setAttribute('aria-label', words.representationAria);
+            document.querySelector('.manual-gripper-select').setAttribute('aria-label', words.gripperGroupAria);
+            document.querySelector('.manual-nudge-grid').setAttribute('aria-label', words.nudgeGroupAria);
+            const nudgeAriaKeys = {
+                left: 'moveLeftAria', right: 'moveRightAria', up: 'moveUpAria', down: 'moveDownAria',
+                'rotate-left': 'rotateLeftAria', 'rotate-right': 'rotateRightAria'
+            };
+            document.querySelectorAll('[data-manual-nudge]').forEach(button => {
+                button.setAttribute('aria-label', words[nudgeAriaKeys[button.dataset.manualNudge]]);
+            });
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 const active = btn.dataset.lang === lang;
                 btn.classList.toggle('active', active);
                 btn.setAttribute('aria-pressed', String(active));
             });
+            document.getElementById('sceneCanvas').setAttribute('aria-label', words.sceneCanvasLabel);
+            document.getElementById('plotPoints').setAttribute('aria-label', words.pointsPlotLabel);
+            document.getElementById('plotEdges').setAttribute('aria-label', words.edgesPlotLabel);
+            document.getElementById('plotCurvature').setAttribute('aria-label', words.curvaturePlotLabel);
+            document.getElementById('plotAction').setAttribute('aria-label', words.actionPlotLabel);
+            document.getElementById('plotError').setAttribute('aria-label', words.errorPlotLabel);
+            applyModeCopy();
+            renderPrediction();
+            renderManualChallenge();
+            updateAdvancedToggle();
             buildSeriesTables();
             renderJacobian();
             syncControls();
@@ -2602,7 +3462,7 @@
 
         function reportHeight() {
             if (!isEmbedded) return;
-            const height = document.documentElement.scrollHeight;
+            const height = Math.ceil(document.querySelector('.demo-shell').getBoundingClientRect().height);
             if (Math.abs(height - lastReportedHeight) < 2) return;
             lastReportedHeight = height;
             window.parent.postMessage({
@@ -2639,6 +3499,15 @@
         document.querySelectorAll('[data-representation]').forEach(btn => {
             btn.addEventListener('click', () => setRepresentation(btn.dataset.representation));
         });
+        document.querySelectorAll('[data-manual-side]').forEach(button => {
+            button.addEventListener('click', () => {
+                manualSide = Number(button.dataset.manualSide);
+                renderManualChallenge();
+            });
+        });
+        document.querySelectorAll('[data-manual-nudge]').forEach(button => {
+            button.addEventListener('click', () => nudgeManualGripper(button.dataset.manualNudge));
+        });
         playBtn.addEventListener('click', togglePlay);
         probeBtn.addEventListener('click', () => startProbe(false));
         document.getElementById('targetBtn').addEventListener('click', () => {
@@ -2649,6 +3518,8 @@
             gesture = null;
             statusKey = randomTarget() ? 'statusTarget' : 'statusIdle';
             refreshErrorScale();
+            dataPhase = jacobian ? 'Ready' : 'Start';
+            resetManualChallenge();
             for (const key of Object.keys(plots)) plots[key].scale = null;
             syncControls();
         });
@@ -2656,6 +3527,19 @@
         document.getElementById('rigidBtn').addEventListener('click', () => startGesture('rigid'));
         document.getElementById('rotateBtn').addEventListener('click', () => startGesture('rotate'));
         document.getElementById('waveBtn').addEventListener('click', () => startGesture('wave'));
+        document.getElementById('advancedToggle').addEventListener('click', () => {
+            advancedVisible = !advancedVisible;
+            updateAdvancedToggle();
+            requestAnimationFrame(reportHeight);
+        });
+        document.getElementById('nextJourneyBtn').addEventListener('click', (event) => {
+            if (!isEmbedded || demoMode === 'data-driven') return;
+            event.preventDefault();
+            window.parent.postMessage({
+                type: 'demoNavigate',
+                target: demoMode === 'manipulate' ? 'demo-shape-compare' : 'demo-data-driven'
+            }, window.location.protocol === 'file:' ? '*' : window.location.origin);
+        });
 
         const observer = new ResizeObserver(() => reportHeight());
         observer.observe(document.querySelector('.demo-shell'));
@@ -2671,6 +3555,7 @@
         });
 
         refreshErrorScale();
+        resetManualChallenge();
         applyTranslations();
         requestAnimationFrame(frame);
         reportHeight();

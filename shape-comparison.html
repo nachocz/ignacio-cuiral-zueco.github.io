@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Primary Meta Tags -->
-    <title>Shape Sculpting Demo | Ignacio Cuiral-Zueco</title>
-    <meta name="title" content="Shape Sculpting Demo | Ignacio Cuiral-Zueco">
-    <meta name="description" content="Interactive clay sculpting demo showcasing shape control and deformable object manipulation research by Ignacio Cuiral-Zueco.">
+    <title>Shape Match Lab | Ignacio Cuiral-Zueco</title>
+    <meta name="title" content="Shape Match Lab | Ignacio Cuiral-Zueco">
+    <meta name="description" content="An interactive lab about measuring shape similarity for deformable-object manipulation.">
     <meta name="author" content="Ignacio Cuiral-Zueco">
     <meta name="keywords" content="shape control demo, sculpting game, deformable objects, robotics research, interactive demo">
     
@@ -124,6 +124,7 @@
         .is-embedded body {
             min-height: 0;
             padding: 0;
+            overflow: hidden;
             background: transparent;
         }
 
@@ -134,6 +135,34 @@
             border: 0;
             border-radius: 0;
             box-shadow: none;
+        }
+
+        .standalone-back {
+            display: inline-flex;
+            margin-bottom: 13px;
+            color: var(--accent-strong);
+            font-size: 0.72rem;
+            font-weight: 750;
+            text-decoration: none;
+        }
+
+        .standalone-back:hover {
+            text-decoration: underline;
+        }
+
+        .is-embedded .demo-heading {
+            display: none;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         .demo-heading {
@@ -395,7 +424,7 @@
 
         .action-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             margin-top: 12px;
         }
@@ -439,14 +468,89 @@
         }
 
         .status {
-            min-height: 42px;
+            display: grid;
+            min-height: 58px;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
             margin-top: 14px;
-            padding: 11px 13px;
+            padding: 12px 14px;
             border: 1px solid var(--line);
             border-radius: 10px;
             color: var(--ink-soft);
             background: var(--surface-soft);
             font-size: 0.78rem;
+        }
+
+        .status[data-state="improving"],
+        .status[data-state="matched"] {
+            border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+            background: var(--accent-soft);
+        }
+
+        .status-mark {
+            display: grid;
+            width: 30px;
+            height: 30px;
+            place-items: center;
+            border-radius: 50%;
+            color: var(--accent-strong);
+            background: var(--surface);
+            font-size: 0.9rem;
+            font-weight: 850;
+        }
+
+        .status-copy strong,
+        .status-copy span {
+            display: block;
+        }
+
+        .status-copy strong {
+            margin-bottom: 2px;
+            color: var(--ink);
+            font-size: 0.8rem;
+        }
+
+        .feedback-trend {
+            color: var(--accent-strong);
+            font-size: 0.72rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .lesson-takeaway {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 18px;
+            align-items: center;
+            margin-top: 14px;
+            padding: 17px 18px;
+            border: 1px solid var(--line);
+            border-left: 4px solid var(--accent);
+            border-radius: var(--radius);
+            background: var(--accent-soft);
+        }
+
+        .takeaway-label {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--accent-strong);
+            font-size: 0.66rem;
+            font-weight: 850;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
+        .lesson-takeaway strong {
+            display: block;
+            color: var(--ink);
+            font-size: 0.9rem;
+        }
+
+        .lesson-takeaway p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 0.75rem;
         }
 
         .learn-more {
@@ -525,6 +629,15 @@
             .action-row {
                 grid-template-columns: 1fr;
             }
+
+            .status,
+            .lesson-takeaway {
+                grid-template-columns: 1fr;
+            }
+
+            .status-mark {
+                display: none;
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -540,6 +653,7 @@
 <body>
     <main class="demo-shell">
         <header class="demo-heading">
+            <a class="standalone-back" href="index.html#dissemination" data-i18n="backToJourney">← Back to the interactive journey</a>
             <div class="demo-topline">
                 <p class="demo-kicker" data-i18n="demoKicker">Interactive research demo</p>
                 <div class="language-switcher" aria-label="Language">
@@ -547,8 +661,8 @@
                     <button id="lang-es" class="lang-btn" type="button" data-lang="es" aria-pressed="false">ES</button>
                 </div>
             </div>
-            <h1 data-i18n="title">Shape Comparison</h1>
-            <p class="demo-intro" data-i18n="gameInstructions">Remove or restore material on the right until its contour matches the target on the left.</p>
+            <h1 data-i18n="title">Shape Match Lab</h1>
+            <p class="demo-intro" data-i18n="gameInstructions">A sculptor and a shape controller use the same loop: observe, compare with a target, adjust and repeat.</p>
         </header>
 
         <div class="tip-strip">
@@ -561,7 +675,7 @@
                 <div class="card-heading">
                     <h2 data-i18n="targetShapeLabel">Target and comparison</h2>
                     <span class="metric">
-                        <span data-i18n="mismatchLabel">Mismatch</span>
+                        <span data-i18n="matchLabel">Shape match</span>
                         <output id="residualValue">—</output>
                     </span>
                 </div>
@@ -570,7 +684,7 @@
                 </div>
                 <div class="plot-block">
                     <canvas id="errorCanvas" width="400" height="150" role="img" aria-label="Shape mismatch history"></canvas>
-                    <p class="plot-note" data-i18n="shapeResidualNote">Shape mismatch over time; lower is better.</p>
+                    <p class="plot-note" data-i18n="shapeResidualNote">Match after each edit; higher is better.</p>
                 </div>
             </article>
 
@@ -579,7 +693,8 @@
                     <h2 data-i18n="sculptingCanvasLabel">Sculpting workspace</h2>
                 </div>
                 <div class="canvas-wrap">
-                    <canvas id="shapesCanvas" width="400" height="400" aria-label="Interactive material sculpting canvas"></canvas>
+                    <canvas id="shapesCanvas" width="400" height="400" tabindex="0" role="application" aria-label="Interactive material sculpting canvas" aria-describedby="sculptKeyboardHelp"></canvas>
+                    <p id="sculptKeyboardHelp" class="sr-only" data-i18n="keyboardHelp">Keyboard: use the arrow keys to move the tool and press Space or Enter to apply it.</p>
                 </div>
                 <div class="tool-panel">
                     <div class="tool-segment" role="group" aria-label="Sculpting tool">
@@ -599,13 +714,18 @@
 
                     <div class="action-row">
                         <button id="resetBlockBtn" class="button" type="button" data-i18n="resetBlockBtn">Reset block</button>
+                        <button id="hintBtn" class="button" type="button" data-i18n="hintBtn">Show hint</button>
                         <button id="newShapeBtn" class="button button-primary" type="button" data-i18n="newShapeBtn">New target</button>
                     </div>
                 </div>
             </article>
         </section>
 
-        <div class="status" id="statusText" aria-live="polite"></div>
+        <div class="status" id="feedbackCard" data-state="start" role="status" aria-live="polite">
+            <span class="status-mark" aria-hidden="true">↗</span>
+            <span class="status-copy"><strong id="feedbackTitle" data-i18n="feedbackStartTitle">Start outside the dashed outline</strong><span id="statusText" data-i18n="feedbackStartDesc">Remove material that clearly lies beyond the target, then refine the edge.</span></span>
+            <span class="feedback-trend" id="feedbackTrend"></span>
+        </div>
 
         <details class="learn-more">
             <summary data-i18n="howToPlay">How it works</summary>
@@ -614,7 +734,7 @@
                     <h3 data-i18n="interactionGuide">Interaction guide</h3>
                     <p><strong data-i18n="goal">Objective:</strong> <span data-i18n="goalDesc">Sculpt the block so that its contour matches the target.</span></p>
                     <p><strong data-i18n="sculpting">Sculpting:</strong> <span data-i18n="sculptingDesc">Drag over the block to remove or restore particles.</span></p>
-                    <p><strong data-i18n="feedback">Feedback:</strong> <span data-i18n="feedbackDesc">The overlay and curve quantify how close the shapes are. Lower is better.</span></p>
+                    <p><strong data-i18n="feedback">Feedback:</strong> <span data-i18n="feedbackDesc">The overlay and score quantify how close the shapes are. Higher is better.</span></p>
                 </section>
                 <section>
                     <h3 data-i18n="whyMatters">Research context</h3>
@@ -623,72 +743,135 @@
                 </section>
             </div>
         </details>
+
+        <section class="lesson-takeaway">
+            <div>
+                <span class="takeaway-label" data-i18n="takeawayLabel">Takeaway</span>
+                <strong data-i18n="takeawayTitle">Shape comparison turns a target into actionable feedback.</strong>
+                <p data-i18n="takeawayDesc">Observe the current shape, measure its difference from the target, adjust and compare again: this is the core control loop you used in the robot game.</p>
+            </div>
+            <button id="nextDemoBtn" class="button button-primary" type="button" data-i18n="nextDemoBtn">Next: represent shape →</button>
+        </section>
     </main>
 
     <script>
         // i18n Translations Object
         const translations = {
             en: {
+                languageAria: 'Language',
                 demoKicker: 'Interactive research demo',
                 mismatchLabel: 'Mismatch',
+                matchLabel: 'Shape match',
                 brushSize: 'Tool size',
                 newShapeBtn: 'New target',
                 interactionGuide: 'Interaction guide',
-                title: 'Shape Comparison',
-                gameInstructions: 'Remove or restore material on the right until its contour matches the target on the left.',
+                backToJourney: '← Back to the interactive journey',
+                title: 'Shape Match Lab',
+                gameInstructions: 'A sculptor and a shape controller use the same loop: observe, compare with a target, adjust and repeat.',
                 gameTip: 'A useful start:',
-                gameTipText: 'Work gradually from the outer edges and watch the mismatch curve.',
+                gameTipText: 'Start outside the dashed outline, work gradually, and watch whether the match score rises.',
                 howToPlay: 'How it works',
                 goal: 'Goal:',
-                goalDesc: 'Shape the block on the right so that its contour matches the red shape on the left',
+                goalDesc: 'Shape the block on the right until its contour matches the target on the left.',
                 sculpting: 'Sculpting:',
-                sculptingDesc: 'The right-hand panel shows the block as a grid of particles. Use the chisel to remove particles and the clay to add them back',
+                sculptingDesc: 'Use Remove to cut particles away and Restore to add them back. A smaller tool helps near the boundary.',
                 feedback: 'Comments:',
-                feedbackDesc: 'The shape of your "sculpture" appears in green on the left. The error graph shows how close you are to the target shape; the lower the values, the better',
-                whyMatters: 'What does this example illustrate?',
-                matterText1: 'Humans are capable of comparing shapes naturally and robustly, accurately judging the degree of similarity between the shapes of objects. Sculptors are a clear example of this skill: they constantly adjust the sculpture against a model or reference image until the piece and the reference model are nearly identical',
-                matterText2: 'Similarly, robots need systems that help them compare shapes correctly to know whether they are manipulating the object towards the target reference shape or away from it. Part of my research focuses on developing shape comparison systems to help robots understand how close they are to the target shape and in which direction they should manipulate the object to get closer to it.',
+                feedbackDesc: 'The green contour is your current shape. The score and history show whether each edit helped; higher is better.',
+                whyMatters: 'Research context',
+                matterText1: 'People compare and refine shapes naturally; robots need an explicit, robust measure of the same difference.',
+                matterText2: 'Shape comparison gives a robot feedback about whether a manipulation is moving an object toward or away from its target.',
                 targetShapeLabel: 'Target and comparison',
-                shapeResidualNote: 'Shape mismatch over time; lower is better.',
+                shapeResidualNote: 'Match after each edit; higher is better.',
                 sculptingCanvasLabel: 'Sculpting workspace',
                 chiselBtn: 'Remove material',
                 clayBtn: 'Restore material',
                 resetBlockBtn: 'Reset block',
-                initialStatusText: 'Sculpt the shape to match the target. The residual curve updates as you sculpt.',
+                hintBtn: 'Show hint',
+                keyboardHelp: 'Keyboard: use the arrow keys to move the tool and press Space or Enter to apply it.',
+                initialStatusText: 'Sculpt the shape to match the target. The match history updates after each edit.',
                 statusText: 'Sculpt the shape to match the target.',
+                feedbackStartTitle: 'Start outside the dashed outline',
+                feedbackStartDesc: 'Remove material that clearly lies beyond the target, then refine the edge.',
+                feedbackImprovingTitle: 'Good move — the shapes are getting closer',
+                feedbackImprovingDesc: 'Keep following the dashed contour and make smaller edits near the boundary.',
+                feedbackWrongTitle: 'That edit moved away from the target',
+                feedbackWrongDesc: 'Switch to Restore if you removed too much, or try a different part of the contour.',
+                feedbackCloseTitle: 'Close — refine the boundary',
+                feedbackCloseDesc: 'Use a smaller tool and focus on the remaining gaps between the two contours.',
+                feedbackMatchedTitle: 'Shape matched',
+                feedbackMatchedDesc: 'The simplified overlap score now considers the two shapes a match.',
+                feedbackHintTitle: 'Hint: clear the four corners first',
+                feedbackHintDesc: 'The target is entirely inside the initial block, so the outer corners can be removed safely.',
+                improvedBy: 'Improved by',
+                changedBy: 'Changed by',
+                bestLabel: 'Best',
+                takeawayLabel: 'Takeaway',
+                takeawayTitle: 'Shape comparison turns a target into actionable feedback.',
+                takeawayDesc: 'Observe the current shape, measure its difference from the target, adjust and compare again: this is the core control loop you used in the robot game.',
+                nextDemoBtn: 'Next: represent shape →',
                 legendTargetShape: 'Target shape',
-                legendCurrentShape: 'Current shape'
+                legendCurrentShape: 'Current shape',
+                targetCanvasAria: 'Target shape overlaid with the current contour',
+                historyCanvasAria: 'History of the shape-match score; higher values mean a closer match',
+                sculptCanvasAria: 'Interactive sculpting workspace. Use the pointer, or arrow keys and Space or Enter.'
             },
             es: {
+                languageAria: 'Idioma',
                 demoKicker: 'Demostración interactiva',
                 mismatchLabel: 'Desajuste',
+                matchLabel: 'Coincidencia',
                 brushSize: 'Tamaño',
                 newShapeBtn: 'Nuevo objetivo',
                 interactionGuide: 'Guía de interacción',
-                title: 'Comparación de Formas',
-                gameInstructions: 'Elimina o restaura material a la derecha hasta que su contorno coincida con el objetivo de la izquierda.',
+                backToJourney: '← Volver al recorrido interactivo',
+                title: 'Laboratorio de Coincidencia de Formas',
+                gameInstructions: 'Un escultor y un controlador de forma siguen el mismo bucle: observar, comparar con un objetivo, ajustar y repetir.',
                 gameTip: 'Un buen comienzo:',
-                gameTipText: 'Trabaja gradualmente desde los bordes y observa la curva de desajuste.',
+                gameTipText: 'Empieza fuera del contorno discontinuo, trabaja gradualmente y observa si aumenta la puntuación.',
                 howToPlay: 'Cómo funciona',
                 goal: 'Objetivo:',
-                goalDesc: 'Dar forma al bloque de la derecha para que su contorno coincida con la forma roja de la izquierda',
+                goalDesc: 'Da forma al bloque de la derecha hasta que su contorno coincida con el objetivo de la izquierda.',
                 sculpting: 'Esculpir:',
-                sculptingDesc: 'El panel derecho muestra tu bloque como una cuadrícula de partículas. Utiliza el cincel para eliminar partículas y la arcilla para añadirlas de nuevo',
+                sculptingDesc: 'Usa Eliminar para retirar partículas y Restaurar para añadirlas de nuevo. Una herramienta pequeña ayuda cerca del borde.',
                 feedback: 'Comentarios:',
-                feedbackDesc: 'La forma de tu "escultura" aparece en verde a la izquierda. La gráfica de error muestra lo cerca que estás de la forma objetivo, cuanto más bajos sean los valores, mejor',
-                whyMatters: '¿Qué ilustra este ejemplo?',
-                matterText1: 'Los seres humanos son capaces de comparar formas de forma natural y robusta, juzgando con acierto el grado de similitud entre la forma de los objetos. Los escultores son un claro ejemplo de esta habilidad: ajustan constantemente la escultura con respecto a un modelo o imagen de referencia hasta que la pieza y el modelo de referencia son casi idénticos',
-                matterText2: 'De forma similar, los robots necesitan sistemas que les ayuden a comparar formas correctamente para saber si están manipulando el objeto hacia la forma de referencia objetivo o alejándose de ella. Parte de mi investigación se centra en desarrollar sistemas de comparación de formas para ayudar a los robots a entender cómo de cerca están de la forma objetivo y en qué dirección deben manipular el objeto para acercarse a ella.',
+                feedbackDesc: 'El contorno verde es tu forma actual. La puntuación y el historial muestran si cada edición ha ayudado; cuanto más altos, mejor.',
+                whyMatters: 'Contexto de investigación',
+                matterText1: 'Las personas comparan y refinan formas de manera natural; los robots necesitan una medida explícita y robusta de esa diferencia.',
+                matterText2: 'La comparación de formas indica al robot si una manipulación acerca o aleja el objeto de su objetivo.',
                 targetShapeLabel: 'Objetivo y comparación',
-                shapeResidualNote: 'Desajuste de forma en el tiempo; cuanto más bajo, mejor.',
+                shapeResidualNote: 'Coincidencia después de cada edición; cuanto más alta, mejor.',
                 sculptingCanvasLabel: 'Espacio de escultura',
                 chiselBtn: 'Eliminar material',
                 clayBtn: 'Restaurar material',
                 resetBlockBtn: 'Reiniciar bloque',
-                initialStatusText: 'Esculpe la forma para que coincida con el objetivo. La curva de residuo se actualiza mientras esculpes.',
+                hintBtn: 'Mostrar pista',
+                keyboardHelp: 'Teclado: usa las flechas para mover la herramienta y pulsa Espacio o Intro para aplicarla.',
+                initialStatusText: 'Esculpe la forma para que coincida con el objetivo. El historial se actualiza después de cada edición.',
                 statusText: 'Esculpe la forma para que coincida con el objetivo.',
+                feedbackStartTitle: 'Empieza fuera del contorno discontinuo',
+                feedbackStartDesc: 'Elimina el material que queda claramente fuera del objetivo y refina después el borde.',
+                feedbackImprovingTitle: 'Buen movimiento: las formas se están acercando',
+                feedbackImprovingDesc: 'Sigue el contorno discontinuo y realiza ediciones más pequeñas cerca del borde.',
+                feedbackWrongTitle: 'Esta edición se ha alejado del objetivo',
+                feedbackWrongDesc: 'Usa Restaurar si has eliminado demasiado o prueba en otra zona del contorno.',
+                feedbackCloseTitle: 'Estás cerca: refina el borde',
+                feedbackCloseDesc: 'Reduce el tamaño de la herramienta y céntrate en los huecos que quedan entre los contornos.',
+                feedbackMatchedTitle: 'Forma conseguida',
+                feedbackMatchedDesc: 'La medida simplificada de solapamiento ya considera que ambas formas coinciden.',
+                feedbackHintTitle: 'Pista: elimina primero las cuatro esquinas',
+                feedbackHintDesc: 'El objetivo está completamente dentro del bloque inicial, por lo que puedes retirar las esquinas exteriores con seguridad.',
+                improvedBy: 'Mejora',
+                changedBy: 'Cambio',
+                bestLabel: 'Mejor',
+                takeawayLabel: 'Idea clave',
+                takeawayTitle: 'La comparación de formas convierte un objetivo en realimentación útil.',
+                takeawayDesc: 'Observa la forma actual, mide su diferencia respecto al objetivo, ajusta y vuelve a comparar: este es el bucle de control esencial que utilizaste en el juego robótico.',
+                nextDemoBtn: 'Siguiente: representar la forma →',
                 legendTargetShape: 'Forma objetivo',
-                legendCurrentShape: 'Forma actual'
+                legendCurrentShape: 'Forma actual',
+                targetCanvasAria: 'Forma objetivo superpuesta al contorno actual',
+                historyCanvasAria: 'Historial de la puntuación de coincidencia; los valores altos indican mayor similitud',
+                sculptCanvasAria: 'Espacio de escultura interactivo. Usa el puntero o las flechas y Espacio o Intro.'
             }
         };
 
@@ -707,6 +890,7 @@
                 drawTargetShape();
                 drawErrorPlot();
                 renderSculpt();
+                updateFeedback(lastResidual, null);
             }
             requestAnimationFrame(reportHeight);
         }
@@ -720,6 +904,10 @@
                 }
             });
             document.documentElement.lang = currentLanguage;
+            document.querySelector('.language-switcher').setAttribute('aria-label', t.languageAria);
+            document.getElementById('targetCanvas').setAttribute('aria-label', t.targetCanvasAria);
+            document.getElementById('errorCanvas').setAttribute('aria-label', t.historyCanvasAria);
+            document.getElementById('shapesCanvas').setAttribute('aria-label', t.sculptCanvasAria);
         }
 
         function updateLanguageButtons() {
@@ -746,7 +934,7 @@
 
         function reportHeight() {
             if (!isEmbedded) return;
-            const height = document.documentElement.scrollHeight;
+            const height = Math.ceil(document.querySelector('.demo-shell').getBoundingClientRect().height);
             if (Math.abs(height - lastReportedHeight) < 2) return;
             lastReportedHeight = height;
             window.parent.postMessage({
@@ -795,6 +983,9 @@
         const errorCtx = errorCanvas.getContext('2d');
         const statusText = document.getElementById('statusText');
         const residualValue = document.getElementById('residualValue');
+        const feedbackCard = document.getElementById('feedbackCard');
+        const feedbackTitle = document.getElementById('feedbackTitle');
+        const feedbackTrend = document.getElementById('feedbackTrend');
 
         let currentTool = 'chisel';  // 'chisel' for erasing, 'clay' for adding
 
@@ -816,6 +1007,9 @@
         let lastResidual = null;
         let currentSculptShape = [];
         let pendingUpdate = false;
+        let bestMatch = 0;
+        let keyboardCursor = { x: 86, y: 86 };
+        let keyboardActive = false;
 
         const sculptCanvas = shapesCanvas;
         const sculptCtx = shapesCanvas.getContext('2d');
@@ -829,6 +1023,56 @@
         const PARTICLE_RADIUS = 6.5;  // Larger particles for clay-like appearance
         const PARTICLE_COLOR = '#8B6F47';  // Brownish clay color
         let brushRadius = 20;
+        const MATCH_THRESHOLD = 88;
+
+        function matchPercentage(residual) {
+            if (!Number.isFinite(residual)) return 0;
+            return Math.max(0, Math.min(100, (1 - residual / 10) * 100));
+        }
+
+        function updateFeedback(residual, previousResidual) {
+            if (!Number.isFinite(residual)) return;
+            const words = translations[currentLanguage];
+            const match = matchPercentage(residual);
+            const previousMatch = Number.isFinite(previousResidual) ? matchPercentage(previousResidual) : null;
+            const delta = previousMatch === null ? 0 : match - previousMatch;
+            bestMatch = Math.max(bestMatch, match);
+
+            let state = 'start';
+            let titleKey = 'feedbackStartTitle';
+            let descKey = 'feedbackStartDesc';
+            let mark = '↗';
+            if (match >= MATCH_THRESHOLD) {
+                state = 'matched';
+                titleKey = 'feedbackMatchedTitle';
+                descKey = 'feedbackMatchedDesc';
+                mark = '✓';
+            } else if (match >= 75) {
+                state = 'improving';
+                titleKey = 'feedbackCloseTitle';
+                descKey = 'feedbackCloseDesc';
+                mark = '◎';
+            } else if (delta > 0.01) {
+                state = 'improving';
+                titleKey = 'feedbackImprovingTitle';
+                descKey = 'feedbackImprovingDesc';
+                mark = '↑';
+            } else if (delta < -0.01) {
+                state = 'wrong';
+                titleKey = 'feedbackWrongTitle';
+                descKey = 'feedbackWrongDesc';
+                mark = '↶';
+            }
+
+            feedbackCard.dataset.state = state;
+            feedbackCard.querySelector('.status-mark').textContent = mark;
+            feedbackTitle.textContent = words[titleKey];
+            statusText.textContent = words[descKey];
+            feedbackTrend.textContent = previousMatch === null
+                ? `${words.bestLabel}: ${bestMatch.toFixed(0)}%`
+                : `${delta >= 0 ? words.improvedBy : words.changedBy}: ${delta > 0 ? '+' : ''}${delta.toFixed(0)}%`;
+            residualValue.value = `${match.toFixed(0)}%`;
+        }
 
         // Load and parse the target SVG (embedded path data)
         function loadTargetShape() {
@@ -1278,18 +1522,21 @@
                 errorCtx.stroke();
             }
 
-            if (residualHistory.length < 2) return;
-
-            const maxVal = Math.max(...residualHistory, 0.0001);
             const plotW = errorCanvas.width - 40;
             const plotH = errorCanvas.height - 40;
+
+            errorCtx.fillStyle = palette.text;
+            errorCtx.font = '12px Arial';
+            errorCtx.fillText(currentLanguage === 'es' ? 'Coincidencia (%)' : 'Match (%)', 24, 16);
+
+            if (residualHistory.length < 2) return;
 
             errorCtx.strokeStyle = palette.curve;
             errorCtx.lineWidth = 2;
             errorCtx.beginPath();
             residualHistory.forEach((v, i) => {
                 const x = 20 + (i / (residualHistory.length - 1)) * plotW;
-                const y = 20 + plotH - (v / maxVal) * plotH;
+                const y = 20 + plotH - (matchPercentage(v) / 100) * plotH;
                 if (i === 0) {
                     errorCtx.moveTo(x, y);
                 } else {
@@ -1298,9 +1545,6 @@
             });
             errorCtx.stroke();
 
-            errorCtx.fillStyle = palette.text;
-            errorCtx.font = '12px Arial';
-            errorCtx.fillText(currentLanguage === 'es' ? 'Desajuste' : 'Mismatch', 24, 16);
         }
 
         // Helper: Check if a grid cell is valid and alive
@@ -1434,6 +1678,27 @@
             if (currentSculptShape.length > 0) {
                 drawShape(sculptCtx, currentSculptShape, palette.contour, 2, false);
             }
+
+            // Keep the goal visible in the working canvas so visitors can compare
+            // and edit in the same place instead of repeatedly scanning left.
+            if (targetShape.length > 0) {
+                sculptCtx.save();
+                sculptCtx.globalAlpha = 0.92;
+                sculptCtx.setLineDash([7, 5]);
+                drawShape(sculptCtx, targetShape, palette.target, 3, false);
+                sculptCtx.restore();
+            }
+
+            if (keyboardActive) {
+                sculptCtx.save();
+                sculptCtx.strokeStyle = palette.text;
+                sculptCtx.lineWidth = 2;
+                sculptCtx.setLineDash([4, 3]);
+                sculptCtx.beginPath();
+                sculptCtx.arc(keyboardCursor.x, keyboardCursor.y, brushRadius, 0, Math.PI * 2);
+                sculptCtx.stroke();
+                sculptCtx.restore();
+            }
         }
         
         // Animation loop for falling particles
@@ -1544,16 +1809,13 @@
 
             currentSculptShape = getSculptShape();
             if (currentSculptShape.length > 0) {
+                const previousResidual = residualHistory.length
+                    ? residualHistory[residualHistory.length - 1]
+                    : null;
                 lastResidual = computeAreaResidual(targetShape, currentSculptShape);
                 residualHistory.push(lastResidual);
                 if (residualHistory.length > 200) residualHistory.shift();
-                
-                // Translate the status text based on current language
-                const statusMsg = currentLanguage === 'es' 
-                    ? `Desajuste actual de forma (más bajo es mejor): ${lastResidual.toFixed(4)}`
-                    : `Current shape mismatch (lower is better): ${lastResidual.toFixed(4)}`;
-                statusText.textContent = statusMsg;
-                residualValue.value = lastResidual.toFixed(4);
+                updateFeedback(lastResidual, previousResidual);
             }
 
             renderSculpt();
@@ -1598,10 +1860,8 @@
             residualHistory = [];
             currentSculptShape = [];
             residualValue.value = '—';
-            
-            // Translate the status text based on current language
-            const t = translations[currentLanguage];
-            statusText.textContent = t.statusText;
+            bestMatch = 0;
+            keyboardCursor = { x: 86, y: 86 };
 
             updateResidualAndRender();
         }
@@ -1677,9 +1937,23 @@
             resetSculpt();
         });
 
+        document.getElementById('hintBtn').addEventListener('click', () => {
+            const words = translations[currentLanguage];
+            feedbackCard.dataset.state = 'start';
+            feedbackCard.querySelector('.status-mark').textContent = '↘';
+            feedbackTitle.textContent = words.feedbackHintTitle;
+            statusText.textContent = words.feedbackHintDesc;
+            feedbackTrend.textContent = '';
+            keyboardCursor = { x: 78, y: 78 };
+            keyboardActive = true;
+            sculptCanvas.focus();
+            renderSculpt();
+        });
+
         sculptCanvas.addEventListener('pointerdown', (event) => {
             if (event.pointerType === 'mouse' && event.button !== 0) return;
             event.preventDefault();
+            keyboardActive = false;
             isSculpting = true;
             sculptCanvas.setPointerCapture(event.pointerId);
             const { x, y } = getCanvasPos(event);
@@ -1702,6 +1976,46 @@
 
         sculptCanvas.addEventListener('pointerup', endSculpting);
         sculptCanvas.addEventListener('pointercancel', endSculpting);
+
+        sculptCanvas.addEventListener('focus', () => {
+            keyboardActive = true;
+            renderSculpt();
+        });
+
+        sculptCanvas.addEventListener('blur', () => {
+            keyboardActive = false;
+            renderSculpt();
+        });
+
+        sculptCanvas.addEventListener('keydown', (event) => {
+            const movementKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+            if (movementKeys.includes(event.key)) {
+                event.preventDefault();
+                const step = event.shiftKey ? 24 : 10;
+                if (event.key === 'ArrowLeft') keyboardCursor.x -= step;
+                if (event.key === 'ArrowRight') keyboardCursor.x += step;
+                if (event.key === 'ArrowUp') keyboardCursor.y -= step;
+                if (event.key === 'ArrowDown') keyboardCursor.y += step;
+                keyboardCursor.x = Math.max(brushRadius, Math.min(sculptCanvas.width - brushRadius, keyboardCursor.x));
+                keyboardCursor.y = Math.max(brushRadius, Math.min(sculptCanvas.height - brushRadius, keyboardCursor.y));
+                renderSculpt();
+            }
+            if (event.key === ' ' || event.key === 'Enter') {
+                event.preventDefault();
+                eraseAt(keyboardCursor.x, keyboardCursor.y);
+            }
+        });
+
+        document.getElementById('nextDemoBtn').addEventListener('click', () => {
+            if (isEmbedded) {
+                window.parent.postMessage(
+                    { type: 'demoNavigate', target: 'demo-representations' },
+                    window.location.protocol === 'file:' ? '*' : window.location.origin
+                );
+            } else {
+                window.location.href = 'shape-features-demo.html?mode=representations';
+            }
+        });
 
         // Initialize by loading the target shape
         loadTargetShape();
