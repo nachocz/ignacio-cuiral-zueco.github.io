@@ -1450,7 +1450,7 @@
                 representationsSignalsTitle: 'Invariance in the error signals',
                 representationsSignalsDesc: 'A flat trace under a given motion means the representation is invariant to it. Point coordinates respond to every motion, edge vectors to rotation and bending, curvature to bending alone.',
                 dataSignalsTitle: 'Signals inside the feedback loop',
-                dataSignalsDesc: 'Feature components, commanded end-effector rates and normalised error share one 10-second window, so the identification transient and the correction phase line up in time.',
+                dataSignalsDesc: 'Feature components, commanded end-effector rates and normalised error share one rolling five-second window, so the identification transient and the correction phase can be compared directly.',
                 timeAxisLabel: 'Time (s)',
                 pointsAxisLabel: 'Position (m)',
                 edgesAxisLabel: 'Edge component (m)',
@@ -1623,7 +1623,7 @@
                 representationsSignalsTitle: 'Invariancia en las señales de error',
                 representationsSignalsDesc: 'Una traza plana ante un movimiento indica que la representación es invariante a él. Las coordenadas de puntos responden a todo movimiento; los vectores de arista, a rotación y flexión; la curvatura, solo a la flexión.',
                 dataSignalsTitle: 'Señales dentro del lazo de realimentación',
-                dataSignalsDesc: 'Las componentes de características, las velocidades comandadas del efector y el error normalizado comparten una ventana de 10 segundos, de modo que el transitorio de identificación y la fase de corrección quedan alineados en el tiempo.',
+                dataSignalsDesc: 'Las componentes de características, las velocidades comandadas del efector y el error normalizado comparten una ventana móvil de cinco segundos, lo que permite comparar directamente el transitorio de identificación y la fase de corrección.',
                 timeAxisLabel: 'Tiempo (s)',
                 pointsAxisLabel: 'Posición (m)',
                 edgesAxisLabel: 'Componente de arista (m)',
@@ -2282,7 +2282,7 @@
         // ------------------------------------------------------------------
         // history buffer
         // ------------------------------------------------------------------
-        const HIST = 300;
+        const HIST = 150;
         const SAMPLE_MS = 33;
         const history = [];
         let lastSample = performance.now();
@@ -3518,7 +3518,9 @@
         // keeps running when animation callbacks do not.
         let loopId = 0;
         let lastTick = performance.now();
-        let wasLaidOut = false;
+        // starts true so that only a genuine hidden -> visible transition resets
+        // the traces; a demo that was on screen all along must not be wiped
+        let wasLaidOut = true;
 
         function startLoop() {
             const id = ++loopId;
