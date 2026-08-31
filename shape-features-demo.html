@@ -1450,7 +1450,7 @@
                 representationsSignalsTitle: 'Invariance in the error signals',
                 representationsSignalsDesc: 'A flat trace under a given motion means the representation is invariant to it. Point coordinates respond to every motion, edge vectors to rotation and bending, curvature to bending alone.',
                 dataSignalsTitle: 'Signals inside the feedback loop',
-                dataSignalsDesc: 'Feature components, commanded end-effector rates and normalised error share one rolling five-second window, so the identification transient and the correction phase can be compared directly.',
+                dataSignalsDesc: 'Feature components, commanded end-effector rates and normalised error share one rolling three-second window, so the identification transient and the correction phase can be compared directly.',
                 timeAxisLabel: 'Time (s)',
                 pointsAxisLabel: 'Position (m)',
                 edgesAxisLabel: 'Edge component (m)',
@@ -1623,7 +1623,7 @@
                 representationsSignalsTitle: 'Invariancia en las señales de error',
                 representationsSignalsDesc: 'Una traza plana ante un movimiento indica que la representación es invariante a él. Las coordenadas de puntos responden a todo movimiento; los vectores de arista, a rotación y flexión; la curvatura, solo a la flexión.',
                 dataSignalsTitle: 'Señales dentro del lazo de realimentación',
-                dataSignalsDesc: 'Las componentes de características, las velocidades comandadas del efector y el error normalizado comparten una ventana móvil de cinco segundos, lo que permite comparar directamente el transitorio de identificación y la fase de corrección.',
+                dataSignalsDesc: 'Las componentes de características, las velocidades comandadas del efector y el error normalizado comparten una ventana móvil de tres segundos, lo que permite comparar directamente el transitorio de identificación y la fase de corrección.',
                 timeAxisLabel: 'Tiempo (s)',
                 pointsAxisLabel: 'Posición (m)',
                 edgesAxisLabel: 'Componente de arista (m)',
@@ -2282,7 +2282,7 @@
         // ------------------------------------------------------------------
         // history buffer
         // ------------------------------------------------------------------
-        const HIST = 150;
+        const HIST = 90;
         const SAMPLE_MS = 33;
         const history = [];
         let lastSample = performance.now();
@@ -2355,9 +2355,19 @@
             const dim = DIMS[representation];
             const J = Array.from({ length: dim }, () => new Array(KEYS.length).fill(0));
             for (let c = 0; c < KEYS.length; c++) {
-                const hi = probe.plus[c];
-                const lo = probe.minus[c];
-                if (!hi || !lo) continue;
+                let hi = probe.plus[c];
+                let lo = probe.minus[c];
+                if (!hi || !lo) {
+                    // frames were too coarse to catch the excursion: measure the
+                    // column directly so the estimate is never silently empty
+                    const key = KEYS[c];
+                    const saved = probeOffset[key];
+                    probeOffset[key] = PROBE_AMPLITUDE;
+                    hi = { f: allFeatures(effective())[representation], d: PROBE_AMPLITUDE };
+                    probeOffset[key] = -PROBE_AMPLITUDE;
+                    lo = { f: allFeatures(effective())[representation], d: -PROBE_AMPLITUDE };
+                    probeOffset[key] = saved;
+                }
                 const step = hi.d - lo.d;
                 if (Math.abs(step) < 1e-9) continue;
                 for (let r = 0; r < dim; r++) J[r][c] = (hi.f[r] - lo.f[r]) / step;
@@ -3518,16 +3528,26 @@
         // keeps running when animation callbacks do not.
         let loopId = 0;
         let lastTick = performance.now();
-        // starts true so that only a genuine hidden -> visible transition resets
-        // the traces; a demo that was on screen all along must not be wiped
-        let wasLaidOut = true;
+        let lastRaf = 0;
+        let laidOut = true;
+
+        // The demo is driven by animation callbacks when they are delivered and
+        // by a timer when they are not - a frame inside a hidden tab panel gets
+        // none, and nothing re-arms the callback once it is shown again. Both
+        // funnel through tick(), which coalesces them so the two drivers cannot
+        // double-step the simulation.
+        function tick(now) {
+            if (now - lastTick < 8) return;
+            lastTick = now;
+            frame(now);
+        }
 
         function startLoop() {
             const id = ++loopId;
             const step = (now) => {
                 if (id !== loopId) return;          // superseded by a later restart
-                lastTick = now;
-                frame(now);
+                lastRaf = now;
+                tick(now);
                 requestAnimationFrame(step);
             };
             requestAnimationFrame(step);
@@ -3547,22 +3567,25 @@
             lastState = effective();
             for (const key of Object.keys(plots)) drawPlot(plots[key]);
             drawScene();
+            startLoop();
+        }
+
+        // cheap to run often; the layout read is kept on the slow timer
+        function driveFrame() {
+            if (!laidOut || document.hidden) return;
+            // stay out of the way while animation callbacks are arriving, so the
+            // two drivers never step the simulation twice per frame
+            if (performance.now() - lastRaf < 100) return;
+            tick(performance.now());
         }
 
         function watchdog() {
             if (document.hidden) return;
             // zero while this frame is inside a hidden panel, so a rising edge
             // marks the moment the visitor switched back to this demo
-            const laidOut = scene.clientWidth > 0 && scene.clientHeight > 0;
-            if (laidOut && !wasLaidOut) resumeSignals();
-            wasLaidOut = laidOut;
-            if (!laidOut) return;
-            if (performance.now() - lastTick > 400) {
-                // animation callbacks are not being delivered to this frame;
-                // drive one from the timer and re-arm
-                frame(performance.now());
-                startLoop();
-            }
+            const now = scene.clientWidth > 0 && scene.clientHeight > 0;
+            if (now && !laidOut) resumeSignals();
+            laidOut = now;
         }
 
         function frame(now) {
@@ -3746,6 +3769,7 @@
         resetManualChallenge();
         applyTranslations();
         startLoop();
+        setInterval(driveFrame, 16);
         setInterval(watchdog, 500);
         reportHeight();
     })();
