@@ -365,7 +365,7 @@
                             <p class="demo-step-kicker"><span data-i18n="journeyStep">Step</span> 1 · <span data-i18n="journeyManipulate">Manipulate</span></p>
                             <h4 data-i18n="demoShapeTitle">Manual shape servoing</h4>
                             <p data-i18n="demoShapeLead">Two planar manipulators hold a deformable linear object at both ends. Moving either gripper changes the shape of the whole object.</p>
-                            <p class="demo-mission"><strong data-i18n="demoTryThis">Task:</strong> <span data-i18n="demoShapeMission">Move one gripper or rotation ring at a time and keep the change only when the shape error decreases.</span></p>
+                            <p class="demo-mission"><strong data-i18n="demoTryThis">Task:</strong> <span data-i18n="demoShapeMission">Move one gripper, or its rotation ring, and keep the change only when the error plot goes down.</span></p>
                             <p class="demo-model-note" data-i18n="demoShapeModel">The same manipulators, rod model and target return in step 4, where an estimated Jacobian replaces the operator.</p>
                             <p class="demo-research-links"><span data-i18n="demoExploreResearch">Explore the research:</span> <a href="https://doi.org/10.1109/LRA.2023.3292617" data-i18n="demoCompliantControlPaper">object-compliant shape control</a> · <a href="https://doi.org/10.1109/TMECH.2023.3325934" data-i18n="demoProcrustesPaper">multiscale 3-D shape control</a></p>
                         </div>
@@ -388,9 +388,9 @@
                         <div class="demo-callout demo-callout-neutral">
                             <p class="demo-step-kicker"><span data-i18n="journeyStep">Step</span> 3 · <span data-i18n="journeyRepresent">Represent</span></p>
                             <h4 data-i18n="demoRepresentTitle">Shape representations and invariance</h4>
-                            <p data-i18n="demoRepresentLead">The same geometry can be described by point coordinates, edge vectors or discrete curvature. Each description defines a different error signal.</p>
-                            <p class="demo-mission"><strong data-i18n="demoTryThis">Task:</strong> <span data-i18n="demoRepresentMission">Translate, rotate and bend the object, and compare which of the three error signals responds.</span></p>
-                            <p class="demo-model-note" data-i18n="demoRepresentModel">Invariance is a design choice: it rejects nuisance motion, but also removes degrees of freedom the controller can observe and correct.</p>
+                            <p data-i18n="demoRepresentLead">The controller compares numbers, not pictures. Point coordinates, edge vectors and curvature are three ways to turn the same rod into numbers.</p>
+                            <p class="demo-mission"><strong data-i18n="demoTryThis">Task:</strong> <span data-i18n="demoRepresentMission">Press Translate and watch only the point coordinates move. Press Rotate and watch curvature stay flat. Press Bend and watch all three react.</span></p>
+                            <p class="demo-model-note" data-i18n="demoRepresentModel">A feature that ignores a movement is invariant to it. Invariance rejects disturbances you do not care about, and hides directions the controller can no longer correct.</p>
                         </div>
                         <iframe src="shape-features-demo.html?mode=representations" class="demo-iframe" title="Three Ways to Represent Shape" data-i18n-title="representationsFrameTitle" id="representations-iframe" loading="lazy"></iframe>
                     </div>
@@ -399,9 +399,9 @@
                         <div class="demo-callout demo-callout-neutral">
                             <p class="demo-step-kicker"><span data-i18n="journeyStep">Step</span> 4 · <span data-i18n="journeyDataDriven">Shape control</span></p>
                             <h4 data-i18n="demoDataTitle">Data-driven shape control</h4>
-                            <p data-i18n="demoDataLead">The same manipulation task, now closed by an estimated shape Jacobian and a feedback law.</p>
-                            <p class="demo-mission"><strong data-i18n="demoTryThis">Task:</strong> <span data-i18n="demoDataMission">Identify the local model, run the controller under each representation, and compare the commands and error signals.</span></p>
-                            <p class="demo-model-note" data-i18n="demoDataModel">The offline phase estimates how gripper motion maps to shape change; the online phase applies that estimate as feedback and keeps updating it.</p>
+                            <p data-i18n="demoDataLead">The same task without a human in the loop. The robots first explore, then use what they measured as feedback.</p>
+                            <p class="demo-mission"><strong data-i18n="demoTryThis">Task:</strong> <span data-i18n="demoDataMission">Run it once per feature vector and compare: which errors reach zero, and what the robots do differently in each case.</span></p>
+                            <p class="demo-model-note" data-i18n="demoDataModel">Small test movements give the shape Jacobian, the local relation between gripper motion and feature motion. The loop then inverts it to turn error into motion.</p>
                             <p class="demo-research-links"><span data-i18n="demoExploreResearch">Explore the research:</span> <a href="https://doi.org/10.1109/TMECH.2026.3715312" data-i18n="demoTrajectoryPaper">data-driven shape trajectory control</a></p>
                         </div>
                         <iframe src="shape-features-demo.html?mode=data-driven" class="demo-iframe" title="Data-Driven Shape Control" data-i18n-title="dataDrivenFrameTitle" id="data-driven-iframe" loading="lazy"></iframe>
